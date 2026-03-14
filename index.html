@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Quepickeo</title>
+<title>LoL Counter Finder</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -141,7 +141,7 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 <body>
 
 <nav>
-  <div class="logo"> Que me counterea?</div>
+  <div class="logo">⚔ LoL Counter Finder</div>
   <span class="patch">Patch 16.5</span>
 </nav>
 
@@ -151,13 +151,9 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
     <p>Seleccioná un campeón para ver sus counters, ítems y runas recomendadas</p>
     <div class="search-wrap">
         <span class="sico">🔍</span>
-      <div class="search-wrap">
-    <span class="sico">🔍</span>
-    <input id="si" type="text" placeholder="Buscar campeón..." oninput="filterGrid()"/>
-</div>
-    <input id="si" type="text" placeholder="Buscar campeón..." oninput="filterGrid()" style="flex: 1; border: none; background: transparent; outline: none; color: white; padding: 12px;"/>
-    <button onclick="randomPick()" title="Pick al azar" style="background: var(--gold); border: none; border-radius: 6px; cursor: pointer; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s;" onmouseover="this.style.filter='brightness(1.2)'" onmouseout="this.style.filter='none'">🎲</button>
-</div>
+        <input id="si" type="text" placeholder="Buscar campeón..." oninput="filterGrid()"/>
+    </div>
+    <div class="roles" id="roleTabs"></div>
   </div>
 </div>
 
@@ -176,19 +172,13 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 </div>
 
 <footer>
-  Counterpickea siempre! · Imágenes © Riot Games  · No afiliado con Riot Games - Contacto: mazzuchitomas@icloud.com  
+  LoL Counter Finder · Imágenes © Riot Games (Data Dragon) · No afiliado con Riot Games
   <br/><br/>
   <a href="https://link.mercadopago.com.ar/mazzucho" target="_blank" rel="noopener"
     style="display:inline-flex;align-items:center;gap:8px;background:#009ee3;color:#fff;font-family:Inter,sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;text-decoration:none"
     onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
     ☕ Invitame un café en MercadoPago
   </a>
-  <div style="margin-top: 15px; opacity: 0.6; font-size: 11px; color: var(--text3); display: flex; align-items: center; justify-content: center; gap: 8px;">
-  <span>Visitas: </span>
-  <a href="https://www.freecounterstat.com" title="contador de visitas">
-    <img src="https://counter9.optistats.ovh/private/freecounterstat.php?c=8m8l8u6y8n5w3p1u7z6u4b8r9q2j1l5y" border="0" title="contador de visitas" alt="contador de visitas" style="vertical-align: middle; filter: invert(1) brightness(2);">
-  </a>
-</div>
 </footer>
 
 <script>
