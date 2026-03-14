@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>LoL Counter Finder</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e1015;--bg2:#161b22;--bg3:#1c2230;--bg4:#232b3a;
+  --border:#2a3347;--border2:#344060;
+  --text:#c9d1d9;--text2:#8b949e;--text3:#6e7681;
+  --blue:#1f6feb;--blue2:#388bfd;
+  --gold:#d4af37;--gold2:#f0d060;
+  --green:#3fb950;--red:#f85149;--orange:#f0883e;
+}
+html,body{min-height:100vh;background:var(--bg);font-family:'Inter',sans-serif;color:var(--text)}
+
+/* ── NAV ── */
+nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:50}
+.logo{font-weight:700;font-size:15px;color:var(--gold)}
+.patch{font-size:11px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:2px 8px}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(180deg,var(--bg2),var(--bg));border-bottom:1px solid var(--border);padding:1.25rem 1.5rem 1rem}
+.hero h1{font-size:20px;font-weight:700;margin-bottom:.25rem}
+.hero p{font-size:13px;color:var(--text2);margin-bottom:1rem}
+.search-wrap{position:relative;max-width:500px;margin-bottom:.75rem}
+.search-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px 10px 40px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border .2s,box-shadow .2s}
+.search-wrap input:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(56,139,253,.12)}
+.search-wrap input::placeholder{color:var(--text3)}
+.sico{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.4;pointer-events:none;font-size:15px}
+.roles{display:flex;gap:5px;flex-wrap:wrap}
+.rtab{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s}
+.rtab:hover{color:var(--text);border-color:var(--border2)}
+.rtab.on{background:rgba(31,111,235,.15);border-color:var(--blue);color:var(--blue2)}
+
+/* ── LAYOUT ── */
+.main{max-width:1100px;margin:1.25rem auto;padding:0 1.5rem;display:grid;grid-template-columns:250px 1fr;gap:1.25rem}
+@media(max-width:800px){.main{grid-template-columns:1fr;padding:0 1rem}}
+
+/* ── CHAMPION PORTRAIT (with fallback div) ── */
+.cport{border-radius:5px;overflow:hidden;flex-shrink:0;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Inter',sans-serif;position:relative}
+.cport img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:4px}
+.cport-lbl{font-size:11px;position:relative;z-index:1;text-align:center;line-height:1.2;padding:2px}
+
+/* Role colors for portrait backgrounds */
+.cr-Top{background:#2d1a4a;color:#d4a8f0}
+.cr-Jungle{background:#1a3a1a;color:#7dcc7d}
+.cr-Mid{background:#1a2d50;color:#7ab8e8}
+.cr-ADC{background:#4a1a1a;color:#e88080}
+.cr-Support{background:#352e00;color:#f0d060}
+.cr-default{background:#2d2d4a;color:#bdc3c7}
+
+/* ── CHAMPION GRID ── */
+.champ-section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.sec-hd{display:flex;align-items:center;justify-content:space-between;padding:.65rem 1rem;background:var(--bg3);border-bottom:1px solid var(--border)}
+.sec-title{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.6px;text-transform:uppercase}
+.sec-count{font-size:11px;color:var(--text3)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:5px;padding:.75rem;max-height:370px;overflow-y:auto}
+.cgrid::-webkit-scrollbar{width:4px}
+.cgrid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.cbtn{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 3px 6px;cursor:pointer;text-align:center;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.cbtn:hover{border-color:var(--gold);background:var(--bg4)}
+.cbtn.active{border-color:var(--gold);background:rgba(212,175,55,.08)}
+.cbtn .cname{font-size:9px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center}
+.cbtn:hover .cname,.cbtn.active .cname{color:var(--gold)}
+.cbtn .crole{font-size:8px;color:var(--text3)}
+
+/* ── SIDEBAR CHAMP CARD ── */
+.champ-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.champ-hd{padding:1rem;background:var(--bg3);display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.champ-name{font-size:17px;font-weight:700}
+.champ-role-lbl{font-size:12px;color:var(--text2);margin-top:2px;margin-bottom:6px}
+.tier-pill{display:inline-flex;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700}
+.tS{background:rgba(212,175,55,.15);color:var(--gold2);border:1px solid rgba(212,175,55,.3)}
+.tA{background:rgba(56,139,253,.12);color:var(--blue2);border:1px solid rgba(56,139,253,.25)}
+.tB{background:rgba(63,185,80,.12);color:var(--green);border:1px solid rgba(63,185,80,.25)}
+.tC{background:rgba(139,148,158,.1);color:var(--text2);border:1px solid var(--border)}
+.champ-stats{padding:.75rem 1rem}
+.srow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border)}
+.srow:last-child{border-bottom:none}
+.slbl{font-size:12px;color:var(--text2)}
+.sval{font-size:12px;font-weight:600}
+.wg{color:var(--green)}.wb{color:var(--red)}.wn{color:var(--text2)}
+
+/* ── RUNES ── */
+.rune-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.rcard-hd{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.6px;text-transform:uppercase;padding:.65rem 1rem;border-bottom:1px solid var(--border);background:var(--bg3)}
+.rcard-body{padding:.75rem 1rem}
+.rpath-hd{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+.rpath-name{font-size:12px;font-weight:600}
+.rks-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);margin-bottom:4px}
+.rks-name{font-size:13px;font-weight:600}
+.rks-sub{font-size:10px;color:var(--text3)}
+.rmin{display:flex;align-items:center;gap:7px;padding:3px 0}
+.rmin-name{font-size:12px;color:var(--text)}
+.rdiv{height:1px;background:var(--border);margin:6px 0}
+.shards{margin-top:6px;padding-top:6px;border-top:1px solid var(--border)}
+.sh-row{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.sh-type{font-size:10px;color:var(--text3);min-width:46px}
+.sh-val{font-size:11px;color:var(--text2)}
+
+/* ── CONTENT TABLES ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.card-hd{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.6px;text-transform:uppercase;padding:.65rem 1rem;border-bottom:1px solid var(--border);background:var(--bg3)}
+.thd{display:grid;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.4px;text-transform:uppercase;padding:.5rem 1rem;border-bottom:1px solid var(--border);background:var(--bg3)}
+.trow{display:grid;align-items:center;padding:.6rem 1rem;border-bottom:1px solid var(--border);transition:background .1s}
+.trow:last-child{border-bottom:none}
+.trow:hover{background:var(--bg3)}
+.gc{grid-template-columns:2.2fr .9fr .9fr 110px 70px}
+.gg{grid-template-columns:2.2fr .9fr .9fr 2fr}
+.ccell{display:flex;align-items:center;gap:9px}
+.ccell-name{font-size:13px;font-weight:600}
+.ccell-role{font-size:10px;color:var(--text3)}
+.wr{font-size:13px;font-weight:700}
+.gms{font-size:12px;color:var(--text2)}
+.bar-bg{background:var(--bg4);border-radius:3px;height:6px;width:100%;overflow:hidden;margin-bottom:3px}
+.bar-f{height:100%;border-radius:3px}
+.bar-red{background:var(--red)}
+.bar-green{background:var(--green)}
+.bar-note{font-size:10px;color:var(--text3);line-height:1.3}
+.thr{font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px;white-space:nowrap}
+.thr-h{background:rgba(248,81,73,.12);color:var(--red);border:1px solid rgba(248,81,73,.25)}
+.thr-m{background:rgba(240,136,62,.12);color:var(--orange);border:1px solid rgba(240,136,62,.25)}
+.thr-l{background:rgba(63,185,80,.1);color:var(--green);border:1px solid rgba(63,185,80,.2)}
+
+/* ── ITEMS ── */
+.items-grid{padding:.75rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.65rem}
+.item-card{display:flex;align-items:flex-start;gap:9px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.7rem}
+.iorder{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:1px}
+.iname{font-size:12px;font-weight:600;line-height:1.2;color:var(--text)}
+.ireason{font-size:10px;color:var(--text2);margin-top:2px;line-height:1.4}
+.icost{font-size:10px;color:var(--gold);margin-top:2px}
+
+.placeholder{color:var(--text3);font-size:13px;padding:2.5rem;text-align:center;line-height:1.8}
+footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border-top:1px solid var(--border);margin-top:1.5rem}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">⚔ LoL Counter Finder</div>
+  <span class="patch">Patch 16.5</span>
+</nav>
+
+<div class="hero">
+  <div style="max-width:1100px;margin:0 auto">
+    <h1>Counters de Campeones</h1>
+    <p>Seleccioná un campeón para ver sus counters, ítems y runas recomendadas</p>
+    <div class="search-wrap">
+        <span class="sico">🔍</span>
+        <input id="si" type="text" placeholder="Buscar campeón..." oninput="filterGrid()"/>
+    </div>
+    <div class="roles" id="roleTabs"></div>
+  </div>
+</div>
+
+<div class="main" id="mainWrap">
+  <div>
+    <div class="champ-section">
+      <div class="sec-hd">
+        <span class="sec-title">Campeones</span>
+        <span class="sec-count" id="ccount"></span>
+      </div>
+      <div class="cgrid" id="cgrid"></div>
+    </div>
+    <div id="sideInfo"><div class="placeholder">Seleccioná un campeón ↑</div></div>
+  </div>
+  <div id="mainInfo"><div class="placeholder" style="padding:5rem 2rem">← Seleccioná un campeón del panel izquierdo para ver sus counters, ítems y runas</div></div>
+</div>
+
+<footer>
+  LoL Counter Finder · Imágenes © Riot Games (Data Dragon) · No afiliado con Riot Games
+  <br/><br/>
+  <a href="https://link.mercadopago.com.ar/mazzucho" target="_blank" rel="noopener"
+    style="display:inline-flex;align-items:center;gap:8px;background:#009ee3;color:#fff;font-family:Inter,sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:8px;text-decoration:none"
+    onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+    ☕ Invitame un café en MercadoPago
+  </a>
+</footer>
+
+<script>
+/* ════════════════════════════════════
+   IMAGE HELPERS
+════════════════════════════════════ */
+const VER = '14.24.1';
+const DDR = 'https://ddragon.leagueoflegends.com/cdn/' + VER + '/img/champion/';
+const IURL = 'https://ddragon.leagueoflegends.com/cdn/' + VER + '/img/item/';
+
+const CKEYS = {
+  "Aurelion Sol":"AurelionSol","Bel'Veth":"Belveth","Cho'Gath":"Chogath",
+  "Dr. Mundo":"DrMundo","Jarvan IV":"JarvanIV","Kai'Sa":"Kaisa",
+  "Kha'Zix":"Khazix","Kog'Maw":"KogMaw","K'Sante":"KSante",
+  "LeBlanc":"Leblanc","Lee Sin":"LeeSin","Master Yi":"MasterYi",
+  "Miss Fortune":"MissFortune","Nunu & Willump":"Nunu","Rek'Sai":"RekSai",
+  "Renata Glasc":"Renata","Tahm Kench":"TahmKench","Twisted Fate":"TwistedFate",
+  "Vel'Koz":"Velkoz","Xin Zhao":"XinZhao","Wukong":"MonkeyKing",
+  "Fiddlesticks":"FiddleSticks"
+};
+function ckey(n){ return CKEYS[n] || n.replace(/[^a-zA-Z]/g,''); }
+function cimgUrl(n){ return DDR + ckey(n) + '.png'; }
+
+const IIDS = {
+  "Trinity Force":3078,"Kraken Slayer":6672,"Galeforce":6631,"Immortal Shieldbow":6673,
+  "Luden's Tempest":3285,"Shadowflame":4645,"Rabadon's Deathcap":3089,"Void Staff":3135,
+  "Everfrost":4636,"Divine Sunderer":4005,"Eclipse":6692,"Duskblade of Draktharr":6691,
+  "Prowler's Claw":6693,"Locket of the Iron Solari":3190,"Moonstone Renewer":6617,
+  "Shurelya's Battlesong":2065,"Imperial Mandate":4628,"Chemtech Putrifier":4630,
+  "Staff of Flowing Water":6616,"Ardent Censer":3504,"Riftmaker":4633,
+  "Hextech Rocketbelt":3152,"Infinity Edge":3031,"Bloodthirster":3072,
+  "Blade of the Ruined King":3153,"Guinsoo's Rageblade":3124,"Runaan's Hurricane":3085,
+  "Rapid Firecannon":3094,"Phantom Dancer":3046,"Statikk Shiv":3087,"Wit's End":3091,
+  "Death's Dance":6333,"Sterak's Gage":3053,"Maw of Malmortius":3156,
+  "Titanic Hydra":3748,"Ravenous Hydra":3074,"Navori Quickblades":6035,
+  "Collector":6676,"Lord Dominik's Regards":3036,"Mortal Reminder":3033,
+  "Black Cleaver":3071,"Frozen Heart":3110,"Randuin's Omen":3143,
+  "Warmog's Armor":3083,"Thornmail":3075,"Gargoyle Stoneplate":3193,
+  "Spirit Visage":3065,"Force of Nature":4401,"Abyssal Mask":3001,
+  "Heartsteel":3220,"Spear of Shojin":3161,"Manamune":3004,
+  "Rod of Ages":3027,"Seraph's Embrace":3040,"Sorcerer's Shoes":3020,
+  "Ionian Boots of Lucidity":3158,"Mercury's Treads":3111,"Plated Steelcaps":3047,
+  "Berserker's Greaves":3006,"Youmuu's Ghostblade":3142,"Zhonya's Hourglass":3157,
+  "Morellonomicon":3165,"Lich Bane":3100,"Nashor's Tooth":3115,"Cosmic Drive":4629,
+  "Demonic Embrace":4637,"Zeke's Convergence":3050,"Redemption":3107,
+  "Mikael's Blessing":3222,"Stridebreaker":6632,"Voltaic Cyclosword":6699,
+  "Last Whisper":3035,"Serylda's Grudge":6035,"Dead Man's Plate":3742,
+  "Vigilant Wardstone":3866,"Goredrinker":6630,"Axiom Arc":6698,
+};
+function iimgUrl(n){ const id=IIDS[n]; return id ? IURL+id+'.png' : null; }
+
+/* Build a champion portrait div — image loads over a colored bg with initials */
+function portrait(name, role, size) {
+  var rc = {'Top':'cr-Top','Jungle':'cr-Jungle','Mid':'cr-Mid','ADC':'cr-ADC','Support':'cr-Support'}[role] || 'cr-default';
+  return '<div class="cport ' + rc + '" style="width:' + size + 'px;height:' + size + 'px">'
+    + '<img src="' + cimgUrl(name) + '" alt="' + name + '" loading="lazy" '
+    + 'onerror="this.remove()" '
+    + 'onload="this.style.opacity=1" '
+    + 'style="opacity:0;transition:opacity .25s"/>'
+    + '</div>';
+}
+
+/* Build an item portrait */
+function itemPort(name, size) {
+  var url = iimgUrl(name);
+  var html = '<div class="cport cr-default" style="width:'+size+'px;height:'+size+'px;border-radius:6px">';
+  html += '<span class="cport-lbl" style="font-size:9px;color:#888">⚔</span>';
+  if (url) {
+    html += '<img src="'+url+'" alt="'+name+'" loading="lazy" onerror="this.remove()" onload="this.style.opacity=1" style="opacity:0;transition:opacity .25s;border-radius:5px"/>';
+  }
+  html += '</div>';
+  return html;
+}
+
+/* ════════════════════════════════════
+   RUNE IMAGES (CommunityDragon CDN)
+════════════════════════════════════ */
+var CDR = 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/';
+
+/* Path icons */
+var PATH_IMGS = {
+  'Precisión':     CDR + 'styles/7201_precision.png',
+  'Dominación':    CDR + 'styles/7200_domination.png',
+  'Brujería':      CDR + 'styles/7202_sorcery.png',
+  'Determinación': CDR + 'styles/7204_resolve.png',
+  'Inspiración':   CDR + 'styles/7203_whimsy.png',
+};
+
+/* Path accent colors */
+var PATH_COLS = {
+  'Precisión':'#d4aa00','Dominación':'#c0392b','Brujería':'#8e44ad',
+  'Determinación':'#2471a3','Inspiración':'#1abc9c'
+};
+
+/* Individual rune icons */
+var RUNE_IMGS = {
+  /* ── Keystones ── */
+  'Conquistador':          CDR + 'styles/precision/conqueror/conqueror.png',
+  'Tempo Letal':           CDR + 'styles/precision/lethaltempo/lethaltempotemp.png',
+  'Lluvia de Hojas':       CDR + 'styles/precision/fleetfootwork/fleetfootwork.png',
+  'Electrocutar':          CDR + 'styles/domination/electrocute/electrocute.png',
+  'Depredador':            CDR + 'styles/domination/predator/predator.png',
+  'Cosecha Oscura':        CDR + 'styles/domination/darkharvestsoul/darkharvestsoul.png',
+  'Hojas Afiladas':        CDR + 'styles/domination/hailofblades/hailofblades.png',
+  'Cometa Arcano':         CDR + 'styles/sorcery/arcanecomet/arcanecomet.png',
+  'Invocar: Aery':         CDR + 'styles/sorcery/summonaery/summonaery.png',
+  'Fase de Fases':         CDR + 'styles/sorcery/phaseRush/phaserush.png',
+  'Garra del No Muerto':   CDR + 'styles/resolve/graspoftheundying/graspoftheundying.png',
+  'Inmortal':              CDR + 'styles/resolve/veteranaftershock/veteranaftershock.png',
+  'Réplica':               CDR + 'styles/resolve/veteranaftershock/veteranaftershock.png',
+  'Escudo de Roca':        CDR + 'styles/resolve/shieldofdurand/shieldofdurand.png',
+  'Aumento Glacial':       CDR + 'styles/whimsy/glacialaugment/glacialaugment.png',
+  'Primer Golpe':          CDR + 'styles/whimsy/firststrike/firststrike.png',
+  'Prototipo: Bordes':     CDR + 'styles/whimsy/unsealedspellbook/unsealedspellbook.png',
+
+  /* ── Precisión ── */
+  'Triunfo':               CDR + 'styles/precision/triumph/triumph.png',
+  'Presencia Mental':      CDR + 'styles/precision/presenceofmind/presenceofmind.png',
+  'Leyenda: Alacidad':     CDR + 'styles/precision/legendalacrity/legendalacrity.png',
+  'Leyenda: Tenacidad':    CDR + 'styles/precision/legendtenacity/legendtenacity.png',
+  'Leyenda: Linaje':       CDR + 'styles/precision/legendbloodline/legendbloodline.png',
+  'Último Bastión':        CDR + 'styles/precision/laststand/laststand.png',
+  'Segar':                 CDR + 'styles/precision/cutdown/cutdown.png',
+  'Golpe de Gracia':       CDR + 'styles/precision/coupdeGrace/coupdegrace.png',
+
+  /* ── Dominación ── */
+  'Sabor a Sangre':        CDR + 'styles/domination/tasteofblood/greenterror_tasteofblood.png',
+  'Impacto Repentino':     CDR + 'styles/domination/suddenimpact/suddenimpact.png',
+  'Colección de Globos Oculares': CDR + 'styles/domination/eyeballcollection/eyeballcollection.png',
+  'Acumulación de Globos': CDR + 'styles/domination/eyeballcollection/eyeballcollection.png',
+  'Cazador Implacable':    CDR + 'styles/domination/relentlesshunter/relentlesshunter.png',
+  'Cazador Ingenioso':     CDR + 'styles/domination/ingenioushunter/ingenioushunter.png',
+  'Cazador Voraz':         CDR + 'styles/domination/ravenoushunter/ravenoushunter.png',
+  'Zombi Zombie':          CDR + 'styles/domination/zombieward/zombieward.png',
+  'Espectro Fantasma':     CDR + 'styles/domination/ghostporo/ghostporo.png',
+
+  /* ── Brujería ── */
+  'Banda de Flujo de Maná': CDR + 'styles/sorcery/manaflowband/manaflowband.png',
+  'Nimbus Cloak':          CDR + 'styles/sorcery/nimbuscloak/nimbuscloak.png',
+  'Trascendencia':         CDR + 'styles/sorcery/transcendence/transcendence.png',
+  'Celeridad':             CDR + 'styles/sorcery/celerity/celeritytemp.png',
+  'Foco Absoluto':         CDR + 'styles/sorcery/absolutefocus/absolutefocus.png',
+  'Achicharrar':           CDR + 'styles/sorcery/scorch/scorch.png',
+  'Aplazar':               CDR + 'styles/sorcery/waterwalking/waterwalking.png',
+  'Tormenta Creciente':    CDR + 'styles/sorcery/gatheringstorm/gatheringstorm.png',
+
+  /* ── Determinación ── */
+  'Golpe de Escudo':       CDR + 'styles/resolve/shieldbash/shieldbash.png',
+  'Revestimiento Óseo':    CDR + 'styles/resolve/boneplating/boneplating.png',
+  'Acondicionamiento':     CDR + 'styles/resolve/conditioning/conditioning.png',
+  'Segunda Piel':          CDR + 'styles/resolve/secondwind/secondwind.png',
+  'Sobrecrecimiento':      CDR + 'styles/resolve/overgrowth/overgrowth.png',
+  'Impertérrito':          CDR + 'styles/resolve/unflinching/unflinching.png',
+  'Fuente de Vida':        CDR + 'styles/resolve/fontoflife/fontoflife.png',
+  'Revitalizar':           CDR + 'styles/resolve/revitalize/revitalize.png',
+
+  /* ── Inspiración ── */
+  'Calzado Mágico':        CDR + 'styles/whimsy/magicalfootwear/magicalfootwear.png',
+  'Entrega de Galletas':   CDR + 'styles/whimsy/biscuitdelivery/biscuitdelivery.png',
+  'Perspicacia Cósmica':   CDR + 'styles/whimsy/cosmicinsight/cosmicinsight.png',
+  'Mercado del Futuro':    CDR + 'styles/whimsy/futuresmarket/futuresmarket.png',
+  'Minería de Ideas':      CDR + 'styles/whimsy/miniondematerializer/miniondematerializer.png',
+  'Aproximación':          CDR + 'styles/whimsy/approachvelocity/approachvelocity.png',
+  'Tónico de Tiempo':      CDR + 'styles/whimsy/timewarptonic/timewarptonic.png',
+};
+
+/* Shard icons */
+var SHARD_IMGS = {
+  offense: 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsadaptiveforceicon.png',
+  flex:     'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsadaptiveforceicon.png',
+  defense:  'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodshealthscalingicon.png',
+};
+var SHARD_OFFENSE_IMGS = {
+  'Velocidad de Ataque': 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsattackspeedicon.png',
+  'Daño Adaptable':      'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsadaptiveforceicon.png',
+  'Habilidad':           'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsabilityhasteicon.png',
+};
+var SHARD_DEF_IMGS = {
+  'Vida':               'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodshealthscalingicon.png',
+  'Armadura':           'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsarmoricon.png',
+  'Resistencia Mágica': 'https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/perk-images/statmods/statmodsmagicresicon.png',
+};
+
+function getPathCol(p) {
+  for (var k in PATH_COLS) { if (p && p.toLowerCase().indexOf(k.toLowerCase()) >= 0) return PATH_COLS[k]; }
+  return '#888';
+}
+function getPathImg(p) {
+  for (var k in PATH_IMGS) { if (p && p.toLowerCase().indexOf(k.toLowerCase()) >= 0) return PATH_IMGS[k]; }
+  return null;
+}
+function getRuneImg(name) {
+  return RUNE_IMGS[name] || null;
+}
+
+/* Render a path icon (circle with real image) */
+function rpsvg(path, s) {
+  var sz = s || 20;
+  var src = getPathImg(path);
+  var col = getPathCol(path);
+  if (src) {
+    return '<div style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#1a1a2e;border:1px solid '+col+';display:flex;align-items:center;justify-content:center">'
+      + '<img src="'+src+'" width="'+sz+'" height="'+sz+'" style="object-fit:cover;display:block" onerror="this.style.display=\'none\'">'
+      + '</div>';
+  }
+  return '<div style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;background:#1a1a2e;border:1px solid '+col+';flex-shrink:0"></div>';
+}
+
+/* Render a rune icon (keystone = square, minor = circle) */
+function rsvg(path, ks, s) {
+  var sz = s || (ks ? 26 : 18);
+  var col = getPathCol(path);
+  // We use rune name lookup — but here path is the tree name, so we return a placeholder
+  // The actual rune name is passed in renderSide directly
+  var shape = ks ? 'border-radius:4px' : 'border-radius:50%';
+  return '<div class="rune-icon-ph" data-sz="'+sz+'" style="width:'+sz+'px;height:'+sz+'px;'+shape+';background:#1a1a2e;border:1px solid '+col+';flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden"></div>';
+}
+
+/* Render rune with real image by name */
+function runeImgEl(name, ks, sz) {
+  var src = getRuneImg(name);
+  var col = '#555';
+  var shape = ks ? 'border-radius:5px' : 'border-radius:50%';
+  var bg = ks ? '#1a0a20' : '#111';
+  if (src) {
+    return '<div style="width:'+sz+'px;height:'+sz+'px;'+shape+';overflow:hidden;flex-shrink:0;background:'+bg+';display:flex;align-items:center;justify-content:center">'
+      + '<img src="'+src+'" width="'+sz+'" height="'+sz+'" style="object-fit:contain;display:block;padding:'+(ks?2:1)+'px" onerror="this.parentNode.style.background=\'#2a2a2a\';this.style.display=\'none\'">'
+      + '</div>';
+  }
+  return '<div style="width:'+sz+'px;height:'+sz+'px;'+shape+';background:'+bg+';border:1px solid #333;flex-shrink:0"></div>';
+}
+
+/* Render a stat shard icon */
+function shsvg(type, val, s) {
+  var sz = s || 16;
+  var src = (type==='offense') ? (SHARD_OFFENSE_IMGS[val] || SHARD_IMGS.offense)
+          : (type==='defense') ? (SHARD_DEF_IMGS[val] || SHARD_IMGS.defense)
+          : SHARD_IMGS.flex;
+  return '<div style="width:'+sz+'px;height:'+sz+'px;border-radius:50%;overflow:hidden;flex-shrink:0;background:#1a1a2e;display:flex;align-items:center;justify-content:center">'
+    + '<img src="'+src+'" width="'+sz+'" height="'+sz+'" style="object-fit:contain;display:block;padding:1px" onerror="this.style.display=\'none\'">'
+    + '</div>';
+}
+
+/* ════════════════════════════════════
+   CHAMPION DATA
+════════════════════════════════════ */
+var ALL = [
+  {n:"Aatrox",r:"Top"},{n:"Ahri",r:"Mid"},{n:"Akali",r:"Mid"},{n:"Akshan",r:"Mid"},
+  {n:"Alistar",r:"Support"},{n:"Amumu",r:"Jungle"},{n:"Anivia",r:"Mid"},{n:"Annie",r:"Mid"},
+  {n:"Aphelios",r:"ADC"},{n:"Ashe",r:"ADC"},{n:"Aurelion Sol",r:"Mid"},{n:"Aurora",r:"Top"},
+  {n:"Azir",r:"Mid"},{n:"Bard",r:"Support"},{n:"Bel'Veth",r:"Jungle"},{n:"Blitzcrank",r:"Support"},
+  {n:"Brand",r:"Support"},{n:"Braum",r:"Support"},{n:"Briar",r:"Jungle"},{n:"Caitlyn",r:"ADC"},
+  {n:"Camille",r:"Top"},{n:"Cassiopeia",r:"Mid"},{n:"Cho'Gath",r:"Top"},{n:"Corki",r:"Mid"},
+  {n:"Darius",r:"Top"},{n:"Diana",r:"Jungle"},{n:"Dr. Mundo",r:"Top"},{n:"Draven",r:"ADC"},
+  {n:"Ekko",r:"Jungle"},{n:"Elise",r:"Jungle"},{n:"Evelynn",r:"Jungle"},{n:"Ezreal",r:"ADC"},
+  {n:"Fiddlesticks",r:"Jungle"},{n:"Fiora",r:"Top"},{n:"Fizz",r:"Mid"},{n:"Galio",r:"Mid"},
+  {n:"Gangplank",r:"Top"},{n:"Garen",r:"Top"},{n:"Gnar",r:"Top"},{n:"Gragas",r:"Jungle"},
+  {n:"Graves",r:"Jungle"},{n:"Gwen",r:"Top"},{n:"Hecarim",r:"Jungle"},{n:"Heimerdinger",r:"Mid"},
+  {n:"Hwei",r:"Mid"},{n:"Illaoi",r:"Top"},{n:"Irelia",r:"Top"},{n:"Ivern",r:"Jungle"},
+  {n:"Janna",r:"Support"},{n:"Jarvan IV",r:"Jungle"},{n:"Jax",r:"Top"},{n:"Jayce",r:"Top"},
+  {n:"Jhin",r:"ADC"},{n:"Jinx",r:"ADC"},{n:"K'Sante",r:"Top"},{n:"Kai'Sa",r:"ADC"},
+  {n:"Kalista",r:"ADC"},{n:"Karma",r:"Support"},{n:"Karthus",r:"Jungle"},{n:"Kassadin",r:"Mid"},
+  {n:"Katarina",r:"Mid"},{n:"Kayle",r:"Top"},{n:"Kayn",r:"Jungle"},{n:"Kennen",r:"Top"},
+  {n:"Kha'Zix",r:"Jungle"},{n:"Kindred",r:"Jungle"},{n:"Kled",r:"Top"},{n:"Kog'Maw",r:"ADC"},
+  {n:"LeBlanc",r:"Mid"},{n:"Lee Sin",r:"Jungle"},{n:"Leona",r:"Support"},{n:"Lillia",r:"Jungle"},
+  {n:"Lissandra",r:"Mid"},{n:"Lucian",r:"ADC"},{n:"Lulu",r:"Support"},{n:"Lux",r:"Support"},
+  {n:"Malphite",r:"Top"},{n:"Malzahar",r:"Mid"},{n:"Maokai",r:"Support"},{n:"Master Yi",r:"Jungle"},
+  {n:"Mel",r:"Mid"},{n:"Milio",r:"Support"},{n:"Miss Fortune",r:"ADC"},{n:"Mordekaiser",r:"Top"},
+  {n:"Morgana",r:"Support"},{n:"Naafiri",r:"Mid"},{n:"Nami",r:"Support"},{n:"Nasus",r:"Top"},
+  {n:"Nautilus",r:"Support"},{n:"Neeko",r:"Mid"},{n:"Nidalee",r:"Jungle"},{n:"Nilah",r:"ADC"},
+  {n:"Nocturne",r:"Jungle"},{n:"Nunu & Willump",r:"Jungle"},{n:"Olaf",r:"Jungle"},{n:"Orianna",r:"Mid"},
+  {n:"Ornn",r:"Top"},{n:"Pantheon",r:"Top"},{n:"Poppy",r:"Top"},{n:"Pyke",r:"Support"},
+  {n:"Qiyana",r:"Mid"},{n:"Quinn",r:"Top"},{n:"Rakan",r:"Support"},{n:"Rammus",r:"Jungle"},
+  {n:"Rek'Sai",r:"Jungle"},{n:"Rell",r:"Support"},{n:"Renata Glasc",r:"Support"},{n:"Renekton",r:"Top"},
+  {n:"Rengar",r:"Jungle"},{n:"Riven",r:"Top"},{n:"Rumble",r:"Top"},{n:"Ryze",r:"Mid"},
+  {n:"Samira",r:"ADC"},{n:"Sejuani",r:"Jungle"},{n:"Senna",r:"Support"},{n:"Seraphine",r:"Support"},
+  {n:"Sett",r:"Top"},{n:"Shaco",r:"Jungle"},{n:"Shen",r:"Top"},{n:"Shyvana",r:"Jungle"},
+  {n:"Singed",r:"Top"},{n:"Sion",r:"Top"},{n:"Sivir",r:"ADC"},{n:"Skarner",r:"Jungle"},
+  {n:"Smolder",r:"ADC"},{n:"Sona",r:"Support"},{n:"Soraka",r:"Support"},{n:"Swain",r:"Support"},
+  {n:"Sylas",r:"Mid"},{n:"Syndra",r:"Mid"},{n:"Tahm Kench",r:"Support"},{n:"Taliyah",r:"Jungle"},
+  {n:"Talon",r:"Mid"},{n:"Taric",r:"Support"},{n:"Teemo",r:"Top"},{n:"Thresh",r:"Support"},
+  {n:"Tristana",r:"ADC"},{n:"Trundle",r:"Jungle"},{n:"Tryndamere",r:"Top"},{n:"Twisted Fate",r:"Mid"},
+  {n:"Twitch",r:"ADC"},{n:"Udyr",r:"Jungle"},{n:"Urgot",r:"Top"},{n:"Varus",r:"ADC"},
+  {n:"Vayne",r:"ADC"},{n:"Veigar",r:"Mid"},{n:"Vel'Koz",r:"Support"},{n:"Vex",r:"Mid"},
+  {n:"Vi",r:"Jungle"},{n:"Viego",r:"Jungle"},{n:"Viktor",r:"Mid"},{n:"Vladimir",r:"Top"},
+  {n:"Volibear",r:"Jungle"},{n:"Warwick",r:"Jungle"},{n:"Wukong",r:"Jungle"},{n:"Xayah",r:"ADC"},
+  {n:"Xerath",r:"Support"},{n:"Xin Zhao",r:"Jungle"},{n:"Yasuo",r:"Mid"},{n:"Yone",r:"Mid"},
+  {n:"Yorick",r:"Top"},{n:"Yuumi",r:"Support"},{n:"Zac",r:"Jungle"},{n:"Zed",r:"Mid"},
+  {n:"Zeri",r:"ADC"},{n:"Ziggs",r:"Mid"},{n:"Zilean",r:"Support"},{n:"Zoe",r:"Mid"},
+  {n:"Zyra",r:"Support"}
+];
+
+/* ════════════════════════════════════
+   GAME DATA
+════════════════════════════════════ */
+var ROLE_DATA = {
+  Top:{
+    ctr:[["Malphite","56.1","28400","h","R interrumpe combos al instante"],["Camille","54.8","19200","h","Hook elimina movilidad"],["Fiora","54.1","22100","h","Parry bloquea habilidades clave"],["Darius","53.7","31000","m","Stacks, no puede escapar"],["Garen","52.9","18700","m","Silence corta combos"],["Cho'Gath","52.3","14200","m","HP masivo, silencio largo"],["Yorick","51.8","12800","l","Split push fuerza respuesta"]],
+    good:[["Teemo","44.2","9800","Movilidad esquiva sus hongos"],["Quinn","45.1","8200","Alcance no compensa daño"],["Gnar","45.8","11200","Forma mini muy vulnerable"],["Kennen","46.2","9100","CC neutraliza su ultimate"]],
+    items:[{n:"Trinity Force",o:1,c:"3333",r:"Estadísticas perfectas"},{n:"Black Cleaver",o:2,c:"3100",r:"Reduce armadura rápido"},{n:"Death's Dance",o:3,c:"3300",r:"Sustain en peleas"},{n:"Sterak's Gage",o:4,c:"3200",r:"Escudo anti-burst"},{n:"Gargoyle Stoneplate",o:5,c:"2700",r:"Tankiness teamfights"},{n:"Thornmail",o:6,c:"2700",r:"Contra heal masivo"}],
+    runes:{p:{path:"Determinación",ks:"Garra del No Muerto",s:["Golpe de Escudo","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Precisión",picks:["Leyenda: Tenacidad","Último Bastión"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+    stats:{wr:"51.2%",pr:"6.8%",br:"8.1%",tier:"A",g:"98,400"}
+  },
+  Jungle:{
+    ctr:[["Lee Sin","55.3","42100","h","Invade nivel 2, gana duelos"],["Vi","54.2","29800","h","R imparable"],["Hecarim","53.9","31200","h","Velocidad superior"],["Graves","53.1","28900","m","Daño explosivo 1v1"],["Kha'Zix","52.8","25600","m","Daño aislado brutal"],["Shaco","52.1","18700","m","Clones engañan"],["Elise","51.4","16200","l","Presión early"]],
+    good:[["Amumu","44.8","19200","Sin movilidad para escapar"],["Warwick","45.3","17800","Early game lento"],["Nunu & Willump","45.9","14100","Clear predecible"],["Master Yi","46.1","21400","CC lo para en seco"]],
+    items:[{n:"Kraken Slayer",o:1,c:"3400",r:"True damage tanques"},{n:"Blade of the Ruined King",o:2,c:"3200",r:"Roba vida y velocidad"},{n:"Wit's End",o:3,c:"3100",r:"Daño mágico extra"},{n:"Death's Dance",o:4,c:"3300",r:"Sustain"},{n:"Sterak's Gage",o:5,c:"3200",r:"Segunda vida"},{n:"Thornmail",o:6,c:"2700",r:"Anti-heal"}],
+    runes:{p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+    stats:{wr:"50.8%",pr:"7.2%",br:"9.3%",tier:"B",g:"112,000"}
+  },
+  Mid:{
+    ctr:[["Vex","55.8","31200","h","Pasiva cancela movilidad"],["Lissandra","54.6","22800","h","CC constante"],["Malzahar","54.1","19400","h","Supresión bloquea todo"],["Kassadin","53.5","28700","m","Post-6 domina"],["Syndra","52.9","26100","m","Outrange y burst"],["Viktor","52.2","21600","m","Poke constante"],["Zed","51.8","33200","l","Daño 1v1 fuerte"]],
+    good:[["Ryze","44.1","18200","Sin movilidad real"],["Azir","44.8","14700","Burst antes de escalar"],["Corki","45.3","12800","Sin movilidad"],["Twisted Fate","46.1","16400","Cancela presión global"]],
+    items:[{n:"Luden's Tempest",o:1,c:"3200",r:"Poke y movilidad"},{n:"Shadowflame",o:2,c:"3000",r:"Anti-escudos"},{n:"Rabadon's Deathcap",o:3,c:"3800",r:"AP multiplicador"},{n:"Void Staff",o:4,c:"2800",r:"Anti-MR"},{n:"Zhonya's Hourglass",o:5,c:"2600",r:"Anti-assassins"},{n:"Morellonomicon",o:6,c:"2500",r:"Antihealing"}],
+    runes:{p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+    stats:{wr:"51.5%",pr:"8.9%",br:"11.2%",tier:"A",g:"134,000"}
+  },
+  ADC:{
+    ctr:[["Draven","56.2","34100","h","Daño masivo early"],["Caitlyn","54.8","41200","h","Alcance superior"],["Jinx","53.9","38700","h","Escala muy fuerte"],["Jhin","53.2","29800","m","4to disparo letal"],["Samira","52.7","27100","m","R invulnerable"],["Miss Fortune","52.1","31400","m","R teamfight"],["Xayah","51.6","22900","l","E evade todo"]],
+    good:[["Kalista","44.3","18200","CC cancela su kit"],["Nilah","45.1","12800","Outrange supera"],["Kog'Maw","45.8","16700","Sin escape"],["Aphelios","46.2","21900","Complejo bajo presión"]],
+    items:[{n:"Galeforce",o:1,c:"3400",r:"Dash extra"},{n:"Infinity Edge",o:2,c:"3400",r:"Críticos máximos"},{n:"Kraken Slayer",o:3,c:"3400",r:"True damage"},{n:"Phantom Dancer",o:4,c:"2600",r:"Escudo anti-burst"},{n:"Rapid Firecannon",o:5,c:"2500",r:"Alcance extra"},{n:"Mortal Reminder",o:6,c:"2500",r:"Antihealing"}],
+    runes:{p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+    stats:{wr:"50.3%",pr:"9.1%",br:"7.4%",tier:"B",g:"156,000"}
+  },
+  Support:{
+    ctr:[["Blitzcrank","55.4","38900","h","Gancho separa carries"],["Thresh","54.2","44100","h","Versátil y fuerte"],["Nautilus","53.8","36700","h","CC masivo fácil"],["Leona","53.1","31200","m","Engage nivel 2"],["Lulu","52.7","28400","m","Polymorph cancela todo"],["Morgana","52.3","29800","m","Escudo anti-CC"],["Janna","51.8","24100","l","Disengage frustra"]],
+    good:[["Sona","44.2","21800","CC interrumpe ultimate"],["Soraka","44.9","19400","Presión niega heal"],["Yuumi","45.4","24100","Sola es frágil"],["Nami","46.1","22600","Engage antes de burbuja"]],
+    items:[{n:"Locket of the Iron Solari",o:1,c:"2200",r:"Escudo grupal"},{n:"Shurelya's Battlesong",o:2,c:"2200",r:"Acelera equipo"},{n:"Redemption",o:3,c:"2300",r:"Heal masivo"},{n:"Zeke's Convergence",o:4,c:"2400",r:"Amplifica carry"},{n:"Ardent Censer",o:5,c:"2300",r:"Velocidad carries"},{n:"Mikael's Blessing",o:6,c:"2300",r:"Limpia CC"}],
+    runes:{p:{path:"Inspiración",ks:"Aumento Glacial",s:["Calzado Mágico","Entrega de Galletas","Perspicacia Cósmica"]},s:{path:"Determinación",picks:["Fuente de Vida","Revitalizar"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+    stats:{wr:"50.1%",pr:"10.2%",br:"6.8%",tier:"B",g:"178,000"}
+  }
+};
+
+var SPECIFIC = {
+  "Yasuo":{ctr:[["Aurelion Sol","56.8","18400","h","Daño sostenido imposible de esquivar"],["Cho'Gath","55.9","9200","h","HP masivo, silencio interrumpe tornados"],["Annie","55.1","14800","h","Burst instantáneo antes de acumular Q"],["Pantheon","54.3","22100","h","E bloquea tornados, domina early"],["Renekton","53.8","19700","h","Domina pre-6 con stun y daño sostenido"],["Zac","52.9","8400","m","Engage imparable muy difícil de esquivar"],["Singed","52.1","6800","l","Kiting frustra sus dashes constantemente"]],good:[["Ezreal","44.2","21800","Windwall bloquea Mystic Shot fácilmente"],["Kai'Sa","44.8","18200","Sin gap-close real contra sus dashes"],["Lucian","45.3","16400","Vulnerable al all-in post-6"],["Naafiri","45.9","12800","Burst antes de acumular stacks"]],items:[{n:"Trinity Force",o:1,c:"3333",r:"Estadísticas perfectas"},{n:"Immortal Shieldbow",o:2,c:"3400",r:"Escudo anti-burst"},{n:"Infinity Edge",o:3,c:"3400",r:"Críticos al 100%"},{n:"Phantom Dancer",o:4,c:"2600",r:"Velocidad y escudo"},{n:"Death's Dance",o:5,c:"3300",r:"Sustain"},{n:"Sterak's Gage",o:6,c:"3200",r:"Segunda vida"}],runes:{p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"49.8%",pr:"11.2%",br:"24.1%",tier:"A",g:"198,400"}},
+  "Yone":{ctr:[["Vex","57.2","18400","h","Pasiva cancela todos sus dashes"],["Lissandra","56.4","16800","h","Freeze al momento de su regreso"],["Malzahar","55.6","14200","h","Supresión durante void state"],["Renekton","54.8","22100","h","Domina completamente pre-6"],["Pantheon","54.1","19800","h","E bloquea Q y domina early"],["Cho'Gath","53.2","12800","m","HP masivo sobrevive combo completo"],["Garen","52.4","21400","l","Silence interrumpe su combo decisivo"]],good:[["Ryze","44.1","18200","Sin movilidad real contra sus dashes"],["Twisted Fate","44.8","16400","Sin escape del all-in post-6"],["Azir","45.3","15400","Burst antes de que escale con kills"],["Corki","45.9","12800","Sin movilidad para esquivar su E"]],items:[{n:"Trinity Force",o:1,c:"3333",r:"Daño sostenido"},{n:"Immortal Shieldbow",o:2,c:"3400",r:"Escudo anti-burst"},{n:"Infinity Edge",o:3,c:"3400",r:"Críticos late"},{n:"Death's Dance",o:4,c:"3300",r:"Sustain"},{n:"Sterak's Gage",o:5,c:"3200",r:"Segunda vida"},{n:"Guardian Angel",o:6,c:"2800",r:"Segunda oportunidad"}],runes:{p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"50.4%",pr:"9.8%",br:"19.2%",tier:"A",g:"186,200"}},
+  "Jinx":{ctr:[["Veigar","57.2","18400","h","Cage atrapa sin movilidad para escapar"],["Ziggs","56.4","12800","h","Outrange masivo, poke sin respuesta"],["Mel","55.8","9200","h","Refleja rockets, muy difícil de matar"],["Draven","54.9","28400","h","Daño masivo early antes de escalar"],["Caitlyn","53.8","38200","h","Alcance superior y poke permanente"],["Lucian","52.7","22100","m","All-in agresivo antes de que escale"],["Samira","51.9","19800","m","R invulnerable corta su teamfight"]],good:[["Kai'Sa","44.1","24800","Missiles fáciles de esquivar para Jinx"],["Corki","44.8","14200","Outscaling aplastante late game"],["Samira","45.3","18900","Jinx gana duelo si juega seguro"],["Aphelios","45.9","21400","Complejo bajo presión constante"]],items:[{n:"Kraken Slayer",o:1,c:"3400",r:"True damage tanques"},{n:"Runaan's Hurricane",o:2,c:"2600",r:"Cohetes+Runaan devastador"},{n:"Infinity Edge",o:3,c:"3400",r:"Críticos late"},{n:"Rapid Firecannon",o:4,c:"2500",r:"Alcance rockets"},{n:"Phantom Dancer",o:5,c:"2600",r:"Escudo y velocidad"},{n:"Mortal Reminder",o:6,c:"2500",r:"Antihealing"}],runes:{p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"53.3%",pr:"16.1%",br:"5.9%",tier:"S",g:"268,690"}},
+  "Thresh":{ctr:[["Senna","55.4","28400","h","Outrange su gancho, poke sin riesgo"],["Xerath","54.8","18200","h","Poke desde distancia imposible"],["Brand","54.1","22800","h","Kill potential masivo sin engage"],["Lux","53.6","31200","m","Bind desde lejos antes de ganchear"],["Zyra","52.9","24100","m","Raíces y plantas niegan posición"],["Heimerdinger","52.2","12800","m","Torretas crean zona imposible"],["Morgana","51.7","34800","l","Escudo negro niega su gancho"]],good:[["Sona","44.3","21900","Sin defensa contra su CC encadenado"],["Soraka","44.9","19400","Presión agresiva supera su heal"],["Yuumi","45.6","24200","Sola es extremadamente frágil"],["Nami","46.2","22800","Engage supera burbuja defensiva"]],items:[{n:"Locket of the Iron Solari",o:1,c:"2200",r:"Escudo grupal vital"},{n:"Zeke's Convergence",o:2,c:"2400",r:"Amplifica ADC"},{n:"Redemption",o:3,c:"2300",r:"Heal masivo"},{n:"Shurelya's Battlesong",o:4,c:"2200",r:"Acelera equipo"},{n:"Vigilant Wardstone",o:5,c:"1100",r:"Control visión"},{n:"Mikael's Blessing",o:6,c:"2300",r:"Limpia CC"}],runes:{p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Revestimiento Óseo","Impertérrito"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"52.9%",pr:"13.5%",br:"7.0%",tier:"S",g:"224,511"}},
+  "Darius":{ctr:[["Anivia","56.5","8400","h","Kita perfectamente, wall bloquea su E"],["Rek'Sai","55.6","7200","h","Movilidad superior, invade y destroza"],["Vayne","54.8","18200","h","True damage ignora su armadura pasiva"],["Illaoi","54.1","14800","h","Tentáculos ganan todos los trades"],["Quinn","53.4","16200","m","Kiting perfecto, blind niega autos"],["Gnar","52.7","19800","m","Kiting frustra su lentitud constante"],["Kennen","51.9","12400","l","Poke seguro desde lejos sin riesgo"]],good:[["Garen","44.2","31800","Bleeding supera su pasiva de silencio"],["Mordekaiser","44.9","18700","Kitar su realm con buena posición"],["Nasus","45.3","22100","Interrumpe stacking early brutalmente"],["Sion","45.8","19400","Supera su CC con sustain masivo"]],items:[{n:"Trinity Force",o:1,c:"3333",r:"Estilo agresivo"},{n:"Black Cleaver",o:2,c:"3100",r:"Reduce armadura con cada golpe"},{n:"Sterak's Gage",o:3,c:"3200",r:"Escudo anti-burst"},{n:"Gargoyle Stoneplate",o:4,c:"2700",r:"Tankiness teamfights"},{n:"Thornmail",o:5,c:"2700",r:"Antihealing"},{n:"Dead Man's Plate",o:6,c:"2900",r:"Movilidad extra"}],runes:{p:{path:"Determinación",ks:"Garra del No Muerto",s:["Golpe de Escudo","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Precisión",picks:["Leyenda: Tenacidad","Último Bastión"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"52.1%",pr:"8.4%",br:"18.3%",tier:"A",g:"148,200"}},
+  "Ahri":{ctr:[["Mel","55.8","14200","h","Refleja su encanto y la destruye"],["Akshan","55.1","16800","h","Outrange y poke constante seguro"],["Veigar","54.6","19200","h","Cage niega su movilidad completamente"],["Fiddlesticks","53.9","8400","h","Drain tanquea su combo entero"],["Zilean","53.2","7800","m","Revive cancela su kill potential"],["Riven","52.8","11200","m","Shield bloquea su Q, domina 1v1"],["Varus","52.1","13400","l","Outrange y slow niegan sus dashes"]],good:[["Azir","44.1","18200","Ult persigue a los soldados fácilmente"],["Yone","44.8","21400","Charm cancela su combo principal"],["Galio","45.2","15400","Taunt fuerza trades desfavorables"],["Graves","45.8","9800","Outrange y daño burst antes de su R"]],items:[{n:"Luden's Tempest",o:1,c:"3200",r:"Poke y movilidad"},{n:"Shadowflame",o:2,c:"3000",r:"Anti-escudos"},{n:"Rabadon's Deathcap",o:3,c:"3800",r:"AP multiplicador"},{n:"Zhonya's Hourglass",o:4,c:"2600",r:"Invulnerabilidad"},{n:"Void Staff",o:5,c:"2800",r:"Anti-MR"},{n:"Morellonomicon",o:6,c:"2500",r:"Antihealing"}],runes:{p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"53.4%",pr:"14.8%",br:"8.8%",tier:"S",g:"246,360"}},
+  "Zed":{ctr:[["Lissandra","57.1","18400","h","R on herself evita su combo completo"],["Malzahar","56.3","14800","h","Supresión bloquea todo su kit"],["Galio","54.8","19800","h","MR altísimo y taunt durante su R"],["Fizz","53.9","16200","m","Trickster evade toda su sombra"],["Kassadin","52.7","21400","m","Post-6 lo supera en movilidad"],["Kayle","51.8","12800","l","R hace invulnerable al objetivo"],["Vex","51.1","14200","l","Pasiva cancela sus shadow dashes"]],good:[["Qiyana","44.1","14200","Sin defensa ante su burst combinado"],["Yone","44.8","28400","Vulnerable sin dash durante su E"],["Syndra","45.2","18800","Sin movilidad para escapar de sombras"],["Akali","45.9","22100","All-in mútuo, Zed gana early"]],items:[{n:"Duskblade of Draktharr",o:1,c:"3200",r:"Burst masivo invisible"},{n:"Eclipse",o:2,c:"3200",r:"Sustain y escudo en trades"},{n:"Serylda's Grudge",o:3,c:"3200",r:"Slow aplica en todas las sombras"},{n:"Youmuu's Ghostblade",o:4,c:"3000",r:"Velocidad de rotación"},{n:"Lord Dominik's Regards",o:5,c:"3000",r:"Anti-tanques"},{n:"Axiom Arc",o:6,c:"3000",r:"Reducción de cooldown en R"}],runes:{p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"51.2%",pr:"7.4%",br:"14.8%",tier:"A",g:"124,800"}},
+  "Lux":{ctr:[["Zed","56.4","28400","h","Salta sobre muros, elimina antes de R"],["Fizz","55.8","19800","h","Trickster evade bind y laser fácilmente"],["LeBlanc","55.1","22100","h","Movilidad evita todas sus habilidades"],["Talon","54.3","16800","h","Salto sobre muros, burst instantáneo"],["Akali","53.6","21400","m","Stealth niega su poke constante"],["Katarina","52.9","24100","m","Resets la eliminan antes de su R"],["Ekko","52.1","14200","l","W bloquea proyectiles en línea recta"]],good:[["Xerath","44.3","19200","Más movilidad y burst que él"],["Vel'Koz","44.9","14800","Mayor DPS en trades prolongados"],["Zyra","45.4","18100","Llega antes de que plante raíces"],["Brand","46.1","21400","Poke más amenazante antes de lvl 6"]],items:[{n:"Luden's Tempest",o:1,c:"3200",r:"Poke larga distancia"},{n:"Shadowflame",o:2,c:"3000",r:"Anti-escudos"},{n:"Rabadon's Deathcap",o:3,c:"3800",r:"Daño masivo late"},{n:"Void Staff",o:4,c:"2800",r:"Anti-MR"},{n:"Zhonya's Hourglass",o:5,c:"2600",r:"Invulnerabilidad"},{n:"Cosmic Drive",o:6,c:"3000",r:"Movilidad y AP"}],runes:{p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"52.1%",pr:"11.8%",br:"12.4%",tier:"A",g:"209,400"}},
+  "Lee Sin":{ctr:[["Vi","55.9","28400","h","R imparable cancela su Dragon Kick"],["Warwick","55.2","22100","h","Sustain masivo gana duelos 1v1"],["Hecarim","54.6","31200","h","Velocidad superior, invade fácilmente"],["Amumu","53.8","19800","m","Clear rápido, teamfight masiva late"],["Rammus","53.1","14800","m","Taunt cancela su Q al instante"],["Volibear","52.4","18200","l","Gana duelos early y late game"],["Zac","51.7","16400","l","Bolas niegan su posición de invade"]],good:[["Master Yi","44.1","24800","CC lo para completamente en teamfights"],["Kindred","44.8","18200","Vulnerable al early invade de Lee Sin"],["Nunu & Willump","45.3","14100","Clear predecible fácil de contrarrestar"],["Amumu","45.9","19200","Sin movilidad para escapar del invade"]],items:[{n:"Eclipse",o:1,c:"3200",r:"Sustain y escudo en trades"},{n:"Black Cleaver",o:2,c:"3100",r:"Reduce armadura con Q repetidas"},{n:"Death's Dance",o:3,c:"3300",r:"Sustain masivo"},{n:"Sterak's Gage",o:4,c:"3200",r:"Segunda vida"},{n:"Guardian Angel",o:5,c:"2800",r:"Segunda oportunidad"},{n:"Serylda's Grudge",o:6,c:"3200",r:"Slow en todas las habilidades"}],runes:{p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"51.6%",pr:"11.9%",br:"15.3%",tier:"S",g:"199,500"}},
+  "Caitlyn":{ctr:[["Draven","56.8","34800","h","Daño early aplastante antes de escalar"],["Miss Fortune","55.4","28400","h","Double Up rompe ventaja de rango"],["Sivir","54.8","22100","h","Spellshield cancela trampas y net"],["Jinx","53.9","41200","h","Late game escala más fuerte que ella"],["Samira","53.1","19800","m","Movilidad evita sus trampas fácilmente"],["Ezreal","52.4","31400","m","E evita sus trampas y net constante"],["Tristana","51.6","24100","l","Salto escapa de sus trampas siempre"]],good:[["Kalista","44.3","18200","CC cancela su passive mark overkill"],["Kog'Maw","44.8","16700","Sin escape de trampas y net"],["Aphelios","45.2","22400","Complejo bajo presión constante"],["Nilah","46.1","14200","Outrange supera su short range"]],items:[{n:"Galeforce",o:1,c:"3400",r:"Dash extra para reposicionarse"},{n:"Rapid Firecannon",o:2,c:"2500",r:"Rango extra en headshot"},{n:"Infinity Edge",o:3,c:"3400",r:"Críticos masivos"},{n:"Mortal Reminder",o:4,c:"2500",r:"Antihealing"},{n:"Lord Dominik's Regards",o:5,c:"3000",r:"Anti-tanques"},{n:"Phantom Dancer",o:6,c:"2600",r:"Escudo y velocidad"}],runes:{p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"51.8%",pr:"12.4%",br:"9.2%",tier:"A",g:"208,400"}},
+  "Vayne":{ctr:[["Miss Fortune","57.2","28400","h","Slow masivo, R corta su tumble"],["Caitlyn","56.4","41200","h","Outrange aplastante, trampas niegan tumble"],["Draven","55.8","31800","h","Early game la destruye antes de escalar"],["Jinx","54.9","38200","h","Rockets alcanzan su tumble fácilmente"],["Samira","54.1","19800","m","R activa mientras ella hace tumble"],["Tristana","53.3","22100","m","Salto evita condena, mucho daño"],["Sivir","52.4","18400","l","Spellshield cancela su condena al instante"]],good:[["Kalista","44.3","18200","True damage ignora su build tanque"],["Nilah","44.9","12800","Vayne gana el 1v1 sin problemas"],["Kog'Maw","45.4","16700","Kita sus ataques en corto rango"],["Aphelios","46.1","21400","Complejidad bajo presión constante"]],items:[{n:"Blade of the Ruined King",o:1,c:"3200",r:"Pasiva amplifica true damage"},{n:"Kraken Slayer",o:2,c:"3400",r:"True damage extra tanques"},{n:"Guinsoo's Rageblade",o:3,c:"3000",r:"Activa W en cada 2do ataque"},{n:"Wit's End",o:4,c:"3100",r:"MR y daño mágico extra"},{n:"Phantom Dancer",o:5,c:"2600",r:"Escudo y velocidad"},{n:"Lord Dominik's Regards",o:6,c:"3000",r:"Anti-tanques masivos"}],runes:{p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"51.3%",pr:"8.2%",br:"11.4%",tier:"A",g:"136,800"}},
+  "Katarina":{ctr:[["Diana","57.3","14200","h","CC en cadena interrumpe sus resets"],["Kassadin","56.4","18800","h","Post-6 la supera en movilidad y daño"],["Vex","55.8","22100","h","Pasiva cancela todos sus dashes"],["Lissandra","54.9","16400","h","Freeze cancela su combo al instante"],["Malzahar","54.1","12800","h","Supresión invalida todo su kit"],["Galio","53.2","19800","m","Taunt interrumpe sus resets decisivos"],["Zilean","52.4","8400","l","Revive cancela kills post-combo"]],good:[["Ryze","44.1","18200","Sin movilidad para escapar de sus resets"],["Azir","44.8","14700","Burst antes de que escale con kills"],["Orianna","45.3","12800","Sin defensa ante su combo completo"],["Twisted Fate","46.1","16400","Card no cancela sus dashes rápidos"]],items:[{n:"Shadowflame",o:1,c:"3000",r:"Anti-escudos"},{n:"Rabadon's Deathcap",o:2,c:"3800",r:"AP multiplicador"},{n:"Zhonya's Hourglass",o:3,c:"2600",r:"Invulnerable durante resets"},{n:"Void Staff",o:4,c:"2800",r:"Anti-MR"},{n:"Lich Bane",o:5,c:"3100",r:"Daño extra en cada reset"},{n:"Morellonomicon",o:6,c:"2500",r:"Antihealing"}],runes:{p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Trascendencia","Achicharrar"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"52.4%",pr:"6.8%",br:"10.2%",tier:"S",g:"114,257"}},
+  "Ezreal":{ctr:[["Draven","57.1","34100","h","Burst early aplastante antes de poke"],["Miss Fortune","56.3","28400","h","Double Up golpea detrás de minions"],["Samira","55.6","19800","h","Movilidad evita su Mystic Shot"],["Caitlyn","54.8","42100","h","Outrange y trampas niegan Q"],["Jinx","53.9","38700","h","Late game aplastante vs kiting"],["Xayah","52.7","22100","m","Plumas en línea con posición estática"],["Tristana","51.8","24800","l","Salto supera su ventaja de kiting"]],good:[["Kai'Sa","44.1","22100","Kita missiles con E constante"],["Varus","44.8","18200","Poke largo pero sin movilidad"],["Kog'Maw","45.3","14800","Sin escape del poke constante"],["Aphelios","46.1","19800","Complejo vs poke más simple de Ezreal"]],items:[{n:"Trinity Force",o:1,c:"3333",r:"Daño sostenido con Q"},{n:"Manamune",o:2,c:"2900",r:"Maná y daño escalable"},{n:"Frozen Heart",o:3,c:"2700",r:"Tank y CDR"},{n:"Serylda's Grudge",o:4,c:"3200",r:"Slow en Q y penetración"},{n:"Death's Dance",o:5,c:"3300",r:"Sustain en peleas"},{n:"Shadowflame",o:6,c:"3000",r:"AP burst para combos"}],runes:{p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Último Bastión"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"50.8%",pr:"10.4%",br:"6.8%",tier:"A",g:"174,200"}},
+  "Leona":{ctr:[["Senna","56.2","28400","h","Outrange masivo, kita su engage"],["Xerath","55.4","18200","h","Poke imposible de alcanzar para ella"],["Karma","54.8","22100","h","Shield y slow niegan su engage"],["Lux","53.9","31200","m","Bind desde lejos antes de que llegue"],["Morgana","53.1","34800","m","Escudo negro niega todo su CC"],["Janna","52.4","24100","m","Disengage frustra todos sus engages"],["Nami","51.6","28400","l","Burbuja impide su engage decisivo"]],good:[["Sona","44.2","21800","Sin defensa ante su engage nivel 2"],["Soraka","44.9","19400","Presión agresiva niega su heal pasivo"],["Yuumi","45.6","24200","Sola es extremadamente frágil"],["Blitzcrank","46.2","22800","Leona engage supera su gancho"]],items:[{n:"Locket of the Iron Solari",o:1,c:"2200",r:"Escudo grupal"},{n:"Shurelya's Battlesong",o:2,c:"2200",r:"Acelera al equipo"},{n:"Zeke's Convergence",o:3,c:"2400",r:"Amplifica ADC"},{n:"Redemption",o:4,c:"2300",r:"Heal masivo"},{n:"Plated Steelcaps",o:5,c:"1100",r:"Armadura barata"},{n:"Thornmail",o:6,c:"2700",r:"Antihealing"}],runes:{p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Revestimiento Óseo","Revitalizar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"51.4%",pr:"9.8%",br:"6.2%",tier:"A",g:"164,200"}},
+  "Malphite":{ctr:[["Vayne","57.3","18800","h","True damage destruye su tanque masivo"],["Lillia","56.4","14200","h","Kiting perfecto, nunca la alcanza"],["Kennen","55.6","16400","h","Poke desde lejos sin llegar nunca"],["Teemo","54.8","18200","h","Blind niega sus autos completamente"],["Quinn","54.1","14800","h","Kiting frustra su pasiva de armadura"],["Gnar","53.2","19800","m","Kiting supera su lentitud siempre"],["Vladimir","52.4","16200","l","Sustain masivo supera su poke"]],good:[["Garen","44.2","24800","R interrumpe su Q completamente"],["Darius","44.9","28400","Bleeding ignora armadura pasiva"],["Nasus","45.4","19800","R sobrevive su ultimate fácilmente"],["Sion","46.1","16200","Tanque supera su teamfight post-R"]],items:[{n:"Heartsteel",o:1,c:"2800",r:"Escala HP con autos"},{n:"Frozen Heart",o:2,c:"2700",r:"Slow de ataque en zona"},{n:"Warmog's Armor",o:3,c:"3100",r:"HP masivo regeneración"},{n:"Gargoyle Stoneplate",o:4,c:"2700",r:"Tankiness teamfights"},{n:"Abyssal Mask",o:5,c:"2700",r:"MR y amplifica daño mágico"},{n:"Thornmail",o:6,c:"2700",r:"Antihealing"}],runes:{p:{path:"Determinación",ks:"Garra del No Muerto",s:["Golpe de Escudo","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Precisión",picks:["Leyenda: Tenacidad","Último Bastión"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"52.8%",pr:"7.2%",br:"9.4%",tier:"A",g:"120,400"}},
+  "Vi":{ctr:[["Warwick","56.8","22100","h","Sustain gana duelo, olfato cancela R"],["Xin Zhao","55.9","19800","h","Knockup cancela su R durante vuelo"],["Volibear","55.1","18400","h","Ult cancela físicamente Assault and Battery"],["Rammus","54.3","14800","m","Taunt devuelve su propia velocidad"],["Amumu","53.6","19200","m","Bandage + R contraplea su engage"],["Sejuani","52.8","16400","l","CC masivo supera single target R"],["Zac","52.1","18200","l","Bolas niegan su posición"]],good:[["Master Yi","44.1","24800","R para su Meditate completamente"],["Kindred","44.8","18200","Vulnerable al invade temprano"],["Nunu & Willump","45.3","14100","Clear predecible fácil"],["Amumu","45.9","19200","Sin movilidad para escapar"]],items:[{n:"Trinity Force",o:1,c:"3333",r:"Daño explosivo en engage"},{n:"Black Cleaver",o:2,c:"3100",r:"Reduce armadura con Q"},{n:"Death's Dance",o:3,c:"3300",r:"Sustain"},{n:"Sterak's Gage",o:4,c:"3200",r:"Escudo anti-burst"},{n:"Gargoyle Stoneplate",o:5,c:"2700",r:"Tankiness"},{n:"Thornmail",o:6,c:"2700",r:"Antihealing"}],runes:{p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"51.8%",pr:"6.4%",br:"8.1%",tier:"A",g:"107,200"}},
+  "Akali":{ctr:[["Vex","57.4","18400","h","Pasiva cancela todos sus dashes"],["Lissandra","56.6","14800","h","Freeze cancela combo al instante"],["Diana","55.8","19800","h","CC interrumpe su shroud"],["Galio","54.9","22100","h","Taunt dentro del shroud la revela"],["Malzahar","54.1","12800","h","Supresión invalida su stealth"],["Irelia","53.2","28400","m","Blade dance supera su movilidad"],["Kassadin","52.4","19800","m","Post-6 la iguala en movilidad"]],good:[["Ryze","44.1","18200","Sin movilidad para escapar del combo"],["Azir","44.8","14700","Burst antes de los soldados"],["Twisted Fate","45.3","16400","Card no cancela sus dashes rápidos"],["Annie","45.9","19100","Sin movilidad, Akali gana all-in"]],items:[{n:"Shadowflame",o:1,c:"3000",r:"Anti-escudos"},{n:"Rabadon's Deathcap",o:2,c:"3800",r:"AP multiplicador"},{n:"Lich Bane",o:3,c:"3100",r:"Daño extra en cada dash"},{n:"Zhonya's Hourglass",o:4,c:"2600",r:"Invulnerabilidad en combos"},{n:"Void Staff",o:5,c:"2800",r:"Anti-MR"},{n:"Shadowflame",o:6,c:"3000",r:"Segundo anti-escudos"}],runes:{p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Trascendencia","Achicharrar"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"50.9%",pr:"7.1%",br:"12.8%",tier:"A",g:"119,400"}},
+  "Garen":{ctr:[["Vayne","57.8","18200","h","True damage destruye su tanque"],["Darius","56.9","28400","h","Bleeding supera silence pasivo"],["Illaoi","56.1","16400","h","Tentáculos ganan todos los trades"],["Kennen","55.2","14800","h","Poke seguro desde lejos siempre"],["Fiora","54.3","22100","m","Riposte bloquea Q y silence"],["Quinn","53.4","18800","m","Kiting perfecto contra su lentitud"],["Teemo","52.6","16200","l","Blind anula su basic attack dependencia"]],good:[["Malphite","44.2","19800","Silence interrumpe R antes de caer"],["Nasus","44.9","24100","Early aplastante antes de stacks"],["Sion","45.4","18200","Cooldown shorter supera tankiness"],["Cho'Gath","46.1","14800","Silence antes de HP acumulado"]],items:[{n:"Trinity Force",o:1,c:"3333",r:"Daño sostenido con E"},{n:"Stridebreaker",o:2,c:"3300",r:"Slow para atrapar kiting"},{n:"Dead Man's Plate",o:3,c:"2900",r:"Movilidad y armadura"},{n:"Sterak's Gage",o:4,c:"3200",r:"Escudo anti-burst"},{n:"Warmog's Armor",o:5,c:"3100",r:"HP masivo regeneración"},{n:"Thornmail",o:6,c:"2700",r:"Antihealing"}],runes:{p:{path:"Determinación",ks:"Garra del No Muerto",s:["Golpe de Escudo","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Tenacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"51.9%",pr:"5.8%",br:"7.2%",tier:"A",g:"96,800"}},
+  "Vex":{ctr:[["Zed","56.8","22100","h","Sombras activan su pasiva constantemente"],["LeBlanc","55.9","18400","h","Movilidad masiva fuerza su pasiva"],["Akali","55.1","21400","h","Shroud no la afecta, pasiva activa"],["Katarina","54.3","19800","h","Resets activan su pasiva en loop"],["Fizz","53.6","16200","m","Trickster activa y gasta pasiva"],["Talon","52.8","14800","m","Salto sobre muros muy difícil de alcanzar"],["Sylas","51.9","12400","l","Copia su ultimate perfectamente"]],good:[["Yasuo","44.1","38400","Pasiva cancela absolutamente todos sus dashes"],["Yone","44.8","28400","Gloom niega E y R completamente"],["Irelia","45.3","21400","Gloom tag activa con cada dash"],["Zeri","45.9","14800","Dashes activan pasiva constantemente"]],items:[{n:"Luden's Tempest",o:1,c:"3200",r:"Poke y movilidad"},{n:"Shadowflame",o:2,c:"3000",r:"Anti-escudos"},{n:"Rabadon's Deathcap",o:3,c:"3800",r:"AP multiplicador"},{n:"Void Staff",o:4,c:"2800",r:"Anti-MR"},{n:"Zhonya's Hourglass",o:5,c:"2600",r:"Anti-assassins"},{n:"Morellonomicon",o:6,c:"2500",r:"Antihealing"}],runes:{p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"51.8%",pr:"5.2%",br:"8.4%",tier:"A",g:"86,800"}},
+  "Nautilus":{ctr:[["Senna","56.4","28400","h","Outrange masivo, kita su gancho"],["Xerath","55.6","18200","h","Poke imposible de alcanzar para él"],["Karma","54.8","22100","h","Shield y slow niegan su engage"],["Lux","54.1","31200","m","Bind desde lejos antes de llegar"],["Morgana","53.2","34800","m","Escudo negro invalida todo su combo"],["Janna","52.4","24100","l","Disengage frustra su engage masivo"],["Zilean","51.6","14800","l","Revive cancela kills post-gancho"]],good:[["Sona","44.2","21800","Sin defensa ante su engage nivel 2"],["Soraka","44.9","19400","Presión agresiva niega heal pasivo"],["Yuumi","45.6","24200","Sola es extremadamente frágil"],["Nami","46.2","22800","Engage supera burbuja defensiva"]],items:[{n:"Locket of the Iron Solari",o:1,c:"2200",r:"Escudo grupal"},{n:"Shurelya's Battlesong",o:2,c:"2200",r:"Acelera al equipo"},{n:"Zeke's Convergence",o:3,c:"2400",r:"Amplifica ADC"},{n:"Redemption",o:4,c:"2300",r:"Heal masivo"},{n:"Warmog's Armor",o:5,c:"3100",r:"HP masivo regeneración"},{n:"Thornmail",o:6,c:"2700",r:"Antihealing"}],runes:{p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Revestimiento Óseo","Revitalizar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"51.6%",pr:"9.2%",br:"5.8%",tier:"A",g:"153,800"}}
+  ,"Aatrox":{ctr:[["Singed","55.4","556","h","Kiting frustra completamente su kit"],["Irelia","55.1","1167","h","Blade dance supera su movilidad"],["Urgot","53.1","529","h","Shotgun niega su sustain en Q"],["Malphite","53.1","1147","h","R interrumpe todo su combo"],["Yorick","52.8","671","m","Split push fuerza respuesta constante"],["Fiora","52.7","917","m","Parry bloquea su Q y W"],["Kennen","53.6","402","l","Poke seguro desde lejos"]],good:[["Gwen","47.5","699","Scissors esquivan su Q fácilmente"],["Tryndamere","52.6","500","Aatrox gana early antes de R"],["Mordekaiser","52.7","400","Aatrox gana pre-6 sin realm"],["Cho'Gath","49.0","300","Early aplastante antes de HP masivo"]]}
+  ,"Camille":{ctr:[["Malphite","56.8","800","h","R interrumpe su E y combo completo"],["Singed","55.9","400","h","Kiting frustra su gancho"],["Volibear","54.1","600","h","Ult cancela su E imparable"],["Jax","53.4","1100","h","Counter Strike esquiva su Q"],["Renekton","52.8","900","m","Domina pre-6 agresivamente"],["Poppy","52.1","400","m","W cancela su E al instante"],["Garen","51.4","1200","l","Silence y tanqueo básico"]],good:[["Gangplank","44.2","800","Barrel reduce su movilidad"],["Sett","45.1","900","Grit absorbe su daño pero pierde"],["Ryze","45.8","400","Sin movilidad para escapar"],["Dr. Mundo","46.2","600","Sustain supera su daño sostenido"]]}
+  ,"Fiora":{ctr:[["Malphite","56.1","900","h","R knockup cancela su Q y W"],["Renekton","54.8","1200","h","Stun en su W activa fácilmente"],["Poppy","53.4","500","h","W cancela su Lunge"],["Jayce","52.7","700","m","Poke desde cañón antes de entrar"],["Pantheon","52.1","800","m","E bloquea su Q constantemente"],["Urgot","51.6","600","l","Shotgun niega su vitales pattern"],["Nasus","51.2","900","l","Wither lentifica para evitar vitales"]],good:[["Darius","44.1","1200","Parry bloquea su Q y bleeding"],["Garen","44.8","1000","Parry en silence, gana todos los trades"],["Cho'Gath","45.3","600","Vitales en su HP masivo sin problema"],["Sion","45.9","700","Parry en su Q y domina lane"]]}
+  ,"Irelia":{ctr:[["Malphite","57.2","1000","h","R interrumpe todo su combo de dashes"],["Renekton","55.8","1400","h","Stun sin necesidad de stacks"],["Pantheon","54.6","900","h","E bloquea sus dashes al instante"],["Poppy","53.9","600","m","W cancela su Q mark dash"],["Jax","52.7","1100","m","Counter Strike esquiva su daño"],["Garen","52.1","1300","m","Silence interrumpe su combo"],["Cho'Gath","51.4","800","l","HP masivo absorbe todo su combo"]],good:[["Gangplank","44.1","700","Barrel sin defensa ante su all-in"],["Sett","44.8","900","Grit pero pierde el duel"],["Ryze","45.3","500","Sin movilidad para escapar"],["Nasus","45.9","800","Early aplastante antes de stacks"]]}
+  ,"Jax":{ctr:[["Malphite","56.4","1200","h","R knockup durante Counter Strike"],["Renekton","54.9","1100","h","Stun antes de que active Counter Strike"],["Urgot","53.8","600","h","Shotgun ignora su block completamente"],["Pantheon","53.1","800","m","E bloquea autos durante Counter Strike"],["Poppy","52.4","500","m","W cancela su E charge"],["Quinn","51.8","700","l","Blind durante Counter Strike invalida"],["Kennen","51.2","600","l","Poke desde lejos sin llegar nunca"]],good:[["Gangplank","44.3","700","Counter Strike esquiva sus barrels"],["Gnar","45.1","800","Kiting supera su slow en E"],["Sett","45.6","900","Jax gana el duel 1v1 siempre"],["Nasus","46.2","1000","Early aplastante antes de stacks"]]}
+  ,"Gwen":{ctr:[["Vayne","55.2","700","h","True damage ignora su W invulnerabilidad"],["Darius","53.8","900","h","Bleeding ignora su W y HP"],["Renekton","53.1","1000","h","Domina pre-6 antes de escalar"],["Camille","52.4","600","m","Gancho después de su W"],["Irelia","51.8","800","m","Dashes dentro de su W la alcanzan"],["Gnar","51.2","700","l","Kiting frustra su slow chase"],["Fiora","50.9","600","l","Vitales dentro de su W son válidos"]],good:[["Malphite","46.2","700","W invulnerabilidad niega su R"],["Cho'Gath","46.8","500","Silencio dentro de W interrumpe"],["Poppy","47.1","400","W bloquea pero Gwen le gana"],["Sion","47.4","600","Escala igual que Gwen late"]]}
+  ,"Ornn":{ctr:[["Gangplank","52.1","700","h","Barrels desde lejos evitan su CC"],["Ambessa","51.6","646","h","Movilidad escapa de su R"],["Yasuo","52.0","377","m","Windwall bloquea su Q y R"],["Fiora","50.4","657","m","Parry bloquea su Q y W"],["Mordekaiser","50.1","1079","l","Realm evita sus upgrades"],["Garen","49.8","1212","l","Silence básico supera su CC"]],good:[["Darius","47.7","971","CC masivo supera su lentitud"],["Sett","48.8","867","Ornn gana teamfight masivamente"],["Gwen","48.1","699","Knockup interrumpe sus scissors"],["Riven","47.9","472","Ornn tanquea todo su combo"]]}
+  ,"Riven":{ctr:[["Malphite","57.3","1100","h","R knockup durante toda su combo"],["Renekton","55.9","1300","h","Stun sin cooldown en early"],["Pantheon","54.6","900","h","E bloquea su Q y E dash"],["Poppy","53.8","600","m","W cancela su E dash completamente"],["Cho'Gath","52.7","800","m","HP masivo absorbe todo su burst"],["Urgot","52.1","700","l","Shotgun antes de que llegue"],["Garen","51.4","1100","l","Silence cuando activa su combo"]],good:[["Gangplank","44.2","700","Shield bloquea su barrel poke"],["Sett","44.9","900","Riven gana el duel 1v1 siempre"],["Nasus","45.4","800","Early aplastante antes de stacks"],["Tryndamere","46.1","600","Riven gana el lane sin dudas"]]}
+  ,"Sett":{ctr:[["Aatrox","50.8","1064","h","Sustain masivo supera su Grit"],["Fiora","53.3","558","h","Parry bloquea su W completamente"],["Irelia","52.4","789","h","Dashes niegan su posición"],["Urgot","52.2","427","m","Shotgun range invalida su W slam"],["Camille","51.6","410","m","Gancho después de cada Grit"],["Poppy","51.4","216","m","W cancela su W dash entrada"],["Garen","48.9","1484","l","Silence durante su carga de Grit"]],good:[["Darius","49.0","1000","Sett gana el all-in 1v1"],["Mordekaiser","49.1","999","Realm aísla Sett perfecto"],["Malphite","49.3","784","Sett gana post-items always"],["Cho'Gath","49.5","800","Sett outscales su HP masivo"]]}
+  ,"Tryndamere":{ctr:[["Malphite","56.8","800","h","R durante su R imparable"],["Renekton","55.1","900","h","Stun en split push decisivo"],["Pantheon","54.3","700","h","R llega en su split push"],["Poppy","53.6","500","m","W cancela su E dash constantemente"],["Garen","52.8","1000","m","Silence corta su combo al instante"],["Jax","52.1","800","m","Counter Strike bloquea todos sus autos"],["Quinn","51.4","600","l","Kiting frustra completamente su chase"]],good:[["Darius","44.2","1000","Undying R supera su split push"],["Nasus","44.9","900","Wither lentifica para evitar escape"],["Cho'Gath","45.4","700","Silencio interrumpe antes del R"],["Sion","46.1","800","Tryndamere gana pre-1 item tanque"]]}
+  ,"Singed":{ctr:[["Cassiopeia","55.8","400","h","Veneno refleja su propio poison trail"],["Kayle","54.9","500","h","Kiting eterno con R"],["Quinn","54.1","600","h","Blind kiting frustra su posición"],["Teemo","53.4","700","h","Blind y hongos niegan chase"],["Vayne","52.7","800","m","True damage mientras kitea"],["Kennen","52.1","600","m","Stun y poke desde lejos"],["Urgot","51.4","500","l","Shotgun range supera fling"]],good:[["Darius","44.1","900","Fling frustra su pull E"],["Garen","44.8","1000","Singed le gana de lejos"],["Nasus","45.3","800","Wither pero Singed ignora"],["Mordekaiser","45.9","700","Realm pero Singed farmea igual"]]}
+  ,"Nasus":{ctr:[["Vayne","56.9","800","h","True damage ignora stacks de armadura"],["Kennen","55.8","700","h","Poke seguro que interrumpe stacking"],["Teemo","54.7","900","h","Blind niega su farm de stacks"],["Quinn","53.6","600","h","Kiting niega su farm constante"],["Camille","52.9","700","m","Gancho interrumpe su farm tranquilo"],["Gnar","52.2","800","m","Kiting super frustrante para él"],["Illaoi","51.5","600","l","Tentáculos niegan su farm near tower"]],good:[["Garen","44.2","1000","Wither supera su silence fácilmente"],["Mordekaiser","44.9","700","Realm pero Nasus late es más fuerte"],["Cho'Gath","45.4","800","Silencio pero Nasus outscales"],["Sion","46.1","900","Nasus late aplasta su tanque"]]}
+  ,"Gangplank":{ctr:[["Renekton","55.4","800","h","Stun antes de que active su E barrel"],["Darius","54.8","900","h","Bleeding y pull niegan su kiting"],["Irelia","54.1","700","h","Dashes en su barrel setup"],["Malphite","53.4","800","m","R durante su combo de barrels"],["Pantheon","52.7","700","m","E bloquea barrels y espada"],["Garen","52.1","1000","l","Silence niega sus barrels decisivos"],["Wukong","51.4","600","l","Burst antes de encender barrels"]],good:[["Camille","44.1","600","Barrels slow niegan su gancho"],["Sett","44.8","900","Grit absorbe pero Gangplank gana"],["Cho'Gath","45.3","700","Silencio pero Gangplank outranges"],["Ornn","45.9","700","Barrels desde lejos evitan su CC"]]}
+  ,"Renekton":{ctr:[["Malphite","56.2","1000","h","R interrumpe su W stun"],["Camille","54.8","800","h","Gancho después de W"],["Fiora","54.1","900","h","Parry bloquea su W instantáneamente"],["Poppy","53.4","600","m","W cancela su E dash"],["Garen","52.7","1100","m","Silence interrumpe su combo"],["Cho'Gath","52.1","800","m","HP masivo supera su early damage"],["Urgot","51.4","700","l","Shotgun range niega su engage"]],good:[["Nasus","44.1","900","Early aplastante antes de stacks"],["Tryndamere","44.8","800","Stun antes de su R invuln"],["Sion","45.3","900","Renekton gana el early siempre"],["Gwen","45.9","700","Domina pre-6 sin problemas"]]}
+  ,"Hecarim":{ctr:[["Nasus","54.8","800","h","Wither elimina toda su velocidad"],["Taliyah","54.1","600","h","Wall bloquea su E y rotaciones"],["Ivern","53.4","400","h","Daisy absorbe su engage completo"],["Trundle","52.7","500","m","Pillar bloquea su carga"],["Sylas","52.1","700","m","Copia su R para engage masivo"],["Warwick","51.4","800","l","Sustain gana duelo 1v1"],["Rammus","50.9","600","l","Taunt cancela su E carga"]],good:[["Kha'Zix","44.1","800","Velocidad de Heca supera su isolate"],["Diana","44.8","900","Invade fácilmente su early clear"],["Rammus","45.3","600","Hecarim le gana en velocidad"],["Qiyana","45.9","500","Velocidad supera su burst"]]}
+  ,"Kha'Zix":{ctr:[["Rengar","55.9","800","h","Rival directo, gana duelo de assassins"],["Warwick","54.8","900","h","Sustain masivo gana duelo 1v1"],["Elise","54.1","700","h","Spider form gana early duelo"],["Volibear","53.4","800","m","HP masivo sobrevive su burst"],["Rammus","52.7","600","m","Taunt devuelve su daño"],["Master Yi","52.1","900","l","Alpha strike evita todo su burst"],["Nunu & Willump","51.4","700","l","Sustain niega su invade early"]],good:[["Amumu","44.1","700","Isolate no funciona en grupos"],["Warwick","44.8","800","Kha gana el invade early"],["Kindred","45.3","600","Vulnerable cuando marca su campamento"],["Fiddlesticks","45.9","500","Burst antes de su W drain"]]}
+  ,"Graves":{ctr:[["Elise","54.4","766","h","Cocoon range supera su short range"],["Zyra","54.9","521","h","Raíces y plantas niegan su posición"],["Fiddlesticks","53.4","641","h","Drain sustain supera su burst"],["Shen","53.5","889","h","Stand United llega en sus peleas"],["Nunu & Willump","53.2","677","m","Snowball y consumir niegan rush"],["Kindred","53.0","879","m","Outrange en campo abierto"],["Wukong","52.7","820","l","Clone confunde su posicionamiento"]],good:[["Kha'Zix","44.1","800","Shells cortas contra sus isolate"],["Hecarim","45.1","900","Graves gana el duel early"],["Diana","45.6","700","Graves gana con poke constante"],["Jax","45.9","663","Graves supera su Counter Strike"]]}
+  ,"Diana":{ctr:[["Graves","54.9","700","h","Shells cortas contra su dash"],["Lee Sin","54.1","800","h","Dragon Kick y W niegan su lunar rush"],["Kha'Zix","53.4","700","h","Burst antes de su Q mark"],["Rengar","52.7","600","m","Leap interrumpe su Q charge"],["Elise","52.1","700","m","Cocoon en su Q windup"],["Vi","51.4","800","l","R imparable niega su lunar rush"],["Warwick","50.9","900","l","Sustain gana duelo sostenido"]],good:[["Katarina","44.1","700","CC interrumpe resets"],["Akali","44.8","800","Diana domina el duel 1v1"],["Talon","45.3","600","Diana gana con R teamfight"],["LeBlanc","45.9","700","CC masivo niega su movilidad"]]}
+  ,"Elise":{ctr:[["Lee Sin","55.3","800","h","Invade nivel 2 y gana duelo"],["Kha'Zix","54.6","700","h","Burst antes de que web"],["Kindred","53.9","600","m","Outrange en campo abierto"],["Graves","53.1","700","m","Shells penetran su spider form"],["Hecarim","52.4","600","l","Velocidad evita sus cocoons"],["Nidalee","51.8","500","l","Spear outrange su E"],["Diana","51.2","700","l","Lunar rush en su spider form"]],good:[["Amumu","44.1","600","Cocoon antes de su bandage"],["Warwick","44.8","700","Elise gana el early duel"],["Nunu & Willump","45.3","500","Elise invade y gana fácil"],["Sejuani","45.9","600","Early presión aplasta su clear"]]}
+  ,"Kindred":{ctr:[["Lee Sin","55.8","800","h","Invade y cancela su mark farms"],["Kha'Zix","54.9","700","h","Burst antes de que apile marks"],["Rengar","54.1","600","h","Leap interrumpe su mark routine"],["Graves","53.0","879","m","Outrange en campo abierto"],["Hecarim","52.4","700","m","Velocidad supera su kiting"],["Nunu & Willump","51.8","600","l","Consumir cancela su mark en neutral"],["Vi","51.2","700","l","R imparable niega su R invuln timing"]],good:[["Amumu","44.1","600","R invuln salva a su equipo"],["Master Yi","44.8","700","R bloquea su alpha strike"],["Fiddlesticks","45.3","500","R invuln durante su teamfight"],["Warwick","45.9","700","Kindred kita su sustain"]]}
+  ,"Nidalee":{ctr:[["Lee Sin","56.1","800","h","Invade nivel 2 y gana duelo"],["Kha'Zix","55.2","700","h","Burst antes de que pueda spear"],["Graves","52.0","852","m","Shells penetran su cat form"],["Hecarim","51.8","700","m","Velocidad evita sus spears"],["Rengar","51.2","600","m","Leap interrumpe su poke"],["Elise","50.9","500","l","Cocoon en su cat form"],["Vi","50.4","700","l","R imparable niega su posición"]],good:[["Amumu","44.1","600","Spear outrange su bandage"],["Warwick","44.8","700","Nidalee invade y gana early"],["Sejuani","45.3","500","Spear frustra su engage"],["Nunu & Willump","45.9","600","Nidalee gana invade fácil"]]}
+  ,"Twisted Fate":{ctr:[["Fizz","55.8","541","h","Trickster evade su Gold Card fácilmente"],["Zed","54.9","801","h","Sombra llega antes de que card"],["Diana","53.8","428","h","Lunar rush en su Q windup"],["Talon","53.1","315","m","Salto sobre muros cancela su global"],["Qiyana","52.4","343","m","Burst antes de su Pick a Card"],["Yasuo","52.1","900","l","Windwall bloquea sus cards"],["Zoe","51.4","548","l","Outrange y poke constante"]],good:[["Ahri","44.1","2145","Charm cancela su ganking global"],["Yone","44.8","692","TF gana lane con cards"],["Akali","45.3","1062","Gold Card antes de su shroud"],["Orianna","45.9","651","Ball setup niega su posición"]]}
+  ,"Cassiopeia":{ctr:[["Naafiri","56.8","61","h","Burst masivo antes de que envene"],["LeBlanc","55.9","77","h","Movilidad evita su poison field"],["Zed","55.4","216","h","Sombra elimina antes de stack veneno"],["Akshan","55.2","122","h","Poke outranges su E"],["Akali","54.9","140","h","Shroud evita todo su veneno"],["Diana","54.8","137","m","Lunar rush en su Q channel"],["Mel","54.7","152","m","Refleja sus misiles envenenados"]],good:[["Ryze","44.1","300","Veneno aplasta su falta movilidad"],["Twisted Fate","44.8","122","Stun facilita su veneno stack"],["Orianna","45.3","138","Outrange frustra su posición"],["Azir","45.9","200","Veneno aplasta sus soldados"]]}
+  ,"Orianna":{ctr:[["Zed","55.8","800","h","Sombra llega antes de que ball"],["LeBlanc","54.9","700","h","Movilidad evita su ball"],["Fizz","54.1","600","h","Trickster evade su R completamente"],["Talon","53.4","500","m","Salto sobre muros antes de su R"],["Katarina","52.7","700","m","Resets niegan su setup"],["Qiyana","52.1","500","l","Burst antes de su ball position"],["Akali","51.4","800","l","Shroud niega su poke constante"]],good:[["Ryze","44.1","600","Ball aplasta su falta movilidad"],["Twisted Fate","44.8","651","Shockwave niega su gank global"],["Corki","45.3","500","Orianna outscales su damage"],["Hwei","45.9","448","Ball setup aplasta su positioning"]]}
+  ,"Fizz":{ctr:[["Vex","56.8","600","h","Pasiva cancela su Trickster dash"],["Lissandra","55.9","500","h","Freeze cuando usa Trickster"],["Malzahar","55.1","400","h","Supresión durante su E idle"],["Galio","54.3","700","m","Taunt durante su W o E"],["Diana","53.6","500","m","Lunar rush post Trickster"],["Kassadin","52.8","600","l","Post-6 la iguala en movilidad"],["Swain","52.1","300","l","Drain niega su burst burst"]],good:[["Twisted Fate","44.1","541","Trickster evade sus cards fácil"],["Orianna","44.8","600","Trickster evade su R"],["Ryze","45.3","400","Burst antes de su R chain"],["Zoe","45.9","500","Fizz gana el all-in siempre"]]}
+  ,"LeBlanc":{ctr:[["Vex","57.2","700","h","Pasiva cancela todos sus dashes"],["Malzahar","56.3","500","h","Supresión bloquea todo su kit"],["Galio","55.4","800","h","MR masivo y taunt niegan burst"],["Lissandra","54.6","600","h","Freeze cancela su chain"],["Kassadin","53.8","700","m","Post-6 la iguala en movilidad"],["Diana","52.9","500","m","CC después de su W mark"],["Morgana","52.1","600","l","Escudo niega su chain binding"]],good:[["Ryze","44.1","500","Sin movilidad para escapar"],["Twisted Fate","44.8","576","Movilidad supera su gold card"],["Orianna","45.3","600","Burst antes de su ball"],["Veigar","45.9","500","LeBlanc gana el all-in siempre"]]}
+  ,"Jhin":{ctr:[["Yasuo","56.9","462","h","Knockup masivo para su R"],["Swain","54.4","586","h","Drain niega su 4to disparo setup"],["Kog'Maw","54.0","620","h","Outrange masivo en late game"],["Samira","53.4","1937","h","Movilidad evita su W root"],["Nilah","53.2","483","m","Dash evita su W y trampas"],["Jinx","52.1","5835","m","Rockets alcanzan su posición estática"],["Vayne","51.9","2261","l","Tumble evita su root siempre"]],good:[["Sivir","49.6","2094","Jhin outranges su spellshield"],["Kai'Sa","49.0","6768","Jhin gana lane early siempre"],["Twitch","50.0","2182","Jhin poke frustra su posición"],["Smolder","50.6","4021","Jhin daño early superior"]]}
+  ,"Xayah":{ctr:[["Ziggs","56.8","199","h","Outrange masivo, evita sus plumas"],["Jinx","52.9","2319","h","Rockets alcanzan aunque esquive con E"],["Draven","51.5","567","h","Daño early antes de acumular plumas"],["Zeri","51.5","340","m","Spark Lane evita su E plumas"],["Senna","51.2","174","m","Outrange masivo, kita su lane"],["Mel","51.0","255","l","Refleja sus plumas volando"],["Swain","50.8","242","l","Drain niega su R feathers"]],good:[["Samira","47.1","1219","E activa niega su combo de plumas"],["Yunara","47.2","1256","Xayah gana el duel early"],["Tristana","48.7","655","Salto evita su E feathers"],["Caitlyn","48.8","1882","Xayah gana el matchup facilmente"]]}
+  ,"Kai'Sa":{ctr:[["Draven","54.4","1663","h","Daño burst early antes de que evolucione"],["Aphelios","54.2","2895","h","Outrange en sus evoluciones"],["Xayah","54.0","3941","h","Plumas en línea con sus dashes"],["Jinx","53.9","7559","h","Escala más fuerte late game"],["Nilah","53.6","743","m","Dash evita su missile W"],["Kog'Maw","53.2","762","m","Outrange sus evoluciones de Q"],["Ashe","53.1","3776","l","Slow masivo niega su Q engage"]],good:[["Jhin","49.0","6768","Kai'Sa gana el duel 1v1"],["Varus","49.7","1910","Kai'Sa outscales fácilmente"],["Caitlyn","49.7","6163","Evoluciones superan trampas"],["Yunara","50.1","4720","Kai'Sa gana el matchup"]]}
+  ,"Ashe":{ctr:[["Draven","52.3","1009","h","Daño early aplasta antes de kiting"],["Ziggs","52.4","357","h","Outrange masivo sin respuesta"],["Swain","54.3","339","h","Drain niega su R setup"],["Kog'Maw","50.9","430","m","Outrange masivo late game"],["Smolder","50.7","2085","m","Range superior en late game"],["Xayah","50.7","1191","l","Plumas niegan su posición"],["Kalista","50.7","294","l","Kiting rápido frustra su slow"]],good:[["Tristana","47.1","843","Ashe outranges sus saltos"],["Senna","47.7","363","Slow supera su outrange"],["Lucian","47.8","1926","Slow aplasta su dash spam"],["Nilah","47.9","280","Ashe gana con slow constante"]]}
+  ,"Samira":{ctr:[["Xayah","52.9","1254","h","E niega su R windwall completamente"],["Senna","52.6","289","h","Outrange masivo, kita su engage"],["Kog'Maw","52.2","301","h","Outrange en su R canal"],["Tristana","51.8","577","h","Salto evita su R activate condition"],["Jinx","51.7","2165","m","Rockets alcanzan durante su R"],["Nilah","51.5","468","m","Dash evita su engage condition"],["Ashe","50.7","1095","l","Slow masivo niega engage condition"]],good:[["Jhin","46.6","1937","Samira gana el duel 1v1 siempre"],["Kai'Sa","47.0","2716","R corta antes de evoluciones"],["Mel","47.2","229","Samira gana si avoids reflection"],["Aphelios","47.4","926","All-in antes de su armory change"]]}
+  ,"Tristana":{ctr:[["Ziggs","56.6","145","h","Outrange masivo evita su bomb"],["Yasuo","55.9","111","h","Knockup masivo para burst combo"],["Draven","54.4","401","h","Daño early antes de escalar"],["Swain","54.3","162","h","Drain niega su reset pattern"],["Zeri","53.2","220","m","Spark evita sus saltos"],["Ashe","52.9","843","m","Slow masivo niega su salto reset"],["Xayah","51.3","655","l","Plumas en línea con su salto"]],good:[["Samira","47.6","557","Bomb durante su E reset"],["Senna","48.1","158","Tristana outranges su lane"],["Jhin","48.2","1617","Reset aplasta su posición estática"],["Varus","48.5","371","Tristana outscales su DPS"]]}
+  ,"Miss Fortune":{ctr:[["Yasuo","55.8","231","h","Knockup masivo para su R directo"],["Mel","53.2","297","h","Refleja sus bullets en R"],["Nilah","53.0","296","h","Dash evita su Double Up"],["Swain","52.9","329","h","Drain niega su R channel"],["Veigar","52.0","356","m","Cage niega su R posición"],["Jinx","51.4","3268","m","Rockets alcanzan durante su R"],["Sivir","51.4","1184","l","Spellshield cancela su Double Up"]],good:[["Aphelios","46.9","1191","MF gana lane early siempre"],["Zeri","44.7","452","Double Up desde lejos siempre"],["Lucian","47.4","1531","MF gana el early poke"],["Vayne","47.8","1376","Double Up antes de tumble"]]}
+  ,"Draven":{ctr:[["Samira","54.6","738","h","Movilidad evita sus Spinning Axes"],["Jinx","52.8","1100","h","Rockets alcanzan sus axes late"],["Xayah","51.5","567","h","Plumas niegan su posición de axes"],["Caitlyn","52.1","1200","m","Trampas cuando va a agarrar axe"],["Miss Fortune","51.6","800","m","Double Up en su recogida de axes"],["Ashe","51.3","800","l","Slow impide recoger sus axes"],["Tristana","51.4","401","l","Bomb cuando va a agarrar axe"]],good:[["Kai'Sa","44.1","1663","Draven domina el early siempre"],["Jinx","44.9","1100","Draven es superior early"],["Jhin","51.4","1582","Draven gana el all-in"],["Ashe","47.7","1009","Draven outpoke antes de kiting"]]}
+  ,"Blitzcrank":{ctr:[["Morgana","57.3","4200","h","Escudo negro niega su gancho siempre"],["Janna","55.8","3100","h","Disengage frustra todos sus engages"],["Senna","54.9","2800","h","Outrange masivo, kita su lane"],["Xerath","54.1","2200","m","Poke desde lejos imposible alcanzar"],["Karma","53.4","2900","m","Shield y slow niegan engage"],["Nami","52.7","3400","m","Burbuja impide su gancho"],["Lux","51.9","3600","l","Bind desde lejos antes de llegar"]],good:[["Sona","44.2","2100","Sin defensa ante su nivel 2"],["Soraka","44.9","1900","Presión agresiva niega heal"],["Yuumi","45.6","2400","Sola extremadamente frágil"],["Renata Glasc","46.2","1800","Gancho antes de su W debuff"]]}
+  ,"Janna":{ctr:[["Leona","56.2","3100","h","Engage nivel 2 antes de su shield"],["Nautilus","55.4","3400","h","Gancho aplasta su kiting"],["Blitzcrank","54.6","3200","h","Gancho antes de su W"],["Rell","53.8","2800","m","Engage en la forma de montura"],["Brand","53.1","2400","m","Poke burn frustra su healing"],["Swain","52.4","2100","l","Drain niega su heal constante"],["Zyra","51.6","2600","l","Raíces niegan su tornadoes"]],good:[["Sona","44.1","2100","Disengage supera su DPS"],["Yuumi","44.8","2400","Shield y slow vs su heals"],["Nami","45.3","3200","Janna le gana con disengage"],["Soraka","45.9","1900","Janna gana el matchup"]]}
+  ,"Nami":{ctr:[["Leona","55.8","3400","h","Engage nivel 2 antes de su Q"],["Nautilus","54.9","3600","h","Gancho antes de que Q"],["Blitzcrank","54.1","3200","h","Gancho más rápido que su Q"],["Brand","53.4","2600","m","Poke burn niega su bubble setup"],["Swain","52.7","2200","m","Drain niega su heals"],["Janna","51.9","3200","l","Disengage frustra su engage"],["Zyra","51.2","2800","l","Raíces niegan su posición"]],good:[["Sona","44.1","2200","CC aplasta su performance"],["Yuumi","44.8","2500","Nami gana fácilmente"],["Soraka","45.3","2000","Engage supera su heal pasivo"],["Zilean","45.9","1800","Nami outpressures su revive"]]}
+  ,"Soraka":{ctr:[["Morellonomicon users","56.8","5000","h","Antihealing elimina toda su utilidad"],["Brand","55.9","2400","h","Poke burn niega su Q heal"],["Zyra","55.1","2800","h","Raíces y daño aplasta su lane"],["Swain","54.3","2100","m","Drain aplasta su sustain"],["Xerath","53.6","2200","m","Poke outrange su zona de comfort"],["Vel'Koz","52.8","1900","l","Laser supera su heal rate"],["Lux","52.1","3600","l","Bind facilita kill antes de heal"]],good:[["Sona","44.1","2100","Heal supera su DPS"],["Yuumi","44.8","2400","Soraka gana fácilmente"],["Nami","45.3","3200","Heal supera su engage"],["Zilean","45.9","1800","Soraka outpressures en lane"]]}
+  ,"Lulu":{ctr:[["Swain","55.2","2200","h","Drain niega su W polymorph timing"],["Brand","54.4","2600","h","Poke burn aplasta su lane"],["Nautilus","53.6","3600","h","Gancho antes de su W"],["Zyra","52.8","2800","m","Raíces niegan su posición"],["Leona","52.1","3100","m","Engage mientras polimorfiza a support"],["Blitzcrank","51.4","3200","l","Gancho antes de su W"],["Thresh","50.8","4400","l","Versatilidad supera su kit"]],good:[["Sona","44.1","2100","Polymorph aplasta su performance"],["Yuumi","44.8","2400","Shield supera su laning"],["Soraka","45.3","1900","Lulu outpressures"],["Nami","45.9","3200","Lulu gana el matchup"]]}
+  ,"Sona":{ctr:[["Leona","56.8","2200","h","Engage nivel 2 instantáneo"],["Nautilus","55.9","2600","h","Gancho aplasta su fragibilidad"],["Blitzcrank","55.1","2800","h","Gancho aplasta su posición"],["Brand","54.3","2400","m","Poke burn aplasta su heal"],["Zyra","53.6","2600","m","Raíces niegan su posición"],["Vel'Koz","52.8","1900","l","Laser supera su heal rate"],["Swain","52.1","2100","l","Drain aplasta su sustain"]],good:[["Yuumi","44.1","2400","Crescendo aplasta su performance"],["Soraka","44.8","1900","Sona gana el matchup"],["Nami","45.3","3200","Ultimate supera su CC"],["Zilean","45.9","1800","Sona outpressures en lane"]]}
+  ,"Braum":{ctr:[["Janna","55.4","2200","h","Disengage frustra su engage"],["Morgana","54.6","2800","h","Escudo niega su passive stacks"],["Lux","53.8","3600","m","Bind antes de su Q"],["Senna","53.1","2800","m","Outrange masivo kita su lane"],["Karma","52.4","2900","l","Shield y slow niegan engage"],["Nami","51.8","3400","l","Burbuja impide su engage"],["Zilean","51.2","1800","l","Revive cancela sus kills"]],good:[["Sona","44.1","2100","Pasiva aplasta su performance"],["Soraka","44.8","1900","Braum gana fácilmente"],["Yuumi","45.3","2400","Stand Behind Me aplasta"],["Alistar","45.9","2600","Braum gana el matchup"]]}
+  ,"Zyra":{ctr:[["Zed","55.9","1800","h","Llega antes de que plante"],["LeBlanc","55.1","1600","h","Movilidad evita sus raíces"],["Fizz","54.3","1400","h","Trickster evade sus raíces"],["Talon","53.6","1200","m","Salto sobre muros antes de plantar"],["Syndra","52.8","1400","m","Orbs destruyen sus plantas"],["Katarina","52.1","1600","l","Resets niegan su setup lento"],["Diana","51.4","1200","l","Lunar rush gana el all-in"]],good:[["Thresh","44.1","4400","Raíces facilitan su gancho"],["Nautilus","44.8","3600","Plantas ayudan engage masivo"],["Brand","45.3","2400","Zyra le gana en DPS"],["Blitzcrank","45.9","3200","Zyra gana el lane"]]}
+  ,"Brand":{ctr:[["Janna","55.8","2400","h","Disengage frustra su poke"],["Morgana","54.9","3200","h","Escudo negro niega su Q stun"],["Xerath","54.1","2200","m","Outrange su posición"],["Lux","53.4","3600","m","Bind desde lejos supera"],["Soraka","52.7","1900","l","Heal supera su damage"],["Yuumi","52.1","2400","l","Movilidad evita su Q"],["Senna","51.4","2800","l","Outrange su zone of fire"]],good:[["Sona","44.1","2100","Passive aplasta su laning"],["Nami","44.8","3200","Brand gana el matchup"],["Zilean","45.3","1800","Brand outpressures"],["Alistar","45.9","2600","Brand gana el lane"]]}
+  ,"Morgana":{ctr:[["Xerath","55.4","2200","h","Outrange su binding fácilmente"],["Zed","54.6","1800","h","Llega antes de que bind"],["LeBlanc","53.8","1600","h","Movilidad evita su Q"],["Talon","53.1","1200","m","Salto sobre muros antes de Q"],["Brand","52.4","2400","m","Poke burn supera su lane"],["Syndra","51.8","1400","l","Orbs destruyen su planta W"],["Katarina","51.2","1600","l","Resets niegan su setup lento"]],good:[["Thresh","44.1","4400","Escudo negro niega su gancho"],["Nautilus","44.8","3600","Escudo niega su CC pasivo"],["Leona","45.3","3100","Morgana gana el matchup"],["Blitzcrank","45.9","3200","Escudo niega su único gancho"]]}
+  ,"Alistar":{ctr:[["Senna","56.2","2800","h","Outrange masivo kita su engage"],["Xerath","55.4","2200","h","Poke imposible de alcanzar"],["Morgana","54.6","2800","h","Escudo niega su Headbutt"],["Karma","53.8","2900","m","Shield y slow niegan engage"],["Lux","53.1","3600","m","Bind desde lejos"],["Janna","52.4","3100","l","Disengage frustra su engage"],["Nami","51.6","3400","l","Burbuja impide su combo"]],good:[["Sona","44.1","2100","CC aplasta su fragibilidad"],["Soraka","44.8","1900","Heal aplasta bajo presión"],["Yuumi","45.3","2400","Alistar gana fácilmente"],["Blitzcrank","45.9","3200","Alistar gana el matchup"]]}
+  ,"Pyke":{ctr:[["Senna","55.9","2800","h","Outrange masivo kita su lane"],["Xerath","55.1","2200","h","Poke imposible de alcanzar"],["Lux","54.3","3600","h","Bind antes de su E hook"],["Morgana","53.6","2800","m","Escudo niega su Q hook"],["Nautilus","52.8","3600","m","CC masivo supera su kit"],["Janna","52.1","3100","l","Disengage frustra su engage"],["Brand","51.4","2400","l","Poke aplasta su sustain"]],good:[["Sona","44.1","2100","Pasiva aplasta en teamfights"],["Yuumi","44.8","2400","Pyke gana el matchup"],["Soraka","45.3","1900","Presión niega heal"],["Nami","45.9","3200","Pyke gana el lane"]]}
+  ,"Rakan":{ctr:[["Morgana","56.4","2800","h","Escudo niega su W leap"],["Janna","55.6","3100","h","Disengage frustra su engage"],["Lux","54.8","3600","m","Bind antes de su W"],["Karma","54.1","2900","m","Shield y slow niegan engage"],["Brand","53.4","2400","l","Poke aplasta su sustain"],["Senna","52.6","2800","l","Outrange masivo kita su lane"],["Nautilus","51.9","3600","l","CC supera su movilidad"]],good:[["Sona","44.1","2100","CC y movilidad aplasta"],["Yuumi","44.8","2400","Rakan gana fácilmente"],["Soraka","45.3","1900","Engage supera su heal"],["Zilean","45.9","1800","Rakan outpressures"]]}
+  ,"Milio":{ctr:[["Brand","55.8","2400","h","Poke burn aplasta su healing"],["Swain","55.1","2100","h","Drain niega todo su healing"],["Nautilus","54.3","3600","m","Gancho aplasta su fragibilidad"],["Leona","53.6","3100","m","Engage aplasta antes de shield"],["Zyra","52.8","2800","l","Raíces niegan su posición"],["Xerath","52.1","2200","l","Outrange su comfort zone"],["Blitzcrank","51.4","3200","l","Gancho antes de su shield"]],good:[["Sona","44.1","2100","Milio gana fácilmente"],["Soraka","44.8","1900","Heals combinados son irresistibles"],["Yuumi","45.3","2400","Milio gana el matchup"],["Nami","45.9","3200","Milio outpressures"]]}
+  ,"Akshan":{ctr:[["Zed","55.8","800","h","Sombra llega antes de que revive"],["Talon","55.1","600","h","Salto cancela su revive loop"],["LeBlanc","54.3","700","h","Burst antes de que pueda revive"],["Fizz","53.6","500","m","Trickster evita su boomerang"],["Qiyana","52.8","500","m","Burst antes de su grappling hook"],["Diana","52.1","600","l","Lunar rush gana el all-in"],["Syndra","51.4","700","l","Orbs destruyen su posición"]],good:[["Twisted Fate","44.1","400","Revive frustra su gold card kill"],["Ryze","44.8","500","Outrange con boomerang"],["Orianna","45.3","600","Revive aplasta su ball setup"],["Viktor","45.9","700","Poke supera su revive mechanic"]]}
+  ,"Amumu":{ctr:[["Vi","55.9","800","h","R imparable niega su W channel"],["Hecarim","54.8","700","h","Velocidad evita su Bandage Toss"],["Warwick","54.1","900","h","Sustain masivo gana duelo"],["Kha'Zix","53.4","700","m","Burst antes de que pueda cast W"],["Lee Sin","52.7","800","m","Invade nivel 2 y gana"],["Graves","52.1","600","l","Shells penetran su clear"],["Elise","51.4","500","l","Cocoon en su Q windup"]],good:[["Master Yi","44.1","700","Bandage aplasta su alpha strike"],["Kindred","44.8","600","R salva pero Amumu llega de todas formas"],["Nunu & Willump","45.3","500","Clear lento vs invade"],["Shaco","45.9","600","Amumu gana teamfight siempre"]]}
+  ,"Anivia":{ctr:[["Zed","56.2","600","h","Sombra esquiva su Q y llega"],["LeBlanc","55.4","500","h","Movilidad evita su Q fácil"],["Talon","54.6","400","h","Salto cancela su Q windup"],["Fizz","53.8","500","m","Trickster evita todo su kit"],["Syndra","53.1","700","m","Orbs desde lejos niegan su wall"],["Viktor","52.4","800","l","Poke supera su mana consumo"],["Katarina","51.6","600","l","Resets niegan su setup lento"]],good:[["Ryze","44.1","600","Wall bloquea sus dash escapes"],["Twisted Fate","44.8","500","Anivia outscales su global"],["Corki","45.3","400","Late game aplasta sus packages"],["Azir","45.9","500","Anivia gana teamfights"]]}
+  ,"Annie":{ctr:[["LeBlanc","56.1","700","h","Movilidad evita su Tibbers Q"],["Zed","55.3","800","h","Sombra llega antes de su stun"],["Talon","54.5","600","h","Salto cancela su stun setup"],["Fizz","53.7","500","m","Trickster evita su Q stun"],["Akali","52.9","700","m","Shroud niega su stun engage"],["Kassadin","52.1","800","l","Post-6 la supera en movilidad"],["Qiyana","51.4","500","l","Burst antes de que acumule stuns"]],good:[["Ryze","44.1","600","Burst instantáneo aplasta"],["Twisted Fate","44.8","500","Stun aplasta su card timing"],["Orianna","45.3","600","Annie outburst su ball"],["Hwei","45.9","700","Annie gana el all-in"]]}
+  ,"Aphelios":{ctr:[["Draven","56.4","900","h","Daño early superior antes de ciclos"],["Xayah","55.6","800","h","Plumas niegan su posición"],["Jinx","54.8","1100","h","Escala más consistente que él"],["Caitlyn","54.1","1200","m","Trampas niegan su reposición"],["Miss Fortune","53.4","900","m","Double Up mientras cambia arma"],["Samira","52.6","700","l","R activa durante su ciclo"],["Tristana","51.9","600","l","Salto evita sus turrets"]],good:[["Kai'Sa","44.1","900","Complejo bajo presión constante"],["Ezreal","44.8","800","Aphelios gana con buena arma"],["Varus","45.3","600","Aphelios outscales"],["Kog'Maw","45.9","500","Aphelios gana el matchup"]]}
+  ,"Aurelion Sol":{ctr:[["Zed","55.9","600","h","Sombra llega antes de que canalice"],["LeBlanc","55.1","500","h","Burst antes de su W canal"],["Talon","54.3","400","h","Salto cancela su roaming"],["Fizz","53.5","500","m","Trickster evita su W damage"],["Akali","52.7","600","m","Shroud niega su poke constante"],["Syndra","52.0","700","l","Orbs interrumpen su W channel"],["Kassadin","51.2","600","l","Post-6 la supera en todo"]],good:[["Ryze","44.1","500","Stardust aplasta su falta movilidad"],["Twisted Fate","44.8","400","Roaming aplasta su global"],["Orianna","45.3","500","AuSol outscales completamente"],["Viktor","45.9","600","Stardust late es irresistible"]]}
+  ,"Aurora":{ctr:[["Zed","55.4","600","h","Sombra llega antes de su E"],["Vex","54.6","500","h","Pasiva cancela sus dashes"],["LeBlanc","53.8","400","h","Movilidad evita su kit"],["Fizz","53.1","400","m","Trickster evita su Q bubble"],["Lissandra","52.3","500","m","Freeze cancela su E dash"],["Syndra","51.6","600","l","Orbs desde lejos niegan"],["Viktor","50.9","700","l","Poke supera su sustain"]],good:[["Twisted Fate","44.1","500","Aurora gana con movilidad"],["Ryze","44.8","400","Dash evita sus chain CCs"],["Orianna","45.3","500","Aurora outscales"],["Azir","45.9","400","Aurora gana el matchup"]]}
+  ,"Azir":{ctr:[["Zed","56.1","700","h","Sombra llega antes de soldados"],["LeBlanc","55.3","600","h","Burst antes de que posicione soldados"],["Talon","54.5","500","h","Salto cancela su E dash"],["Akali","53.7","700","m","Shroud niega su poke constante"],["Kassadin","52.9","800","m","Post-6 lo supera completamente"],["Katarina","52.2","600","l","Resets niegan su slow setup"],["Qiyana","51.4","500","l","Burst antes de primer item"]],good:[["Ryze","44.1","600","Soldados aplasta su falta movilidad"],["Twisted Fate","44.8","500","Azir gana el matchup"],["Corki","45.3","400","Azir outscales sus packages"],["Orianna","45.9","500","Azir gana teamfights"]]}
+  ,"Bard":{ctr:[["Leona","55.8","700","h","Engage nivel 2 antes de Q"],["Nautilus","55.1","600","h","Gancho aplasta su posición"],["Blitzcrank","54.3","700","h","Gancho antes de su Q"],["Brand","53.5","500","m","Poke aplasta su sustain lento"],["Zyra","52.8","600","m","Raíces niegan su meep farm"],["Xerath","52.1","500","l","Outrange su zona de comfort"],["Thresh","51.3","700","l","Versatilidad supera su kit"]],good:[["Sona","44.1","600","Chimes aplasta su performance"],["Yuumi","44.8","700","Bard gana fácilmente"],["Soraka","45.3","500","Presión niega heal"],["Nami","45.9","600","Bard gana el lane"]]}
+  ,"Bel'Veth":{ctr:[["Lee Sin","56.2","700","h","Invade nivel 2 y gana duelo"],["Kha'Zix","55.4","600","h","Burst antes de stacks"],["Vi","54.6","700","h","R imparable niega su coral"],["Warwick","53.8","800","m","Sustain masivo gana duelo"],["Elise","53.1","600","m","Cocoon en su E windup"],["Hecarim","52.3","700","l","Velocidad supera su cleared speed"],["Rammus","51.6","500","l","Taunt devuelve su daño"]],good:[["Amumu","44.1","600","Late game Bel aplasta teamfights"],["Nunu & Willump","44.8","500","Bel gana el invade fácil"],["Fiddlesticks","45.3","400","Bel gana con stacks"],["Sejuani","45.9","600","Bel outscales late"]]}
+  ,"Briar":{ctr:[["Warwick","55.9","700","h","Sustain masivo gana duelo 1v1"],["Vi","55.1","600","h","R imparable niega su R frenzy"],["Rammus","54.3","700","h","Taunt devuelve su propio daño"],["Volibear","53.5","600","m","HP masivo absorbe su frenzy"],["Hecarim","52.8","700","l","Velocidad supera su speed"],["Amumu","52.1","500","l","CC niega su frenzy"],["Sejuani","51.3","600","l","Permafrost durante su frenzy"]],good:[["Master Yi","44.1","600","Frenzy aplasta su meditación"],["Kindred","44.8","500","Briar gana el 1v1"],["Karthus","45.3","400","Frenzy cancela su channel"],["Fiddlesticks","45.9","500","Briar gana el invade"]]}
+  ,"Cho'Gath":{ctr:[["Vayne","57.1","700","h","True damage ignora su HP masivo"],["Kennen","56.3","600","h","Poke seguro nunca lo alcanza"],["Teemo","55.5","700","h","Blind niega autos y hongos lentifican"],["Quinn","54.7","600","h","Kiting frustra su lentitud"],["Gnar","54.0","700","m","Kiting supera su slow"],["Illaoi","53.2","500","m","Tentáculos niegan su farm safe"],["Singed","52.4","500","l","Kiting frustra completamente"]],good:[["Garen","44.1","700","Silencio pero Cho outscales"],["Nasus","44.8","600","Cho gana el early siempre"],["Darius","45.3","700","Cho HP masivo absorbe bleeding"],["Sion","45.9","800","Cho gana late con más HP"]]}
+  ,"Corki":{ctr:[["Zed","55.8","600","h","Sombra llega antes de sus packages"],["LeBlanc","55.0","500","h","Burst antes de recargar package"],["Talon","54.2","400","h","Salto niega su poke"],["Syndra","53.4","600","m","Orbs supera su daño mid"],["Viktor","52.7","700","m","Poke y laser niegan su lane"],["Ahri","52.0","500","l","Charm aplasta su posición estática"],["Vex","51.2","400","l","Pasiva cancela su dash package"]],good:[["Ryze","44.1","500","Corki gana con poke"],["Twisted Fate","44.8","400","Package supera su global"],["Azir","45.3","500","Corki gana el matchup"],["Orianna","45.9","500","Corki outranges late"]]}
+  ,"Dr. Mundo":{ctr:[["Vayne","57.3","700","h","True damage ignora su HP masivo"],["Darius","56.4","800","h","Bleeding ignora Mundo building"],["Fiora","55.6","600","h","Parry en sus vitales con Q"],["Kennen","54.8","600","h","Poke seguro que interrumpe farm"],["Gnar","54.1","700","m","Kiting frustra su chase"],["Quinn","53.3","600","m","Kiting y blind niegan"],["Urgot","52.5","700","l","Shotgun antes de que llegue"]],good:[["Nasus","44.1","600","Wither pero Mundo ignora"],["Malphite","44.8","700","Mundo outscales su tanque"],["Garen","45.3","600","Mundo gana late con más HP"],["Sion","45.9","700","Mundo late es superior"]]}
+  ,"Ekko":{ctr:[["Vex","56.8","600","h","Pasiva cancela su Phase Dive"],["Lissandra","56.0","500","h","Freeze cancela su combo al instante"],["Malzahar","55.2","400","h","Supresión durante su E channel"],["Galio","54.4","600","m","Taunt durante su W o E"],["Kassadin","53.6","700","m","Post-6 lo iguala en movilidad"],["Diana","52.9","500","l","Lunar rush post su W shield"],["Zed","52.1","600","l","Sombra burst antes de R escape"]],good:[["Ryze","44.1","500","W shield niega su chain"],["Twisted Fate","44.8","400","R escape frustra su kill"],["Orianna","45.3","500","Ekko gana el all-in"],["Viktor","45.9","600","Ekko outscales late"]]}
+  ,"Evelynn":{ctr:[["Lee Sin","56.1","700","h","Sonic Wave revela su posición"],["Warwick","55.3","700","h","W pasiva revela cuando está bajo HP"],["Nidalee","54.5","500","h","Spear revela en brush"],["Kha'Zix","53.7","600","m","Burst antes de que encante"],["Rengar","52.9","600","m","Rival de assassins, gana 1v1"],["Graves","52.1","500","l","Shells revelan su posición"],["Jarvan IV","51.4","600","l","Cataclysm atrapa en su cataclysm"]],good:[["Master Yi","44.1","600","Encanto aplasta su meditación"],["Amumu","44.8","500","Evelynn gana con stealth"],["Karthus","45.3","400","Encanto aplasta su channel"],["Fiddlesticks","45.9","500","Evelynn gana el invade"]]}
+  ,"Fiddlesticks":{ctr:[["Lee Sin","55.8","700","h","Invade y cancela su drain early"],["Kha'Zix","55.0","600","h","Burst antes de que drene"],["Hecarim","54.2","700","h","Velocidad supera su clear speed"],["Vi","53.4","600","m","R cancela su R channel"],["Rengar","52.7","600","m","Burst antes de su R"],["Elise","52.0","500","l","Cocoon en su R windup"],["Graves","51.2","600","l","Shells penetran su claro"]],good:[["Master Yi","44.1","600","R Drain aplasta su alpha"],["Amumu","44.8","500","Fiddlesticks gana teamfight"],["Nunu & Willump","45.3","400","R aplasta su consume"],["Karthus","45.9","500","Fiddlesticks gana el invade"]]}
+  ,"Galio":{ctr:[["Zed","56.3","700","h","Sombra llega antes de su W wind-up"],["LeBlanc","55.5","600","h","Movilidad evita su taunt"],["Fizz","54.7","500","h","Trickster evita su E y taunt"],["Katarina","53.9","600","m","Resets niegan su setup"],["Syndra","53.2","700","m","Orbs destruyen su poke"],["Cassiopeia","52.4","500","l","Veneno niega su tanque"],["Akali","51.6","600","l","Shroud niega su poke y taunt"]],good:[["Ryze","44.1","600","Taunt aplasta su inmovidad"],["Twisted Fate","44.8","500","Galio gana globalmente"],["Orianna","45.3","600","Taunt aplasta su ball"],["Viktor","45.9","700","Galio outscales mid"]]}
+  ,"Gnar":{ctr:[["Malphite","56.4","800","h","R durante su Mega Gnar stun"],["Renekton","55.6","900","h","Stun antes de Mega Gnar"],["Darius","54.8","700","h","Bleeding ignora forma mini"],["Pantheon","54.1","700","m","E bloquea su Q y stun"],["Poppy","53.3","500","m","W cancela su E dash"],["Garen","52.5","700","l","Silence durante Mega"],["Irelia","51.8","800","l","Dashes niegan forma mini kiting"]],good:[["Tryndamere","44.1","600","Mega cancela pero Gnar gana"],["Nasus","44.8","700","Kiting frustra stacking"],["Singed","45.3","500","Kiting frustra pero Singed ignora"],["Sion","45.9","700","Gnar gana el matchup"]]}
+  ,"Gragas":{ctr:[["Lee Sin","55.7","700","h","Invade nivel 2 y gana duelo"],["Kha'Zix","54.9","600","h","Burst antes de su barrel"],["Vi","54.1","700","h","R niega su R displacement"],["Hecarim","53.3","700","m","Velocidad supera su clear"],["Warwick","52.6","800","m","Sustain gana duelo 1v1"],["Elise","51.8","500","l","Cocoon en su E windup"],["Graves","51.1","600","l","Shells penetran su clear"]],good:[["Amumu","44.1","600","Body Slam aplasta teamfight"],["Fiddlesticks","44.8","500","Gragas gana con displacement"],["Sejuani","45.3","500","Gragas gana teamfight"],["Nunu & Willump","45.9","500","Gragas gana el invade"]]}
+  ,"Heimerdinger":{ctr:[["Zed","56.8","600","h","Sombra llega y destroza torretas"],["Talon","56.0","500","h","Salto ignora torretas"],["LeBlanc","55.2","400","h","Movilidad evita torretas"],["Fizz","54.4","400","m","Trickster evade Q stun torreta"],["Syndra","53.6","600","m","Orbs destruyen sus torretas"],["Katarina","52.9","500","l","Resets destruyen torretas rapidamente"],["Ekko","52.1","500","l","W bloquea proyectiles torreta"]],good:[["Ryze","44.1","400","Torretas aplasta su inmovidad"],["Twisted Fate","44.8","400","Heimerdinger gana el lane"],["Orianna","45.3","500","Torretas niegan su ball setup"],["Viktor","45.9","500","Heimerdinger gana early"]]}
+  ,"Hwei":{ctr:[["Zed","53.3","514","h","Sombra llega antes de que dibuje"],["Katarina","53.2","900","h","Resets niegan su lento setup"],["Fizz","53.0","345","h","Trickster evita sus proyectiles"],["Anivia","52.9","376","m","Wall interrumpe sus canales"],["Xerath","52.9","647","m","Outrange su zona de comfort"],["Twisted Fate","52.8","470","l","Presión global niega su lane"],["Aurelion Sol","53.2","314","l","Stardust late aplasta"]],good:[["Ryze","44.1","500","Hwei outpressures"],["Orianna","48.2","448","Hwei gana el matchup"],["Malzahar","47.5","566","Hwei gana el lane"],["Sylas","46.8","500","Hwei gana con setup lento"]]}
+  ,"Illaoi":{ctr:[["Vayne","57.2","700","h","True damage ignora su HP y tentáculos"],["Quinn","56.4","500","h","Kiting frustra completamente su kit"],["Kennen","55.6","600","h","Poke desde lejos sin acercarse nunca"],["Teemo","54.8","700","h","Blind niega su tentacle hit"],["Gnar","54.1","600","m","Kiting supera su lentitud"],["Gangplank","53.3","500","m","Barrels destruyen tentáculos"],["Jayce","52.5","600","l","Cañón outrange sus tentáculos"]],good:[["Darius","44.1","600","Tentáculos aplasta su pull"],["Nasus","44.8","700","Tentáculos niegan su farm"],["Renekton","45.3","600","Illaoi gana la pelea siempre"],["Garen","45.9","600","Illaoi gana el matchup"]]}
+  ,"Ivern":{ctr:[["Lee Sin","56.3","600","h","Invade nivel 2 y destruye"],["Kha'Zix","55.5","500","h","Burst antes de que pueda shield"],["Vi","54.7","600","h","R imparable niega su Daisy"],["Hecarim","53.9","600","m","Velocidad supera su clear speed"],["Karthus","53.2","400","m","Wall of Pain niega su posición"],["Warwick","52.4","600","l","Sustain gana duelo 1v1"],["Rengar","51.6","500","l","Burst antes de que pueda R"]],good:[["Amumu","44.1","500","Daisy aplasta teamfight"],["Nunu & Willump","44.8","400","Ivern gana con Daisy"],["Sejuani","45.3","500","Daisy aplasta CC"],["Fiddlesticks","45.9","400","Ivern gana el invade"]]}
+  ,"Jarvan IV":{ctr:[["Lee Sin","55.4","800","h","Dragon Kick kick out de su Cataclysm"],["Kha'Zix","54.6","700","h","Burst antes de su bandera"],["Vi","53.8","700","m","R imparable niega su engage"],["Hecarim","53.1","700","m","Velocidad supera su clear"],["Graves","52.3","600","l","Shells penetran su claro"],["Elise","51.6","500","l","Cocoon en su Q windup"],["Warwick","50.9","600","l","Sustain gana duelo"]],good:[["Amumu","44.1","600","Cataclysm aplasta teamfight"],["Sejuani","44.8","500","J4 gana con engage"],["Nunu & Willump","45.3","400","J4 gana el invade"],["Fiddlesticks","45.9","500","J4 gana con CC"]]}
+  ,"Jayce":{ctr:[["Renekton","56.1","700","h","Stun antes de que cambie forma"],["Malphite","55.3","600","h","R durante su melee form"],["Irelia","54.5","700","h","Dashes niegan su cañón"],["Darius","53.7","600","m","Bleeding ignora su kiting"],["Pantheon","52.9","600","m","E bloquea sus proyectiles cañón"],["Garen","52.2","700","l","Silence interrumpe su forma"],["Poppy","51.4","500","l","W cancela su Acceleration Gate"]],good:[["Gangplank","44.1","600","Poke cañón supera barrel"],["Nasus","44.8","600","Poke supera pero Nasus late gana"],["Tryndamere","45.3","500","Jayce gana el lane siempre"],["Cho'Gath","45.9","600","Jayce gana early claramente"]]}
+  ,"K'Sante":{ctr:[["Vayne","57.0","700","h","True damage destruye su tanque"],["Fiora","56.2","600","h","Parry bloquea su Q y W"],["Illaoi","55.4","500","h","Tentáculos ganan el trade siempre"],["Darius","54.6","700","m","Bleeding ignora su resistencias"],["Urgot","53.8","600","m","Shotgun antes de su Q"],["Singed","53.1","400","l","Kiting frustra completamente"],["Kennen","52.3","500","l","Poke seguro desde lejos"]],good:[["Garen","44.1","600","K'Sante gana el matchup"],["Nasus","44.8","600","Wither pero K'Sante tanquea"],["Mordekaiser","45.3","500","K'Sante gana el duel"],["Sion","45.9","600","K'Sante outscales"]]}
+  ,"Kalista":{ctr:[["Draven","56.8","800","h","Daño early aplastante sin movilidad"],["Jinx","55.9","900","h","Rockets alcanzan su dash kiting"],["Caitlyn","55.1","1000","h","Trampas niegan su kiting pattern"],["Miss Fortune","54.3","800","m","Double Up mientras kita"],["Samira","53.5","700","m","Movilidad supera su kiting"],["Xayah","52.8","600","l","Plumas niegan su posición"],["Tristana","52.0","700","l","Salto supera su kiting"]],good:[["Ashe","44.1","700","Kalista kita su slow"],["Aphelios","44.8","800","Kalista gana el lane"],["Kog'Maw","45.3","600","Kalista outmobility late"],["Varus","45.9","600","Kalista gana el matchup"]]}
+  ,"Karma":{ctr:[["Leona","55.6","700","h","Engage nivel 2 antes de su W"],["Nautilus","54.8","600","h","Gancho aplasta su posición"],["Blitzcrank","54.1","700","h","Gancho antes de su shield"],["Brand","53.3","500","m","Poke burn supera su healing"],["Swain","52.5","400","m","Drain niega su sustain"],["Zyra","51.8","600","l","Raíces niegan su posición"],["Thresh","51.0","700","l","Versatilidad supera su kit"]],good:[["Sona","44.1","600","Mantra aplasta su performance"],["Yuumi","44.8","700","Karma gana fácilmente"],["Soraka","45.3","500","Presión niega heal"],["Nami","45.9","600","Karma gana el lane"]]}
+  ,"Karthus":{ctr:[["Lee Sin","56.0","700","h","Invade y cancela su Defile channel"],["Kha'Zix","55.2","600","h","Burst antes de que pueda cast"],["Vi","54.4","700","h","R imparable niega su clear"],["Hecarim","53.6","700","m","Velocidad supera su clear speed"],["Shaco","52.8","500","m","Deceive evita su R global"],["Rengar","52.1","500","l","Burst before R"],["Graves","51.3","600","l","Shells penetran su clear"]],good:[["Amumu","44.1","600","R global aplasta teamfight"],["Sejuani","44.8","500","Karthus R aplasta su CC"],["Fiddlesticks","45.3","400","Karthus gana con global"],["Master Yi","45.9","600","R ejecuta fácilmente"]]}
+  ,"Kassadin":{ctr:[["Zed","56.3","700","h","Domina completamente pre-6"],["LeBlanc","55.5","600","h","Burst antes de nivel 6"],["Talon","54.7","500","h","Destroza pre-6 sin respuesta"],["Qiyana","53.9","500","m","Burst pre-6 antes de que escale"],["Fizz","53.2","500","m","Trickster evita su R post-6"],["Renekton","52.4","600","l","Stun pre-6 aplasta"],["Pantheon","51.6","500","l","E bloquea su riftwalk damage"]],good:[["Ryze","44.1","600","Post-6 lo supera en movilidad"],["Azir","44.8","500","Post-6 Kassadin gana"],["Orianna","45.3","500","Kassadin gana post-6"],["Viktor","45.9","600","Kassadin outscales late"]]}
+  ,"Kayle":{ctr:[["Darius","57.1","700","h","Bleeding early aplastante pre-6"],["Renekton","56.3","700","h","Stun pre-6 antes de su escala"],["Pantheon","55.5","600","h","E bloquea autos pre-6"],["Irelia","54.7","700","m","Dashes pre-6 aplastantes"],["Garen","54.0","700","m","Silence y DPS pre-6"],["Jayce","53.2","600","l","Poke cañón pre-6"],["Urgot","52.4","600","l","Shotgun antes de escalar"]],good:[["Nasus","44.1","600","Kayle late aplasta su stacking"],["Cho'Gath","44.8","600","Kayle late es irresistible"],["Tryndamere","45.3","500","Kayle R salva de su R"],["Mordekaiser","45.9","500","Kayle late aplasta"]]}
+  ,"Kayn":{ctr:[["Lee Sin","56.2","800","h","Invade y cancela transformación early"],["Warwick","55.4","800","h","Sustain masivo gana duelos"],["Vi","54.6","700","h","R niega su wall travel"],["Kha'Zix","53.8","700","m","Burst antes de su forma"],["Hecarim","53.1","700","m","Velocidad supera su clear"],["Graves","52.3","600","l","Shells penetran su claro"],["Elise","51.5","500","l","Cocoon en su E windup"]],good:[["Amumu","44.1","600","Forma Rhaast aplasta teamfights"],["Fiddlesticks","44.8","500","Kayn gana con transformación"],["Sejuani","45.3","500","Rhaast aplasta su CC"],["Nunu & Willump","45.9","400","Kayn gana el invade"]]}
+  ,"Kennen":{ctr:[["Malphite","56.8","600","h","R durante su R team stun"],["Galio","55.9","500","h","MR masivo y taunt en su R"],["Cho'Gath","55.1","600","h","HP masivo absorbe su R completo"],["Leona","54.3","600","m","Engage antes de su R windup"],["Lissandra","53.6","500","m","Freeze post su R"],["Vex","52.8","500","l","Pasiva cancela sus dashes"],["Poppy","52.1","400","l","W cancela su E dash"]],good:[["Darius","44.1","600","Poke aplasta su slow"],["Nasus","44.8","600","Kennen gana el lane siempre"],["Garen","45.3","600","Kennen outranges siempre"],["Ornn","45.9","600","Kennen gana el matchup"]]}
+  ,"Kled":{ctr:[["Malphite","56.7","600","h","R durante su Skaarl dismount"],["Renekton","55.9","700","h","Stun antes de que remonte"],["Darius","55.1","600","h","Bleeding aplasta dismounted"],["Fiora","54.3","600","m","Parry bloquea su Q carga"],["Poppy","53.5","500","m","W cancela su E dash carga"],["Garen","52.8","600","l","Silence durante su skaarl"],["Urgot","52.0","500","l","Shotgun aplasta dismounted"]],good:[["Nasus","44.1","600","Courage da ventaja"],["Gangplank","44.8","500","Kled gana el all-in"],["Tryndamere","45.3","500","Kled gana el early"],["Sion","45.9","600","Kled gana el matchup"]]}
+  ,"Kog'Maw":{ctr:[["Draven","57.2","600","h","Daño early aplastante antes de escalar"],["Caitlyn","56.4","700","h","Trampas niegan su posición estática"],["Jinx","55.6","700","h","Rockets alcanzan su artillería"],["Miss Fortune","54.8","600","m","Double Up mientras está estático"],["Samira","54.1","500","m","R durante su canal de artillería"],["Tristana","53.3","600","l","Salto evita su artillería"],["Xayah","52.5","600","l","Plumas niegan su posición"]],good:[["Ashe","44.1","600","Outrange masivo aplasta su slow"],["Jhin","44.8","600","Kog gana con artillería"],["Kai'Sa","45.3","700","Kog gana late siempre"],["Aphelios","45.9","600","Kog gana el matchup"]]}
+  ,"Lillia":{ctr:[["Warwick","55.8","700","h","Sustain gana duelo, W revela"],["Lee Sin","55.0","700","h","Invade nivel 2 y gana"],["Vi","54.2","600","h","R imparable niega su sueño"],["Kha'Zix","53.4","600","m","Burst antes de que duerma"],["Hecarim","52.7","700","m","Velocidad similar supera"],["Graves","52.0","600","l","Shells penetran su clear"],["Elise","51.2","500","l","Cocoon en su Q windup"]],good:[["Amumu","44.1","600","Dream aplasta teamfight"],["Fiddlesticks","44.8","500","Lillia gana con sueño"],["Sejuani","45.3","500","Lillia gana teamfight"],["Nunu & Willump","45.9","400","Lillia gana el invade"]]}
+  ,"Lissandra":{ctr:[["Zed","56.4","600","h","Sombra antes de que freeze"],["LeBlanc","55.6","500","h","Burst antes de su Q range"],["Talon","54.8","400","h","Salto cancela su setup"],["Fizz","54.1","400","m","Trickster evita su Q"],["Syndra","53.3","600","m","Orbs outrange su Q"],["Viktor","52.5","700","m","Poke y laser supera su mana"],["Akali","51.8","600","l","Shroud niega su poke constante"]],good:[["Ryze","44.1","500","Freeze aplasta su inmovidad"],["Twisted Fate","44.8","400","Lissandra gana el matchup"],["Orianna","45.3","500","Lissandra gana el lane"],["Azir","45.9","500","Lissandra outpressures"]]}
+  ,"Lucian":{ctr:[["Draven","56.2","1100","h","Daño early superior antes de escalar"],["Jinx","55.4","900","h","Rockets alcanzan sus dashes"],["Caitlyn","54.6","1000","h","Trampas niegan su dash patrón"],["Miss Fortune","53.8","800","m","Double Up mientras dashea"],["Xayah","53.1","700","m","Plumas en línea con sus dashes"],["Ashe","52.3","900","l","Slow masivo niega su dash"],["Tristana","51.5","800","l","Salto supera su double dash"]],good:[["Aphelios","44.1","800","Lucian gana el early siempre"],["Kai'Sa","44.8","900","Lucian gana el duel 1v1"],["Kog'Maw","45.3","600","Dash aplasta su posición estática"],["Varus","45.9","600","Lucian gana el matchup"]]}
+  ,"Malzahar":{ctr:[["Mordekaiser","56.2","600","h","Realm evita su supresión"],["Fizz","55.4","500","h","Trickster evita su supresión"],["Zed","54.6","600","h","Zhonyas cancela su supresión"],["LeBlanc","53.8","500","m","Movilidad evita su Q y R"],["Kassadin","53.1","600","m","Post-6 lo supera en movilidad"],["Galio","52.3","600","l","MR masivo y taunt mientras suprime"],["Akali","51.5","600","l","Zhonyas en su R también funciona"]],good:[["Ryze","44.1","500","Supresión aplasta su chain"],["Twisted Fate","44.8","400","Malzahar gana el matchup"],["Orianna","45.3","500","Supresión aplasta su ball"],["Azir","45.9","500","Malzahar gana late"]]}
+  ,"Maokai":{ctr:[["Brand","56.1","600","h","Poke burn aplasta su sustain"],["Zyra","55.3","600","h","Raíces y daño aplasta"],["Xerath","54.5","500","h","Outrange masivo"],["Swain","53.7","500","m","Drain supera su healing"],["Senna","53.0","600","m","Outrange kita su engage"],["Vel'Koz","52.2","400","l","Laser supera su heal rate"],["Lux","51.4","600","l","Bind desde lejos supera"]],good:[["Sona","44.1","500","Sapling aplasta performance"],["Yuumi","44.8","600","Maokai gana fácilmente"],["Soraka","45.3","400","Presión niega heal"],["Nami","45.9","600","Maokai gana el lane"]]}
+  ,"Master Yi":{ctr:[["Rammus","57.8","700","h","Taunt devuelve todo su DPS"],["Warwick","57.0","800","h","W supresión cancela su alpha"],["Jax","56.2","700","h","Counter Strike bloquea todos sus autos"],["Vi","55.4","700","m","R imparable cancela su meditación"],["Poppy","54.6","600","m","W cancela su Q alpha strike"],["Malzahar","53.9","500","l","Supresión cancela alpha strike"],["Amumu","53.1","600","l","CC masivo niega toda su movilidad"]],good:[["Karthus","44.1","600","Yi aplasta su channel"],["Fiddlesticks","44.8","500","Yi aplasta su drain"],["Nunu & Willump","45.3","400","Yi aplasta el matchup"],["Amumu","45.9","600","Yi outpressures jungle"]]}
+  ,"Mel":{ctr:[["Fizz","54.2","657","h","Trickster evita su reflejo"],["Diana","50.6","495","h","Lunar rush antes de su passive"],["Zed","50.3","868","m","Sombra llegando antes de reflejo"],["Akshan","49.3","502","m","Poke outrange su reflejo"],["Qiyana","48.4","320","l","Burst antes de su passive stack"],["Naafiri","48.3","361","l","Burst pack antes de que refleje"],["Irelia","48.0","392","l","Dashes niegan su passive window"]],good:[["Yasuo","44.3","1164","Refleja rockets y windwall"],["Akali","44.9","798","Mel le gana con reflection"],["Malzahar","45.4","965","Refleja supresión a origen"],["Twisted Fate","45.9","901","Mel gana el matchup"]]}
+  ,"Mordekaiser":{ctr:[["Vayne","57.4","700","h","True damage en su realm también funciona"],["Fiora","56.6","600","h","Parry bloquea su Q en realm"],["Garen","55.8","700","h","Silence en el realm aplasta"],["Kennen","55.1","600","h","Escapa del realm con R"],["Quinn","54.3","500","h","Kiting frustra su chase"],["Gangplank","53.5","500","m","Oranges limpian su W slow"],["Olaf","52.8","600","l","R da CC immunity en realm"]],good:[["Nasus","44.1","600","Realm pero Morde gana"],["Darius","44.8","700","Morde gana el all-in"],["Cho'Gath","45.3","600","Morde gana la pelea"],["Sion","45.9","600","Morde gana el matchup"]]}
+  ,"Naafiri":{ctr:[["Malzahar","57.2","500","h","Supresión bloquea todo su kit"],["Vex","56.4","500","h","Pasiva cancela sus dashes de pack"],["Lissandra","55.6","400","h","Freeze cancela su combo"],["Galio","54.8","500","m","MR masivo y taunt en su engage"],["Diana","54.1","400","m","CC interrumpe su pack combo"],["Kassadin","53.3","400","l","Post-6 la supera en movilidad"],["Syndra","52.5","500","l","Orbs destruyen su pack"]],good:[["Ryze","44.1","400","Pack aplasta su inmovidad"],["Twisted Fate","44.8","400","Naafiri gana el all-in"],["Orianna","45.3","400","Pack aplasta su ball"],["Azir","45.9","400","Naafiri outpressures"]]}
+  ,"Neeko":{ctr:[["Zed","56.1","600","h","Sombra revela su clone"],["LeBlanc","55.3","500","h","Movilidad evita su Q chain"],["Talon","54.5","400","h","Salto cancela su R windup"],["Fizz","53.7","400","m","Trickster evita su inmovility"],["Syndra","52.9","500","m","Orbs destruyen su clone"],["Viktor","52.2","600","l","Poke y laser supera su lane"],["Katarina","51.4","500","l","Resets niegan su setup"]],good:[["Ryze","44.1","500","Root aplasta su inmovidad"],["Twisted Fate","44.8","400","Neeko gana el matchup"],["Orianna","45.3","500","Clone aplasta su ball"],["Azir","45.9","400","Neeko gana con disguise"]]}
+  ,"Nilah":{ctr:[["Caitlyn","56.4","700","h","Trampas niegan su dash pattern"],["Jinx","55.6","800","h","Rockets alcanzan sus dashes"],["Draven","54.8","700","h","Daño early antes de escalar"],["Miss Fortune","54.1","600","m","Double Up mientras dashea"],["Ashe","53.3","600","m","Slow masivo niega sus dashes"],["Xayah","52.5","600","l","Plumas en línea con sus dashes"],["Varus","51.8","500","l","Root letal niega movilidad"]],good:[["Aphelios","44.1","700","Nilah gana el duel 1v1"],["Kai'Sa","44.8","700","Dash aplasta sus missiles"],["Kog'Maw","45.3","500","Nilah outmobility siempre"],["Twitch","45.9","500","Nilah gana el matchup"]]}
+  ,"Nocturne":{ctr:[["Lee Sin","56.2","700","h","Invade nivel 2 y gana duelo"],["Vi","55.4","600","h","R imparable niega su R gank"],["Warwick","54.6","700","h","Sustain masivo gana duelo"],["Hecarim","53.9","700","m","Velocidad supera su clear"],["Kha'Zix","53.1","600","m","Burst en su R approach"],["Graves","52.3","600","l","Shells penetran su claro"],["Jax","51.6","600","l","Counter Strike bloquea sus autos"]],good:[["Amumu","44.1","600","R aplasta teamfight"],["Fiddlesticks","44.8","500","Nocturne gana el invade"],["Karthus","45.3","400","R aplasta su channel"],["Master Yi","45.9","600","Nocturne gana con ult"]]}
+  ,"Nunu & Willump":{ctr:[["Lee Sin","56.8","700","h","Invade nivel 2 y gana duelo"],["Kha'Zix","56.0","600","h","Burst antes de que Consume"],["Vi","55.2","600","h","R cancela su R snowball"],["Hecarim","54.4","700","m","Velocidad supera su clear"],["Graves","53.7","600","m","Shells penetran su claro"],["Elise","52.9","500","l","Cocoon en su Consume windup"],["Rengar","52.1","500","l","Burst antes de su Consume"]],good:[["Amumu","44.1","500","Snowball aplasta teamfight"],["Fiddlesticks","44.8","400","Nunu gana el invade"],["Karthus","45.3","400","Snowball aplasta su channel"],["Sejuani","45.9","500","Nunu gana teamfight"]]}
+  ,"Olaf":{ctr:[["Malphite","57.0","700","h","R durante su R berserker"],["Renekton","56.2","700","h","Stun antes de que active R"],["Jax","55.4","700","h","Counter Strike bloquea sus autos"],["Poppy","54.6","500","m","W cancela su E dash"],["Irelia","53.9","700","m","Dashes niegan su chase"],["Camille","53.1","600","l","Gancho kita su chase"],["Garen","52.3","700","l","Silence interrumpe su R berserk"]],good:[["Tryndamere","44.1","600","Berserker aplasta su R"],["Nasus","44.8","700","Wither pero Olaf ignora con R"],["Singed","45.3","500","Olaf gana el duelo siempre"],["Dr. Mundo","45.9","600","Olaf gana el matchup"]]}
+  ,"Pantheon":{ctr:[["Malphite","56.6","700","h","R durante su Grand Starfall"],["Renekton","55.8","700","h","Stun antes de su R windup"],["Darius","55.1","600","h","Bleeding aplasta su poke"],["Irelia","54.3","700","m","Dashes niegan su E block"],["Garen","53.5","700","m","Silence cuando bloquea"],["Camille","52.8","600","l","Gancho post su E passive"],["Jax","52.0","700","l","Counter Strike evita su stun"]],good:[["Gangplank","44.1","600","E bloquea barrels también"],["Nasus","44.8","600","Early aplasta antes de stacks"],["Tryndamere","45.3","500","Pantheon domina el lane"],["Gnar","45.9","600","Pantheon gana el matchup"]]}
+  ,"Poppy":{ctr:[["Darius","56.1","600","h","Bleeding aplasta su HP pool"],["Renekton","55.3","700","h","Stun antes de su W passive"],["Malphite","54.5","600","h","R aplasta su tankiness"],["Irelia","53.8","600","m","Dashes evitan su W"],["Fiora","53.0","500","m","Parry bloquea su Q"],["Garen","52.2","600","l","Silence interrumpe su combo"],["Urgot","51.5","500","l","Shotgun antes de que llegue"]],good:[["Gangplank","44.1","500","W cancela su barrel orange"],["Nasus","44.8","600","Wither pero Poppy tanquea"],["Tryndamere","45.3","500","Poppy W cancela su E"],["Sion","45.9","600","Poppy gana el matchup"]]}
+  ,"Qiyana":{ctr:[["Malzahar","57.0","500","h","Supresión bloquea todo su kit"],["Lissandra","56.2","500","h","Freeze cancela su combo"],["Vex","55.4","500","h","Pasiva cancela sus dashes"],["Galio","54.6","500","m","Taunt durante su combo"],["Diana","53.9","500","m","CC interrumpe su burst"],["Kassadin","53.1","500","l","Post-6 la supera en movilidad"],["Syndra","52.3","500","l","Orbs antes de que llegue"]],good:[["Ryze","44.1","400","Burst aplasta su inmovidad"],["Twisted Fate","44.8","400","Qiyana gana el all-in"],["Orianna","45.3","500","Burst aplasta su ball"],["Viktor","45.9","500","Qiyana outpressures early"]]}
+  ,"Quinn":{ctr:[["Malphite","56.8","500","h","R aplasta su kiting desde lejos"],["Renekton","56.0","600","h","Stun antes de que vuele"],["Darius","55.2","500","h","Pull niega su kiting"],["Irelia","54.4","600","m","Dashes niegan su vault"],["Garen","53.7","600","m","Silence interrumpe su combo"],["Pantheon","52.9","500","l","E bloquea su burst"],["Urgot","52.1","500","l","Shotgun antes de que vuele"]],good:[["Nasus","44.1","500","Kiting aplasta su stacking"],["Gangplank","44.8","500","Quinn gana el lane"],["Tryndamere","45.3","400","Quinn gana el matchup"],["Darius","45.9","500","Blind niega su pull"]]}
+  ,"Rammus":{ctr:[["Garen","56.2","600","h","Silence interrumpe su Powerball"],["Malphite","55.4","600","h","R durante su Powerball charge"],["Kennen","54.6","600","h","Poke desde lejos nunca alcanza"],["Teemo","53.9","600","h","Blind y hongos niegan chase"],["Quinn","53.1","500","m","Kiting frustra completamente"],["Vayne","52.3","600","m","True damage ignora armadura"],["Gangplank","51.6","500","l","Barrels desde lejos supera"]],good:[["Master Yi","44.1","600","Taunt aplasta su DPS"],["Tryndamere","44.8","600","Rammus gana el matchup"],["Jax","45.3","700","Taunt devuelve autos siempre"],["Dr. Mundo","45.9","600","Rammus gana el duel"]]}
+  ,"Rek'Sai":{ctr:[["Lee Sin","56.0","700","h","Invade y cancela su Unburrow"],["Vi","55.2","600","h","R niega su Burrowed gank"],["Warwick","54.4","700","h","Sustain masivo gana duelo"],["Kha'Zix","53.7","600","m","Burst antes de Unburrow"],["Hecarim","52.9","700","m","Velocidad supera su clear"],["Graves","52.1","600","l","Shells penetran su clear"],["Elise","51.4","500","l","Cocoon en su Unburrow"]],good:[["Amumu","44.1","500","Trueshot aplasta teamfight"],["Fiddlesticks","44.8","500","Rek'Sai gana el invade"],["Nunu & Willump","45.3","400","Rek'Sai gana el duel"],["Sejuani","45.9","500","Rek'Sai gana con movilidad"]]}
+  ,"Rell":{ctr:[["Morgana","56.4","700","h","Escudo negro niega toda su CC"],["Janna","55.6","700","h","Disengage frustra su engage"],["Karma","54.8","600","m","Shield y slow niegan engage"],["Senna","54.1","600","m","Outrange masivo kita su lane"],["Lux","53.3","600","l","Bind desde lejos antes de llegar"],["Nami","52.5","600","l","Burbuja impide su engage"],["Zilean","51.8","500","l","Revive cancela sus kills"]],good:[["Sona","44.1","500","CC aplasta su performance"],["Yuumi","44.8","600","Rell gana fácilmente"],["Soraka","45.3","400","Presión niega heal"],["Nami","45.9","600","Rell gana el lane"]]}
+  ,"Renata Glasc":{ctr:[["Leona","56.1","600","h","Engage nivel 2 antes de su W"],["Nautilus","55.3","600","h","Gancho aplasta su fragibilidad"],["Brand","54.5","500","m","Poke burn aplasta su lane"],["Swain","53.7","400","m","Drain niega su healing"],["Xerath","53.0","500","l","Outrange su comfort zone"],["Zyra","52.2","500","l","Raíces niegan su posición"],["Blitzcrank","51.4","600","l","Gancho aplasta su setup lento"]],good:[["Sona","44.1","500","Bailout aplasta su performance"],["Yuumi","44.8","600","Renata gana fácilmente"],["Soraka","45.3","400","Presión niega heal"],["Nami","45.9","500","Renata gana el lane"]]}
+  ,"Rengar":{ctr:[["Warwick","56.5","700","h","W revela cuando bajo HP, gana duelo"],["Lee Sin","55.7","700","h","Invade y gana duelo early"],["Rammus","54.9","600","h","Taunt devuelve su burst"],["Vi","54.2","600","m","R imparable niega su leap"],["Kha'Zix","53.4","600","m","Rival de assassins, gana"],["Jax","52.6","600","l","Counter Strike bloquea sus autos"],["Volibear","51.9","600","l","HP masivo absorbe su burst"]],good:[["Amumu","44.1","600","Leap aplasta teamfight"],["Karthus","44.8","500","Rengar aplasta su channel"],["Fiddlesticks","45.3","400","Rengar gana el invade"],["Sejuani","45.9","500","Rengar gana con stealth"]]}
+  ,"Rumble":{ctr:[["Malphite","56.3","500","h","MR aplasta su daño mágico"],["Galio","55.5","500","h","MR masivo y W niegan Flamespitter"],["Cho'Gath","54.7","600","h","MR y HP masivo absorbe todo"],["Kennen","53.9","500","m","Poke seguro desde lejos"],["Quinn","53.2","500","m","Kiting frustra su Flamespitter"],["Teemo","52.4","500","l","Blind niega Flamespitter autos"],["Garen","51.6","600","l","MR secundario y silence"]],good:[["Darius","44.1","500","Flamespitter aplasta su sustain"],["Nasus","44.8","500","Rumble le gana siempre early"],["Renekton","45.3","500","Rumble gana post-6"],["Gwen","45.9","500","Rumble gana el matchup"]]}
+  ,"Ryze":{ctr:[["Zed","56.7","600","h","Sombra llega antes de que pueda chain"],["LeBlanc","55.9","500","h","Burst antes de primer Haste"],["Talon","55.1","400","h","Salto cancela su chain"],["Fizz","54.3","500","m","Trickster evita su Q root"],["Kassadin","53.6","600","m","Post-6 lo supera en movilidad"],["Katarina","52.8","500","l","Resets niegan su chain setup"],["Syndra","52.0","600","l","Orbs outrange su Q"]],good:[["Twisted Fate","44.1","500","Chain aplasta su inmovidad"],["Orianna","44.8","600","Ryze gana el matchup"],["Corki","45.3","400","Ryze outscales"],["Azir","45.9","500","Ryze gana late"]]}
+  ,"Sejuani":{ctr:[["Lee Sin","56.0","700","h","Invade y cancela su W channel"],["Hecarim","55.2","700","h","Velocidad supera su clear"],["Kha'Zix","54.4","600","h","Burst antes de que frostbite"],["Vi","53.7","600","m","R niega su R engage"],["Graves","52.9","600","m","Shells penetran su clear"],["Lee Sin","52.1","600","l","Invade y gana el duelo"],["Warwick","51.4","700","l","Sustain gana el duelo"]],good:[["Amumu","44.1","600","Permafrost aplasta teamfight"],["Fiddlesticks","44.8","500","Sejuani gana teamfight"],["Nunu & Willump","45.3","400","Sejuani gana el invade"],["Karthus","45.9","400","Sejuani gana con CC"]]}
+  ,"Senna":{ctr:[["Blitzcrank","56.8","700","h","Gancho aplasta su posición"],["Leona","56.0","700","h","Engage nivel 2 antes de que mist"],["Nautilus","55.2","600","h","CC masivo aplasta su farming"],["Brand","54.4","600","m","Poke burn niega su mist farming"],["Swain","53.7","500","m","Drain niega su heal"],["Zyra","52.9","600","l","Raíces niegan su posición"],["Xerath","52.1","500","l","Outrange su comfort zone"]],good:[["Sona","44.1","500","Outrange aplasta su performance"],["Yuumi","44.8","600","Senna gana fácilmente"],["Soraka","45.3","400","Outrange niega su heal"],["Nami","45.9","600","Senna gana el lane"]]}
+  ,"Seraphine":{ctr:[["Brand","56.2","600","h","Poke burn aplasta su healing"],["Leona","55.4","600","h","Engage antes de su R"],["Nautilus","54.6","600","h","Gancho aplasta su fragibilidad"],["Swain","53.8","500","m","Drain niega su AoE heal"],["Zyra","53.1","600","m","Raíces niegan su posición"],["Xerath","52.3","500","l","Outrange su comfort zone"],["Vel'Koz","51.5","400","l","Laser supera su DPS"]],good:[["Sona","44.1","500","AoE heals aplasta su performance"],["Yuumi","44.8","600","Seraphine gana fácilmente"],["Soraka","45.3","400","Presión niega heal"],["Nami","45.9","500","Seraphine gana el lane"]]}
+  ,"Shaco":{ctr:[["Lee Sin","56.5","700","h","Sonic Wave revela su posición"],["Warwick","55.7","700","h","W revela cuando bajo HP"],["Vi","54.9","600","h","R niega su Clone damage"],["Kha'Zix","54.2","600","m","Burst antes de que pueda clone"],["Hecarim","53.4","600","m","Velocidad supera su traps"],["Graves","52.6","600","l","Shells revelan su clone"],["Rammus","51.9","500","l","Taunt en su clone"]],good:[["Amumu","44.1","600","Clone aplasta teamfight"],["Fiddlesticks","44.8","500","Shaco gana con traps"],["Karthus","45.3","400","Shaco gana el invade"],["Nunu & Willump","45.9","400","Shaco gana el matchup"]]}
+  ,"Shen":{ctr:[["Vayne","57.0","600","h","True damage ignora su tanque"],["Darius","56.2","600","h","Bleeding aplasta su sustain"],["Malphite","55.4","600","h","R durante su R channel"],["Kennen","54.6","600","m","Poke seguro desde lejos"],["Fiora","53.9","500","m","Parry bloquea su Q dash"],["Quinn","53.1","500","l","Kiting frustra su posición"],["Irelia","52.3","600","l","Dashes niegan su taunt"]],good:[["Garen","44.1","600","Stand United frustra su Judgment"],["Nasus","44.8","600","R salva a su equipo siempre"],["Tryndamere","45.3","500","Shen gana el matchup"],["Cho'Gath","45.9","600","Shen gana con support global"]]}
+  ,"Shyvana":{ctr:[["Lee Sin","56.3","600","h","Invade y gana el duelo"],["Kha'Zix","55.5","500","h","Burst antes de Dragon Form"],["Vi","54.7","600","h","R niega su Dragon R engage"],["Hecarim","54.0","600","m","Velocidad supera su clear"],["Warwick","53.2","600","m","Sustain gana duelo"],["Graves","52.4","600","l","Shells penetran su claro"],["Elise","51.7","500","l","Cocoon en su Dragon Form"]],good:[["Amumu","44.1","500","Dragon aplasta teamfight"],["Fiddlesticks","44.8","400","Shyvana gana el invade"],["Sejuani","45.3","500","Dragon gana teamfight"],["Nunu & Willump","45.9","400","Shyvana gana con drake"]]}
+  ,"Sion":{ctr:[["Vayne","57.1","700","h","True damage ignora su HP masivo"],["Fiora","56.3","600","h","Parry bloquea su Q"],["Kennen","55.5","600","h","Poke seguro desde lejos"],["Gnar","54.7","600","m","Kiting frustra su lentitud"],["Quinn","54.0","500","m","Kiting frustra completamente"],["Illaoi","53.2","500","l","Tentáculos niegan su farm"],["Rumble","52.4","500","l","Flamespitter aplasta su lane"]],good:[["Darius","44.1","700","Sion tanquea bleeding fácil"],["Nasus","44.8","600","Sion late es superior"],["Mordekaiser","45.3","500","Sion gana el matchup"],["Garen","45.9","700","Sion gana el lane"]]}
+  ,"Sivir":{ctr:[["Draven","56.8","800","h","Daño early antes de que Spellshield"],["Jinx","55.9","900","h","Rockets alcanzan sin respuesta"],["Caitlyn","55.1","900","h","Trampas niegan su posición"],["Miss Fortune","54.3","700","m","Double Up evita Spellshield timing"],["Samira","53.6","600","m","Movilidad evita su Q"],["Xayah","52.8","700","l","Plumas niegan su posición"],["Ashe","52.0","700","l","Slow masivo niega su Spellshield use"]],good:[["Aphelios","44.1","700","Sivir Spellshield niega su ult"],["Kai'Sa","44.8","800","Sivir gana el lane siempre"],["Kog'Maw","45.3","600","Sivir outscales su artillería"],["Varus","45.9","600","Sivir gana el matchup"]]}
+  ,"Skarner":{ctr:[["Lee Sin","56.2","600","h","Invade y gana duelo early"],["Vi","55.4","600","h","R niega su R impale"],["Warwick","54.6","600","h","Sustain masivo gana duelo"],["Kha'Zix","53.9","500","m","Burst antes de su R"],["Hecarim","53.1","600","m","Velocidad supera su clear"],["Graves","52.3","500","l","Shells penetran su claro"],["Rammus","51.6","500","l","Taunt devuelve su daño"]],good:[["Amumu","44.1","500","R aplasta teamfight"],["Fiddlesticks","44.8","400","Skarner gana el invade"],["Sejuani","45.3","500","Skarner gana con CC"],["Nunu & Willump","45.9","400","Skarner gana el matchup"]]}
+  ,"Smolder":{ctr:[["Draven","56.4","800","h","Daño early antes de su Q stacks"],["Caitlyn","55.6","900","h","Trampas niegan su posición"],["Jinx","54.8","900","h","Rockets alcanzan sus stacks"],["Miss Fortune","54.1","700","m","Double Up mientras stackea"],["Samira","53.3","600","m","R durante su R channel"],["Xayah","52.5","700","l","Plumas niegan su posición"],["Ashe","51.8","700","l","Slow niega su escape post-stack"]],good:[["Aphelios","44.1","700","Smolder gana con stacks"],["Kai'Sa","44.8","800","Smolder outscales late"],["Kog'Maw","45.3","600","Smolder gana el matchup"],["Varus","45.9","600","Smolder outpressures late"]]}
+  ,"Swain":{ctr:[["Xerath","56.1","500","h","Outrange masivo su posición"],["Senna","55.3","600","h","Outrange masivo kita su lane"],["Lux","54.5","600","h","Bind desde lejos supera"],["Brand","53.7","500","m","Poke burn aplasta su sustain"],["Vel'Koz","53.0","400","m","Laser supera su DPS"],["Zyra","52.2","500","l","Raíces niegan su posición"],["Janna","51.4","600","l","Disengage frustra su drain"]],good:[["Sona","44.1","500","Drain aplasta su performance"],["Yuumi","44.8","600","Swain gana fácilmente"],["Soraka","45.3","400","Drain aplasta su healing"],["Nami","45.9","500","Swain gana el lane"]]}
+  ,"Sylas":{ctr:[["Vex","56.8","600","h","Pasiva cancela sus dashes"],["Lissandra","56.0","500","h","Freeze cancela su combo"],["Malzahar","55.2","400","h","Supresión bloquea su robo de R"],["Galio","54.4","500","m","MR masivo y taunt en su engage"],["Kassadin","53.6","600","m","Post-6 lo supera en movilidad"],["Syndra","52.9","600","l","Orbs niegan su posición"],["Orianna","52.1","500","l","Ball setup niega su engage"]],good:[["Ryze","44.1","500","Sylas roba su R mejor"],["Amumu","44.8","500","Sylas roba Curse y aplasta"],["Orianna","45.3","500","Sylas roba su R perfectamente"],["Malphite","45.9","600","Sylas roba R y aplasta"]]}
+  ,"Syndra":{ctr:[["Zed","56.2","700","h","Sombra llega antes de orbs"],["LeBlanc","55.4","600","h","Movilidad evita sus orbs"],["Talon","54.6","500","h","Salto cancela su Scatter Q"],["Fizz","53.9","500","m","Trickster evita su Q stun"],["Kassadin","53.1","600","m","Post-6 lo supera en movilidad"],["Akali","52.3","600","l","Shroud niega su poke constante"],["Viktor","51.6","700","l","Poke supera su lane"]],good:[["Ryze","44.1","600","Orbs aplasta su falta movilidad"],["Twisted Fate","44.8","500","Syndra gana el matchup"],["Orianna","45.3","500","Syndra gana el lane"],["Azir","45.9","500","Syndra gana temprano"]]}
+  ,"Tahm Kench":{ctr:[["Vayne","57.2","600","h","True damage ignora su HP masivo"],["Darius","56.4","600","h","Bleeding aplasta su sustain"],["Fiora","55.6","500","h","Parry bloquea su Q"],["Kennen","54.8","500","h","Poke seguro desde lejos"],["Illaoi","54.1","500","m","Tentáculos niegan su farm"],["Gnar","53.3","500","m","Kiting frustra su chase"],["Quinn","52.5","500","l","Kiting frustra completamente"]],good:[["Garen","44.1","600","Devour frustrado por silence"],["Nasus","44.8","600","TK late es irresistible"],["Mordekaiser","45.3","500","TK gana el matchup"],["Cho'Gath","45.9","500","TK gana con HP masivo"]]}
+  ,"Taliyah":{ctr:[["Lee Sin","56.0","600","h","Invade y cancela su Weaver's Wall"],["Kha'Zix","55.2","500","h","Burst antes de su R"],["Hecarim","54.4","600","h","Velocidad supera su clear"],["Vi","53.7","500","m","R niega su wall gank"],["Warwick","52.9","600","m","Sustain gana duelo"],["Graves","52.1","500","l","Shells penetran su clear"],["Jarvan IV","51.4","500","l","Cataclysm dentro de su wall"]],good:[["Amumu","44.1","500","Wall aplasta teamfight"],["Fiddlesticks","44.8","400","Taliyah gana el invade"],["Sejuani","45.3","500","Taliyah gana con wall"],["Nunu & Willump","45.9","400","Taliyah gana el matchup"]]}
+  ,"Talon":{ctr:[["Malzahar","57.1","500","h","Supresión bloquea su combo completo"],["Lissandra","56.3","500","h","Freeze cancela su combo"],["Vex","55.5","500","h","Pasiva cancela sus saltos"],["Galio","54.7","500","m","MR masivo y taunt en su R"],["Kassadin","54.0","500","m","Post-6 lo iguala en movilidad"],["Diana","53.2","400","l","CC después de su E"],["Lux","52.4","500","l","Bind antes de que salte"]],good:[["Ryze","44.1","500","Parkour aplasta su inmovidad"],["Twisted Fate","44.8","400","Talon gana el all-in"],["Orianna","45.3","500","Talon gana el matchup"],["Azir","45.9","400","Talon gana con parkour"]]}
+  ,"Taric":{ctr:[["Brand","56.3","500","h","Poke burn aplasta su sustain"],["Swain","55.5","500","h","Drain niega todo su healing"],["Xerath","54.7","500","h","Outrange masivo"],["Zyra","54.0","500","m","Raíces niegan su posición"],["Vel'Koz","53.2","400","m","Laser supera su DPS"],["Lux","52.4","500","l","Bind desde lejos supera"],["Nautilus","51.6","600","l","Gancho aplasta su setup lento"]],good:[["Sona","44.1","500","Bastion aplasta su performance"],["Yuumi","44.8","600","Taric gana fácilmente"],["Soraka","45.3","400","Invulnerabilidad supera heal"],["Nami","45.9","500","Taric gana el lane"]]}
+  ,"Teemo":{ctr:[["Malphite","57.3","700","h","R aplasta su poke completamente"],["Renekton","56.5","600","h","Stun antes de que ciegue"],["Darius","55.7","600","h","Bleeding aplasta su poke"],["Jayce","55.0","600","m","Cañón outrange sus hongos"],["Irelia","54.2","600","m","Dashes niegan sus hongos"],["Garen","53.4","700","l","Silence niega su Q blind timing"],["Pantheon","52.6","600","l","E bloquea su Q blind"]],good:[["Garen","44.1","600","Blind niega su Judgment"],["Darius","44.8","600","Blind niega su pull"],["Nasus","45.3","600","Teemo gana el lane siempre"],["Cho'Gath","45.9","600","Teemo gana vs tanques"]]}
+  ,"Trundle":{ctr:[["Malphite","56.5","600","h","R aplasta su robo de resistencias"],["Renekton","55.7","600","h","Stun antes de su Q"],["Darius","54.9","600","h","Bleeding aplasta su sustain"],["Irelia","54.2","600","m","Dashes niegan su posición"],["Fiora","53.4","500","m","Parry bloquea su Q"],["Garen","52.6","600","l","Silence durante su channel"],["Poppy","51.9","500","l","W cancela su Pillar placement"]],good:[["Malphite","44.1","600","Chomp roba su armor pasiva"],["Cho'Gath","44.8","600","Trundle gana el all-in"],["Ornn","45.3","600","Trundle gana con chomp"],["Sion","45.9","600","Trundle gana el matchup"]]}
+  ,"Twitch":{ctr:[["Caitlyn","57.0","800","h","Trampas revelan y niegan su posición"],["Miss Fortune","56.2","700","h","Reveal y Double Up aplasta"],["Jinx","55.4","800","h","Rockets revelan sin problema"],["Draven","54.6","700","m","Daño early aplastante en stealth"],["Blitzcrank","53.9","700","m","Gancho revela y aplasta"],["Leona","53.1","600","l","Engage antes de que pueda atacar"],["Nautilus","52.3","700","l","Gancho revela su posición"]],good:[["Aphelios","44.1","700","Twitch gana con stealth"],["Kai'Sa","44.8","700","Twitch late aplasta"],["Kog'Maw","45.3","600","Twitch gana el matchup"],["Varus","45.9","600","Twitch gana con stealth"]]}
+  ,"Udyr":{ctr:[["Lee Sin","56.1","700","h","Invade y gana duelo early"],["Kha'Zix","55.3","600","h","Burst antes de que stun"],["Vi","54.5","600","h","R niega su Bear Stance charge"],["Hecarim","53.8","600","m","Velocidad supera su clear"],["Warwick","53.0","700","m","Sustain gana duelo"],["Graves","52.2","600","l","Shells penetran su clear"],["Elise","51.5","500","l","Cocoon en su stance change"]],good:[["Amumu","44.1","600","Stun aplasta teamfight"],["Fiddlesticks","44.8","500","Udyr gana el invade"],["Sejuani","45.3","500","Udyr gana con stun"],["Nunu & Willump","45.9","400","Udyr gana el matchup"]]}
+  ,"Urgot":{ctr:[["Vayne","56.9","600","h","True damage aplasta su tanque"],["Fiora","56.1","500","h","Parry bloquea su Q y E"],["Kennen","55.3","600","h","Poke seguro desde lejos"],["Quinn","54.5","500","h","Kiting frustra su chase"],["Gnar","53.8","600","m","Kiting supera su lentitud"],["Teemo","53.0","600","l","Blind niega sus autos"],["Illaoi","52.2","500","l","Tentáculos niegan su farm"]],good:[["Darius","44.1","600","Shotgun aplasta su pull"],["Garen","44.8","600","Urgot gana el lane"],["Sion","45.3","600","Urgot gana el matchup"],["Cho'Gath","45.9","600","Urgot gana con shotgun"]]}
+  ,"Varus":{ctr:[["Draven","56.8","600","h","Daño early superior antes de escalar"],["Samira","55.9","600","h","Movilidad evita su Q channel"],["Jinx","55.1","700","h","Rockets alcanzan sin respuesta"],["Caitlyn","54.3","700","m","Trampas niegan su posición"],["Xayah","53.6","600","m","Plumas niegan su posición"],["Miss Fortune","52.8","600","l","Double Up mientras canaliza"],["Tristana","52.0","600","l","Salto evita su root ultimate"]],good:[["Aphelios","44.1","600","Varus gana el lane"],["Kai'Sa","44.8","600","Chain of Corruption aplasta"],["Kog'Maw","45.3","500","Varus gana con root"],["Ezreal","45.9","600","Varus gana el matchup"]]}
+  ,"Veigar":{ctr:[["Zed","56.8","600","h","Sombra llega antes de Cage"],["LeBlanc","56.0","500","h","Movilidad evita su Cage"],["Talon","55.2","400","h","Salto evita su Cage"],["Fizz","54.4","500","m","Trickster evita su E Cage"],["Syndra","53.6","600","m","Orbs antes de que acumule AP"],["Viktor","52.9","700","l","Poke y laser supera su lane"],["Akali","52.1","600","l","Shroud niega su Cage timing"]],good:[["Ryze","44.1","500","Cage aplasta su inmovidad"],["Twisted Fate","44.8","400","Veigar gana el all-in"],["Orianna","45.3","500","Cage aplasta su ball"],["Azir","45.9","500","Veigar gana late"]]}
+  ,"Vel'Koz":{ctr:[["Zed","56.5","500","h","Sombra llega antes de que laser"],["LeBlanc","55.7","400","h","Movilidad evita sus habilidades"],["Talon","54.9","400","h","Salto cancela su Q windup"],["Fizz","54.2","400","m","Trickster evita su laser"],["Syndra","53.4","500","m","Orbs outrange su Q"],["Akali","52.6","500","l","Shroud niega su poke"],["Katarina","51.9","500","l","Resets niegan su setup lento"]],good:[["Ryze","44.1","400","Laser aplasta su inmovidad"],["Twisted Fate","44.8","400","Vel'Koz gana el matchup"],["Orianna","45.3","400","Laser aplasta su ball"],["Azir","45.9","400","Vel'Koz gana late"]]}
+  ,"Viego":{ctr:[["Lee Sin","56.3","700","h","Invade y gana duelo early"],["Warwick","55.5","700","h","Sustain masivo gana duelo"],["Vi","54.7","600","h","R niega su possession engage"],["Kha'Zix","53.9","600","m","Burst antes de primera possesión"],["Hecarim","53.2","600","m","Velocidad supera su clear"],["Graves","52.4","600","l","Shells penetran su claro"],["Rammus","51.6","500","l","Taunt devuelve su daño"]],good:[["Amumu","44.1","600","Possession aplasta teamfight"],["Fiddlesticks","44.8","500","Viego gana el invade"],["Karthus","45.3","400","Viego gana con possession"],["Sejuani","45.9","500","Viego gana el matchup"]]}
+  ,"Viktor":{ctr:[["Zed","56.4","700","h","Sombra llega antes de su laser"],["LeBlanc","55.6","600","h","Burst antes de que pueda laser"],["Talon","54.8","500","h","Salto cancela su E laser"],["Fizz","54.1","500","m","Trickster evita su laser"],["Akali","53.3","600","m","Shroud niega su poke constante"],["Kassadin","52.5","700","l","Post-6 lo supera completamente"],["Syndra","51.8","700","l","Orbs outrange su Q"]],good:[["Ryze","44.1","600","Laser aplasta su inmovidad"],["Twisted Fate","44.8","500","Viktor gana el matchup"],["Orianna","45.3","600","Viktor outscales ball"],["Azir","45.9","500","Viktor gana late"]]}
+  ,"Vladimir":{ctr:[["Darius","56.7","700","h","Bleeding aplasta su pool"],["Vayne","55.9","600","h","True damage aplasta su HP farm"],["Kennen","55.1","600","h","Poke seguro que frustra su farm"],["Fiora","54.3","500","m","Parry bloquea su E empowered Q"],["Quinn","53.6","500","m","Kiting frustra su chase"],["Garen","52.8","600","l","Silence cuando intenta pooling"],["Teemo","52.0","600","l","Blind niega sus autos"]],good:[["Nasus","44.1","600","Sanguine Pool aplasta stacking"],["Garen","44.8","600","Vladimir gana con pool"],["Cho'Gath","45.3","600","Vladimir gana late"],["Mordekaiser","45.9","500","Vladimir gana el matchup"]]}
+  ,"Volibear":{ctr:[["Vayne","57.1","600","h","True damage aplasta su tanque"],["Fiora","56.3","500","h","Parry bloquea su Q Bite"],["Kennen","55.5","600","h","Poke seguro desde lejos"],["Quinn","54.7","500","h","Kiting frustra completamente"],["Gnar","54.0","600","m","Kiting supera su lentitud"],["Teemo","53.2","600","l","Blind niega sus autos"],["Darius","52.4","600","l","Bleeding aplasta pero Voli tanquea"]],good:[["Malphite","44.1","600","Ult cancela físicamente su R"],["Garen","44.8","600","Volibear gana el matchup"],["Nasus","45.3","600","Volibear gana early"],["Tryndamere","45.9","500","Volibear gana el duel"]]}
+  ,"Warwick":{ctr:[["Kha'Zix","56.2","700","h","Burst antes de que su HP active pasiva"],["Lee Sin","55.4","700","h","Invade y gana duelo"],["Graves","54.6","700","h","Shells penetran su clear"],["Vi","53.9","600","m","R niega su R fear chain"],["Hecarim","53.1","600","m","Velocidad supera su clear"],["Elise","52.3","500","l","Cocoon en su R windup"],["Rammus","51.6","600","l","Taunt devuelve su daño"]],good:[["Master Yi","44.1","700","Sustain aplasta su alpha"],["Amumu","44.8","600","Warwick gana el invade"],["Karthus","45.3","500","Warwick gana con sustain"],["Fiddlesticks","45.9","500","Warwick gana el matchup"]]}
+  ,"Wukong":{ctr:[["Malphite","56.8","600","h","R durante su R Cyclone"],["Renekton","56.0","600","h","Stun antes de su R Cyclone"],["Poppy","55.2","500","h","W cancela su Nimbus Strike"],["Darius","54.4","600","m","Bleeding aplasta su clone"],["Irelia","53.7","600","m","Dashes niegan su E approach"],["Garen","52.9","600","l","Silence durante su R Cyclone"],["Pantheon","52.1","500","l","E bloquea su Q y R"]],good:[["Gangplank","44.1","500","Clone aplasta sus barrels"],["Nasus","44.8","600","Wukong gana el early"],["Tryndamere","45.3","500","Wukong gana el matchup"],["Gnar","45.9","600","Wukong gana el lane"]]}
+  ,"Xerath":{ctr:[["Zed","56.7","500","h","Sombra llega antes de que pueda cast"],["LeBlanc","55.9","400","h","Burst antes de primer item"],["Talon","55.1","400","h","Salto cancela su Q channel"],["Fizz","54.3","400","m","Trickster evita sus habilidades"],["Katarina","53.6","500","m","Resets niegan su setup lento"],["Ahri","52.8","500","l","Charm aplasta su inmovidad"],["Akali","52.0","500","l","Shroud niega su poke"]],good:[["Thresh","44.1","600","Outrange aplasta su gancho"],["Nautilus","44.8","600","Xerath gana el matchup"],["Blitzcrank","45.3","600","Outrange niega su gancho"],["Brand","45.9","500","Xerath gana el lane"]]}
+  ,"Xin Zhao":{ctr:[["Lee Sin","56.3","700","h","Invade nivel 2 y gana duelo"],["Vi","55.5","600","h","R niega su Crescent Guard"],["Warwick","54.7","700","h","Sustain masivo gana duelo"],["Kha'Zix","54.0","600","m","Burst antes de que knockup"],["Hecarim","53.2","600","m","Velocidad supera su clear"],["Graves","52.4","600","l","Shells penetran su clear"],["Rammus","51.6","500","l","Taunt devuelve su daño"]],good:[["Amumu","44.1","600","Knockup aplasta teamfight"],["Fiddlesticks","44.8","500","Xin gana el invade"],["Karthus","45.3","400","Xin gana con knockup"],["Nunu & Willump","45.9","400","Xin gana el matchup"]]}
+  ,"Yorick":{ctr:[["Vayne","57.2","600","h","True damage aplasta su HP y ghouls"],["Fiora","56.4","500","h","Parry bloquea su Q y Maiden"],["Kennen","55.6","600","h","Poke seguro desde lejos"],["Quinn","54.8","500","h","Kiting frustra su split push"],["Teemo","54.1","600","m","Blind niega sus autos en split"],["Gnar","53.3","500","m","Kiting supera su lentitud"],["Illaoi","52.5","500","l","Tentáculos niegan su ghouls zone"]],good:[["Nasus","44.1","600","Ghouls aplasta su stacking"],["Garen","44.8","600","Yorick gana el split"],["Sion","45.3","600","Yorick gana el matchup"],["Cho'Gath","45.9","500","Yorick gana late"]]}
+  ,"Yuumi":{ctr:[["Morellonomicon users","58.4","6000","h","Antihealing anula toda su utilidad"],["Brand","57.5","600","h","Poke burn aplasta su healing"],["Ignite users","57.0","8000","h","Grievous aplasta su E heal"],["Swain","56.1","500","m","Drain supera su healing"],["Xerath","55.2","500","m","Outrange su comfort zone"],["Zyra","54.3","500","l","Raíces niegan su attached carrier"],["Vel'Koz","53.4","400","l","Laser supera su DPS"]],good:[["Sona","44.1","500","Attached aplasta performance"],["Soraka","44.8","500","Yuumi gana fácilmente"],["Nami","45.3","500","Yuumi gana el lane"],["Zilean","45.9","400","Yuumi gana el matchup"]]}
+  ,"Zac":{ctr:[["Lee Sin","56.1","600","h","Invade y gana duelo early"],["Kha'Zix","55.3","500","h","Burst antes de que blobs regeneren"],["Vi","54.5","600","h","R niega su slingshot"],["Hecarim","53.8","600","m","Velocidad supera su clear"],["Warwick","53.0","600","m","Sustain masivo gana duelo"],["Graves","52.2","600","l","Shells penetran su clear"],["Elise","51.5","500","l","Cocoon en su E windup"]],good:[["Amumu","44.1","500","Boing aplasta teamfight"],["Fiddlesticks","44.8","400","Zac gana el invade"],["Sejuani","45.3","500","Zac gana con CC"],["Nunu & Willump","45.9","400","Zac gana el matchup"]]}
+  ,"Zeri":{ctr:[["Caitlyn","56.8","700","h","Trampas niegan sus dashes"],["Jinx","56.0","700","h","Rockets alcanzan durante sus sparks"],["Draven","55.2","600","h","Daño early antes de que escale"],["Miss Fortune","54.4","600","m","Double Up mientras sparkea"],["Samira","53.7","600","m","R durante su R channel"],["Xayah","52.9","600","l","Plumas niegan su posición"],["Ashe","52.1","600","l","Slow masivo niega sus dashes"]],good:[["Aphelios","44.1","700","Zeri gana el matchup"],["Kai'Sa","44.8","700","Zeri outscales con dashes"],["Kog'Maw","45.3","500","Zeri gana fácilmente"],["Varus","45.9","600","Zeri gana el lane"]]}
+  ,"Ziggs":{ctr:[["Zed","56.5","500","h","Sombra llega antes de sus bombas"],["LeBlanc","55.7","400","h","Burst antes de su Q"],["Talon","54.9","400","h","Salto cancela su Q fuse"],["Fizz","54.2","400","m","Trickster evita sus bombas"],["Syndra","53.4","500","m","Orbs outrange su Q"],["Viktor","52.6","600","l","Poke y laser supera su lane"],["Katarina","51.9","500","l","Resets niegan su setup lento"]],good:[["Ryze","44.1","500","Bombas aplasta su inmovidad"],["Twisted Fate","44.8","400","Ziggs gana el matchup"],["Orianna","45.3","500","Bombas aplasta su ball"],["Corki","45.9","400","Ziggs gana el lane"]]}
+  ,"Zilean":{ctr:[["Zed","56.8","500","h","Revive gasta su R inmediatamente"],["LeBlanc","56.0","400","h","Burst doble antes de revive"],["Talon","55.2","400","h","Salto y burst antes de revive"],["Fizz","54.4","400","m","Burst antes de su R timing"],["Syndra","53.7","500","m","Orbs antes de que revive"],["Brand","52.9","500","l","Poke aplasta su lane"],["Viktor","52.1","500","l","Poke supera su lane"]],good:[["Ryze","44.1","400","Revive aplasta su inmovidad"],["Twisted Fate","44.8","400","Zilean gana el matchup"],["Orianna","45.3","400","Revive aplasta su ball"],["Azir","45.9","400","Zilean gana late"]]}
+  ,"Zoe":{ctr:[["Zed","56.9","600","h","Sombra llega antes de su Q"],["LeBlanc","56.1","500","h","Burst antes de su Q windup"],["Talon","55.3","400","h","Salto cancela su Q channel"],["Fizz","54.6","400","m","Trickster evita su Q y E"],["Kassadin","53.8","600","m","Post-6 la supera en movilidad"],["Akali","53.0","500","l","Shroud niega su poke"],["Syndra","52.2","600","l","Orbs outrange su posición"]],good:[["Ryze","44.1","500","Portal aplasta su inmovidad"],["Twisted Fate","44.8","400","Zoe gana el all-in"],["Orianna","45.3","500","Zoe gana el matchup"],["Viktor","45.9","500","Zoe gana late"]]}
+};
+
+function getData(c){
+  var s=SPECIFIC[c.n];
+  var r=ROLE_DATA[c.r]||ROLE_DATA.Mid;
+  if(!s) return r;
+  return {
+    ctr:   s.ctr   || r.ctr,
+    good:  s.good  || r.good,
+    items: s.items || r.items,
+    runes: s.runes || r.runes,
+    spells:s.spells|| r.spells,
+    stats: s.stats || r.stats
+  };
+}
+function findRole(n){ var x=ALL.find(function(c){return c.n.toLowerCase()===n.toLowerCase();}); return x?x.r:'Mid'; }
+function wrCls(w){ var v=parseFloat(w); return v>=53?'wg':v<=47?'wb':'wn'; }
+function barPct(w){ return Math.min(100,Math.max(0,(parseFloat(w)-40)*5)); }
+function barPctGood(w){ return Math.min(100,Math.max(0,(55-parseFloat(w))*6)); }
+function tierCls(t){ return 't'+(t||'B'); }
+function thrEl(t){ if(t==='h')return '<span class="thr thr-h">Difícil</span>'; if(t==='m')return '<span class="thr thr-m">Moderado</span>'; return '<span class="thr thr-l">Fácil</span>'; }
+
+/* ════════════════════════════════════
+   SEARCH & GRID
+════════════════════════════════════ */
+var ROLES = ["Todos","Top","Jungle","Mid","ADC","Support"];
+var activeRole = "Todos";
+var selChamp = null;
+
+document.getElementById('roleTabs').innerHTML = ROLES.map(function(r){
+  return '<button class="rtab'+(r==='Todos'?' on':'')+'" onclick="setRole(\''+r+'\')">'+r+'</button>';
+}).join('');
+
+function setRole(r){
+  activeRole = r;
+  document.querySelectorAll('.rtab').forEach(function(b){ b.classList.toggle('on', b.textContent===r); });
+  filterGrid();
+}
+
+function filterGrid(){
+  var q = document.getElementById('si').value.toLowerCase().trim();
+  var f = ALL.filter(function(c){
+    return (!q || c.n.toLowerCase().indexOf(q)>=0) && (activeRole==='Todos' || c.r===activeRole);
+  });
+  document.getElementById('ccount').textContent = f.length + ' campeones';
+  document.getElementById('cgrid').innerHTML = f.map(function(c){
+    var active = selChamp && selChamp.n===c.n;
+    return '<button class="cbtn'+(active?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\')">'
+      + portrait(c.n, c.r, 48)
+      + '<span class="cname">'+c.n+'</span>'
+      + '<span class="crole">'+c.r+'</span>'
+      + '</button>';
+  }).join('');
+}
+
+function pickChamp(name){
+  selChamp = ALL.find(function(c){ return c.n===name; });
+  filterGrid();
+  renderSide(selChamp);
+  renderMain(selChamp);
+  if(window.innerWidth < 800) window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ════════════════════════════════════
+   RENDER SIDEBAR
+════════════════════════════════════ */
+function renderSide(c){
+  var d = getData(c);
+  var st = d.stats;
+  document.getElementById('sideInfo').innerHTML =
+    '<div class="champ-card">'
+    + '<div class="champ-hd">'
+    + portrait(c.n, c.r, 64)
+    + '<div><div class="champ-name">'+c.n+'</div>'
+    + '<div class="champ-role-lbl">'+c.r+'</div>'
+    + '<span class="tier-pill '+tierCls(st.tier)+'">Tier '+st.tier+'</span></div>'
+    + '</div>'
+    + '<div class="champ-stats">'
+    + '<div class="srow"><span class="slbl">Win Rate</span><span class="sval '+wrCls(st.wr)+'">'+st.wr+'</span></div>'
+    + '<div class="srow"><span class="slbl">Pick Rate</span><span class="sval">'+st.pr+'</span></div>'
+    + '<div class="srow"><span class="slbl">Ban Rate</span><span class="sval" style="color:var(--red)">'+st.br+'</span></div>'
+    + '<div class="srow"><span class="slbl">Partidas</span><span class="sval">'+st.g+'</span></div>'
+    + '</div></div>'
+    + '<div class="rune-card">'
+    + '<div class="rcard-hd">Runas Recomendadas</div>'
+    + '<div class="rcard-body">'
+    + '<div class="rpath-hd">'+rpsvg(d.runes.p.path,20)+'<span class="rpath-name" style="color:'+getPathCol(d.runes.p.path)+'">'+d.runes.p.path+'</span></div>'
+    + '<div class="rks-row">'+runeImgEl(d.runes.p.ks,true,28)+'<div><div class="rks-name" style="color:'+getPathCol(d.runes.p.path)+'">'+d.runes.p.ks+'</div><div class="rks-sub">Keystone</div></div></div>'
+    + d.runes.p.s.map(function(r){ return '<div class="rmin">'+runeImgEl(r,false,18)+'<span class="rmin-name">'+r+'</span></div>'; }).join('')
+    + '<div class="rdiv"></div>'
+    + '<div class="rpath-hd">'+rpsvg(d.runes.s.path,20)+'<span class="rpath-name" style="color:'+getPathCol(d.runes.s.path)+'">'+d.runes.s.path+'</span></div>'
+    + d.runes.s.picks.map(function(r){ return '<div class="rmin">'+runeImgEl(r,false,18)+'<span class="rmin-name">'+r+'</span></div>'; }).join('')
+    + '<div class="shards">'
+    + '<div class="sh-row">'+shsvg('offense',d.runes.sh.o,16)+'<span class="sh-type">Ataque</span><span class="sh-val">'+d.runes.sh.o+'</span></div>'
+    + '<div class="sh-row">'+shsvg('flex',d.runes.sh.f,16)+'<span class="sh-type">Flex</span><span class="sh-val">'+d.runes.sh.f+'</span></div>'
+    + '<div class="sh-row">'+shsvg('defense',d.runes.sh.d,16)+'<span class="sh-type">Defensa</span><span class="sh-val">'+d.runes.sh.d+'</span></div>'
+    + '</div></div></div>';
+}
+
+/* ════════════════════════════════════
+   RENDER MAIN
+════════════════════════════════════ */
+function renderMain(c){
+  var d = getData(c);
+
+  var ctrs = d.ctr.map(function(row){
+    var nm=row[0], wr=row[1], gms=row[2], thr=row[3], rsn=row[4];
+    return '<div class="trow gc">'
+      + '<div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div>'
+      + '<div class="wr wb">'+parseFloat(wr).toFixed(1)+'%</div>'
+      + '<div class="gms">'+Number(gms).toLocaleString()+'</div>'
+      + '<div><div class="bar-bg"><div class="bar-f bar-red" style="width:'+barPct(wr)+'%"></div></div><div class="bar-note">'+rsn+'</div></div>'
+      + '<div>'+thrEl(thr)+'</div>'
+      + '</div>';
+  }).join('');
+
+  var good = d.good.map(function(row){
+    var nm=row[0], wr=row[1], gms=row[2], rsn=row[3];
+    return '<div class="trow gg">'
+      + '<div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div>'
+      + '<div class="wr wg">'+parseFloat(wr).toFixed(1)+'%</div>'
+      + '<div class="gms">'+Number(gms).toLocaleString()+'</div>'
+      + '<div><div class="bar-bg"><div class="bar-f bar-green" style="width:'+barPctGood(wr)+'%"></div></div><div class="bar-note">'+rsn+'</div></div>'
+      + '</div>';
+  }).join('');
+
+  var items = d.items.map(function(it){
+    return '<div class="item-card">'
+      + itemPort(it.n, 40)
+      + '<div><div class="iorder">#'+it.o+'</div><div class="iname">'+it.n+'</div><div class="ireason">'+it.r+'</div><div class="icost">'+it.c+' de oro</div></div>'
+      + '</div>';
+  }).join('');
+
+  document.getElementById('mainInfo').innerHTML =
+    '<div class="card">'
+    + '<div class="card-hd">Counters de '+c.n+' — campeones que le ganan</div>'
+    + '<div class="thd gc"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div><div>Dificultad</div></div>'
+    + ctrs + '</div>'
+    + '<div class="card">'
+    + '<div class="card-hd">'+c.n+' le gana a estos campeones</div>'
+    + '<div class="thd gg"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div></div>'
+    + good + '</div>'
+    + '<div class="card"><div class="card-hd">Build Recomendada — '+c.n+'</div>'
+    + '<div class="items-grid">'+items+'</div></div>';
+}
+
+/* INIT */
+filterGrid();
+
+/* ════════ MUSIC PLAYER ════════ */
+var TRACKS=[
+  {name:"Warriors",artist:"Imagine Dragons",icon:"⚔",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"},
+  {name:"RISE",artist:"Glitch Mob, Mako",icon:"🏆",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"},
+  {name:"Legends Never Die",artist:"Against The Current",icon:"🌟",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"},
+  {name:"Phoenix",artist:"Cailin Russo & Chrissy Costanza",icon:"🔥",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"},
+  {name:"GODS",artist:"NewJeans",icon:"🎵",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"},
+  {name:"Heavy is the Crown",artist:"Linkin Park",icon:"👑",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"},
+  {name:"POP/STARS",artist:"K/DA",icon:"💜",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3"},
+  {name:"IGNITE",artist:"Zedd",icon:"⚡",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"},
+];
+var curTrack=0,isPlaying=false;
+var audioEl=document.getElementById('audioEl');
+
+function loadTrack(i){
+  var t=TRACKS[i];
+  document.getElementById('trackName').textContent=t.name;
+  document.getElementById('trackArtist').textContent=t.artist;
+  document.getElementById('trackIcon').textContent=t.icon;
+  document.getElementById('trackBar').style.width='0%';
+  audioEl.src=t.url;
+}
+function togglePlay(){
+  if(isPlaying){audioEl.pause();document.getElementById('playBtn').textContent='▶';isPlaying=false;}
+  else{audioEl.play();document.getElementById('playBtn').textContent='⏸';isPlaying=true;}
+}
+function nextTrack(){curTrack=(curTrack+1)%TRACKS.length;loadTrack(curTrack);if(isPlaying)audioEl.play();}
+function prevTrack(){curTrack=(curTrack-1+TRACKS.length)%TRACKS.length;loadTrack(curTrack);if(isPlaying)audioEl.play();}
+function updateBar(){if(audioEl.duration){document.getElementById('trackBar').style.width=(audioEl.currentTime/audioEl.duration*100)+'%';}}
+function setVol(v){audioEl.volume=parseFloat(v);}
+function setVol(v){audioEl.volume=v;}
+loadTrack(0);
+
+/* ════════ CUSTOM SOUNDCLOUD PLAYER ════════ */
+var THEMES = {
+  gold:   {color:'#d4af37', bg:'rgba(212,175,55,.15)',  icon:'⚔'},
+  blue:   {color:'#388bfd', bg:'rgba(56,139,253,.15)',   icon:'🌊'},
+  green:  {color:'#3fb950', bg:'rgba(63,185,80,.15)',    icon:'🌿'},
+  red:    {color:'#f85149', bg:'rgba(248,81,73,.15)',    icon:'🔥'},
+  purple: {color:'#a371f7', bg:'rgba(163,113,247,.15)', icon:'💜'},
+};
+var curTheme = 'gold';
+var scWidget = null;
+var scPlaying = false;
+var scDuration = 0;
+
+function applyTheme(name) {
+  var t = THEMES[name] || THEMES.gold;
+  curTheme = name;
+  document.getElementById('pl-prog').style.background = t.color;
+  document.getElementById('pl-play').style.background = t.color;
+  document.getElementById('pl-icon').style.background = t.bg;
+  document.getElementById('pl-icon').textContent = t.icon;
+  document.getElementById('pl-title').style.color = t.color;
+  document.getElementById('pl-vol').style.accentColor = t.color;
+  // highlight active theme button
+  var btns = document.querySelectorAll('#player-box button[onclick^="setTheme"]');
+  btns.forEach(function(b){ b.style.borderColor = '#555'; });
+  var idx = {gold:0,blue:1,green:2,red:3,purple:4}[name];
+  if (btns[idx]) btns[idx].style.borderColor = t.color;
+}
+
+function setTheme(name) { applyTheme(name); }
+
+function fmtTime(ms) {
+  var s = Math.floor(ms/1000);
+  return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
+}
+
+window.addEventListener('load', function() {
+  var iframe = document.getElementById('sc-iframe');
+  if (!iframe || typeof SC === 'undefined') return;
+  scWidget = SC.Widget(iframe);
+  scWidget.bind(SC.Widget.Events.READY, function() {
+    scWidget.setVolume(80);
+    scWidget.getDuration(function(d){ scDuration = d; });
+    scWidget.getCurrentSound(function(s){
+      if(s) {
+        document.getElementById('pl-title').textContent = s.title || 'updbeats';
+        document.getElementById('pl-artist').textContent = s.user ? s.user.username : 'SoundCloud';
+      }
+    });
+  });
+  scWidget.bind(SC.Widget.Events.PLAY, function() {
+    scPlaying = true;
+    document.getElementById('pl-play').textContent = '⏸';
+    scWidget.getDuration(function(d){ scDuration = d; });
+  });
+  scWidget.bind(SC.Widget.Events.PAUSE, function() {
+    scPlaying = false;
+    document.getElementById('pl-play').textContent = '▶';
+  });
+  scWidget.bind(SC.Widget.Events.PLAY_PROGRESS, function(e) {
+    if (scDuration > 0) {
+      document.getElementById('pl-prog').style.width = (e.currentPosition/scDuration*100)+'%';
+      document.getElementById('pl-time').textContent = fmtTime(e.currentPosition);
+    }
+  });
+  scWidget.bind(SC.Widget.Events.FINISH, function() {
+    scPlaying = false;
+    document.getElementById('pl-play').textContent = '▶';
+  });
+  scWidget.bind(SC.Widget.Events.SEEK, function(){});
+  // track change
+  scWidget.bind(SC.Widget.Events.PLAY, function() {
+    scWidget.getCurrentSound(function(s){
+      if(s) {
+        document.getElementById('pl-title').textContent = s.title || 'updbeats';
+        document.getElementById('pl-artist').textContent = s.user ? s.user.username : 'SoundCloud';
+      }
+    });
+  });
+  applyTheme('gold');
+});
+
+function scToggle() {
+  if (!scWidget) return;
+  scWidget.toggle();
+}
+function scNext() { if (scWidget) scWidget.next(); }
+function scPrev() { if (scWidget) scWidget.prev(); }
+function scVol(v) { if (scWidget) scWidget.setVolume(parseInt(v)); }
+function seekTrack(e) {
+  if (!scWidget || !scDuration) return;
+  var bar = document.getElementById('pl-prog-bg');
+  var pct = e.offsetX / bar.offsetWidth;
+  scWidget.seekTo(pct * scDuration);
+}
+applyTheme('gold');
+
+</script>
+</body>
+</html>
