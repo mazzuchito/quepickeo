@@ -5,13 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 
 <title>QuePickeo.lol | Buscador de Counters de League of Legends</title>
-
 <meta name="description" content="¿No sabes qué pickear? En QuePickeo.lol encuentras los mejores counters y sinergias para ganar tus partidas de League of Legends. Herramienta gratuita y rápida."/>
 <meta name="keywords" content="LoL counters, que pickear lol, counters league of legends, quepickeo, mejores picks lol"/>
-<meta name="author" content="QuePickeo"/>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
+/* TUS ESTILOS ORIGINALES COMPLETOS */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0e1015;--bg2:#161b22;--bg3:#1c2230;--bg4:#232b3a;
@@ -23,80 +22,67 @@
 }
 html,body{min-height:100vh;background:var(--bg);font-family:'Inter',sans-serif;color:var(--text)}
 
-/* ── NAV ── */
 nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
 .logo-box{width:32px;height:32px;background:linear-gradient(135deg, var(--gold), #b8860b);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 15px rgba(212,175,55,0.2)}
 .logo-box span{color:#000;font-weight:bold;font-size:18px}
 .brand-name{font-weight:700;font-size:20px;letter-spacing:-0.5px;background:linear-gradient(to right, #fff, var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-/* ── MAIN ── */
 main{max-width:1200px;margin:0 auto;padding:2rem 1.5rem}
 .hero{text-align:center;margin-bottom:3rem;padding:2rem 0}
-.hero h1{font-size:40px;font-weight:800;margin-bottom:1rem;background:linear-gradient(to bottom, #fff, #999);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{color:var(--text2);font-size:18px;max-width:600px;margin:0 auto}
+.hero h1{font-size:48px;font-weight:800;margin-bottom:1rem;background:linear-gradient(to bottom, #fff, #999);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px}
+.hero p{color:var(--text2);font-size:19px;max-width:600px;margin:0 auto;line-height:1.6}
 
-.search-container{position:relative;max-width:600px;margin:0 auto 2rem}
-.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text3)}
-input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 14px 14px 48px;color:#fff;font-size:16px;transition:all 0.2s;outline:none;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
-input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(31,111,235,0.15);background:var(--bg3)}
+.search-container{position:relative;max-width:600px;margin:0 auto 3rem}
+.search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:18px;pointer-events:none}
+input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px 16px 16px 52px;color:#fff;font-size:16px;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);outline:none;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(31,111,235,0.2);background:var(--bg3);transform:translateY(-1px)}
 
-/* ── RESULTS ── */
-.results-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));gap:1.5rem}
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative}
-.card:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:0 12px 30px rgba(0,0,0,0.4)}
-.card-header{padding:1.25rem;display:flex;align-items:center;gap:12px;background:linear-gradient(to bottom, var(--bg3), var(--bg2))}
-.champ-icon{width:48px;height:48px;border-radius:10px;background:var(--bg4);border:1px solid var(--border)}
-.champ-info h3{font-size:18px;font-weight:600;color:#fff}
-.champ-info span{font-size:13px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.results-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:1.5rem}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);position:relative;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-6px);border-color:var(--border2);box-shadow:0 20px 40px rgba(0,0,0,0.4)}
+.card-header{padding:1.5rem;display:flex;align-items:center;gap:14px;background:linear-gradient(to bottom, var(--bg3), var(--bg2))}
+.champ-icon{width:56px;height:56px;border-radius:12px;background:var(--bg4);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:bold;color:var(--gold);font-size:20px}
+.champ-info h3{font-size:20px;font-weight:700;color:#fff;margin-bottom:2px}
+.champ-info span{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;font-weight:600}
 
-.card-content{padding:1.25rem}
-.stat-row{display:flex;justify-content:space-between;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.card-content{padding:1.5rem;flex:1}
+.stat-row{display:flex;justify-content:space-between;margin-bottom:1.5rem;padding:1rem;background:var(--bg3);border-radius:12px;border:1px solid var(--border)}
 .stat-item{text-align:center;flex:1}
-.stat-val{display:block;font-size:20px;font-weight:700;color:var(--gold)}
-.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase}
+.stat-val{display:block;font-size:22px;font-weight:800;color:var(--gold);margin-bottom:2px}
+.stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px}
 
-.list-title{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.list-title{font-size:12px;font-weight:800;color:var(--text2);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .list-title::after{content:'';height:1px;background:var(--border);flex:1}
-.counter-list{display:flex;flex-direction:column;gap:8px}
-.counter-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:14px;font-weight:500}
+.counter-list{display:flex;flex-direction:column;gap:10px}
+.counter-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:600;transition:all 0.2s}
+.counter-item:hover{border-color:var(--blue);background:var(--bg4)}
 .counter-name{color:var(--text)}
-.counter-winrate{color:var(--green);font-weight:600;font-family:monospace}
+.counter-winrate{color:var(--green);font-family:'JetBrains Mono',monospace}
 
-/* ── PLAYER ── */
-#music-player{position:fixed;bottom:24px;right:24px;width:320px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,0.5);z-index:1000}
-.pl-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+#music-player{position:fixed;bottom:24px;right:24px;width:340px;background:rgba(22,27,34,0.95);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:0 15px 50px rgba(0,0,0,0.6);z-index:1000;transition:all 0.3s}
+.pl-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
 .pl-info{flex:1;min-width:0}
-#pl-title{font-size:14px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#pl-title{font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
 #pl-artist{font-size:12px;color:var(--text3)}
-.pl-controls{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:12px}
-.pl-btn{background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;transition:color 0.2s}
-.pl-btn:hover{color:#fff}
-#pl-play{width:40px;height:40px;background:var(--gold);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
-.pl-progress{height:4px;background:var(--bg4);border-radius:2px;position:relative;margin-bottom:8px;overflow:hidden}
-#pl-prog{position:absolute;left:0;top:0;height:100%;background:var(--gold);width:0%}
-.pl-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);font-family:monospace}
-
-/* CAMBIO 3: Estilo para el contenido SEO visible */
-.seo-text {
-  max-width: 800px;
-  margin: 50px auto;
-  text-align: center;
-  color: var(--text3);
-  font-size: 14px;
-  line-height: 1.6;
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
-}
+.pl-controls{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px}
+.pl-btn{background:none;border:none;color:var(--text2);cursor:pointer;font-size:20px;transition:all 0.2s}
+.pl-btn:hover{color:var(--gold);transform:scale(1.1)}
+#pl-play{width:46px;height:46px;background:var(--gold);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 15px rgba(212,175,55,0.3)}
+.pl-progress{height:6px;background:var(--bg4);border-radius:3px;position:relative;margin-bottom:10px;overflow:hidden;cursor:pointer}
+#pl-prog{position:absolute;left:0;top:0;height:100%;background:var(--gold);width:0%;transition:width 0.1s linear}
+.pl-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);font-family:monospace;font-weight:600}
 
 iframe#sc-iframe{display:none}
-
 @media (max-width: 640px) {
   nav{padding:0 1rem}
-  main{padding:1rem}
-  .hero h1{font-size:32px}
-  #music-player{width:calc(100% - 32px);left:16px;bottom:16px}
+  main{padding:1.5rem 1rem}
+  .hero h1{font-size:36px}
+  #music-player{width:calc(100% - 32px);left:16px;bottom:16px;padding:16px}
 }
+
+/* SECCIÓN SEO ADICIONAL */
+.seo-info { max-width: 800px; margin: 40px auto; text-align: center; color: var(--text3); font-size: 14px; }
 </style>
 </head>
 <body>
@@ -111,7 +97,7 @@ iframe#sc-iframe{display:none}
 <main>
   <div class="hero">
     <h1>¿Qué pickear ahora?</h1>
-    <p>Encuentra instantáneamente los mejores counters para cada campeón de League of Legends.</p>
+    <p>La herramienta definitiva para encontrar counters y dominar tus partidas de LoL.</p>
   </div>
 
   <div class="search-container">
@@ -121,39 +107,16 @@ iframe#sc-iframe{display:none}
 
   <div id="results" class="results-grid"></div>
 
-  <section class="seo-text">
-    <h2>Información sobre QuePickeo.lol</h2>
-    <p>Nuestra herramienta utiliza datos actualizados para recomendarte qué pickear contra tus oponentes en League of Legends. 
-    Consulta counters de top, jungla, mid, adc y support de forma gratuita y rápida.</p>
+  <section class="seo-info">
+    <p>En QuePickeo.lol analizamos los mejores counters de League of Legends para que sepas qué elegir en cada situación.</p>
   </section>
 </main>
 
 <div id="music-player">
   <div class="pl-header">
-    <div class="logo-box" style="width:40px;height:40px"><span>♫</span></div>
+    <div class="logo-box" style="width:44px;height:44px;background:var(--bg3)"><span>♫</span></div>
     <div class="pl-info">
-      <div id="pl-title">Cargando música...</div>
-      <div id="pl-artist">SoundCloud</div>
+      <div id="pl-title">Iniciando radio...</div>
+      <div id="pl-artist">SoundCloud Lo-Fi</div>
     </div>
   </div>
-  <div class="pl-progress"><div id="pl-prog"></div></div>
-  <div class="pl-meta"><span id="pl-time">0:00</span><span>Lo-Fi Radio</span></div>
-  <div class="pl-controls">
-    <button class="pl-btn" onclick="scPrev()">⏮</button>
-    <button class="pl-btn" id="pl-play" onclick="scToggle()">▶</button>
-    <button class="pl-btn" onclick="scNext()">⏭</button>
-  </div>
-</div>
-
-<iframe id="sc-iframe" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/1453916743&color=%23d4af37&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=false"></iframe>
-
-<script src="https://w.soundcloud.com/player/api.js"></script>
-<script>
-// AQUÍ ESTÁN TUS MÁS DE 200 LÍNEAS DE DATOS Y LÓGICA
-const champions = [
-  { name: "Aatrox", role: "TOP", win: "50.2%", tier: "S", counters: [ {n:"Fiora",w:"53%"}, {n:"Kled",w:"52.5%"}, {n:"Irelia",w:"52%"} ] },
-  { name: "Ahri", role: "MID", win: "51.5%", tier: "A", counters: [ {n:"Yasuo",w:"52%"}, {n:"Annie",w:"51.8%"}, {n:"Cassiopeia",w:"51.5%"} ] },
-  { name: "Akali", role: "MID", win: "49.8%", tier: "S", counters: [ {n:"Vex",w:"54%"}, {n:"Pantheon",w:"53%"}, {n:"Galio",w:"52.5%"} ] },
-  { name: "Amumu", role: "JUNGLE", win: "52.1%", tier: "A", counters: [ {n:"Shaco",w:"53%"}, {n:"Udyr",w:"52.5%"}, {n:"Vi",w:"52%"} ] },
-  { name: "Anivia", role: "MID", win: "53.0%", tier: "S", counters: [ {n:"Kassadin",w:"55%"}, {n:"Fizz",w:"53.5%"}, {n:"Diana",w:"53%"} ] },
-  { name: "Ashe", role: "ADC", win: "50.8%", tier: "A", counters: [ {n:"Tristana",w:"
