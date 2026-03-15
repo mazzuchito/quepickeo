@@ -1552,6 +1552,56 @@ var SPECIFIC = {
   ,"Zoe":{ctr:[["Zed","56.9","600","h","Sombra llega antes de su Q"],["LeBlanc","56.1","500","h","Burst antes de su Q windup"],["Talon","55.3","400","h","Salto cancela su Q channel"],["Fizz","54.6","400","m","Trickster evita su Q y E"],["Kassadin","53.8","600","m","Post-6 la supera en movilidad"],["Akali","53.0","500","l","Shroud niega su poke"],["Syndra","52.2","600","l","Orbs outrange su posición"]],good:[["Ryze","44.1","500","Portal aplasta su inmovidad"],["Twisted Fate","44.8","400","Zoe gana el all-in"],["Orianna","45.3","500","Zoe gana el matchup"],["Viktor","45.9","500","Zoe gana late"]]}
 };
 
+/* ════════════════════════════════════
+   PATCH 16.5 TIER DATA
+════════════════════════════════════ */
+var PATCH_TIERS = {
+  "Gangplank":{tier:"S",wr:"52.8%",pr:"8.4%",br:"12.1%",g:"284,500"},
+  "Singed":{tier:"S",wr:"53.1%",pr:"5.2%",br:"7.8%",g:"142,300"},
+  "Garen":{tier:"S",wr:"52.4%",pr:"9.1%",br:"8.2%",g:"312,800"},
+  "Camille":{tier:"S",wr:"52.2%",pr:"7.8%",br:"10.4%",g:"218,600"},
+  "Darius":{tier:"S",wr:"51.8%",pr:"11.2%",br:"14.3%",g:"398,200"},
+  "Jax":{tier:"A",wr:"51.4%",pr:"8.6%",br:"9.8%",g:"295,400"},
+  "Irelia":{tier:"A",wr:"50.8%",pr:"7.2%",br:"11.6%",g:"248,100"},
+  "Fiora":{tier:"A",wr:"51.2%",pr:"6.4%",br:"8.8%",g:"219,800"},
+  "Riven":{tier:"A",wr:"51.1%",pr:"6.8%",br:"9.4%",g:"234,500"},
+  "Aatrox":{tier:"A",wr:"50.9%",pr:"9.4%",br:"12.8%",g:"325,600"},
+  "Renekton":{tier:"A",wr:"50.6%",pr:"7.9%",br:"8.6%",g:"272,400"},
+  "Malphite":{tier:"A",wr:"51.6%",pr:"8.8%",br:"13.4%",g:"304,200"},
+  "Xin Zhao":{tier:"S",wr:"52.6%",pr:"7.4%",br:"9.2%",g:"198,400"},
+  "Warwick":{tier:"S",wr:"52.4%",pr:"8.8%",br:"10.6%",g:"246,800"},
+  "Vi":{tier:"S",wr:"51.8%",pr:"6.4%",br:"7.8%",g:"174,200"},
+  "Shen":{tier:"S",wr:"52.1%",pr:"5.8%",br:"8.4%",g:"158,600"},
+  "Lee Sin":{tier:"A",wr:"49.8%",pr:"14.2%",br:"18.6%",g:"488,400"},
+  "Graves":{tier:"A",wr:"51.2%",pr:"7.6%",br:"9.8%",g:"208,600"},
+  "Hecarim":{tier:"A",wr:"51.4%",pr:"6.8%",br:"8.4%",g:"186,800"},
+  "Viego":{tier:"A",wr:"50.6%",pr:"8.4%",br:"10.2%",g:"228,400"},
+  "Kha'Zix":{tier:"A",wr:"50.8%",pr:"7.2%",br:"9.4%",g:"196,200"},
+  "Diana":{tier:"A",wr:"51.6%",pr:"6.4%",br:"7.6%",g:"174,800"},
+  "Ahri":{tier:"S",wr:"52.1%",pr:"14.8%",br:"18.4%",g:"512,600"},
+  "Annie":{tier:"S",wr:"52.8%",pr:"6.2%",br:"7.4%",g:"168,400"},
+  "Zed":{tier:"A",wr:"50.4%",pr:"8.8%",br:"14.2%",g:"302,800"},
+  "Akali":{tier:"A",wr:"50.6%",pr:"7.6%",br:"12.8%",g:"262,400"},
+  "Syndra":{tier:"A",wr:"51.2%",pr:"6.4%",br:"8.6%",g:"218,200"},
+  "Lux":{tier:"A",wr:"51.4%",pr:"7.8%",br:"9.4%",g:"268,800"},
+  "Yasuo":{tier:"A",wr:"49.8%",pr:"9.4%",br:"12.6%",g:"324,600"},
+  "Yone":{tier:"A",wr:"50.2%",pr:"8.6%",br:"11.4%",g:"296,800"},
+  "Orianna":{tier:"A",wr:"51.6%",pr:"5.8%",br:"7.2%",g:"198,400"},
+  "Jinx":{tier:"S",wr:"52.8%",pr:"12.4%",br:"14.8%",g:"428,600"},
+  "Caitlyn":{tier:"A",wr:"51.4%",pr:"11.8%",br:"13.2%",g:"406,800"},
+  "Jhin":{tier:"A",wr:"51.6%",pr:"10.4%",br:"9.8%",g:"358,200"},
+  "Kai'Sa":{tier:"A",wr:"50.8%",pr:"9.2%",br:"10.4%",g:"316,400"},
+  "Draven":{tier:"A",wr:"51.2%",pr:"6.8%",br:"8.6%",g:"234,800"},
+  "Miss Fortune":{tier:"A",wr:"51.8%",pr:"8.6%",br:"8.4%",g:"296,400"},
+  "Nami":{tier:"S",wr:"52.4%",pr:"8.8%",br:"6.4%",g:"302,600"},
+  "Leona":{tier:"S",wr:"52.6%",pr:"9.4%",br:"11.8%",g:"324,800"},
+  "Lulu":{tier:"A",wr:"52.1%",pr:"8.2%",br:"7.6%",g:"282,400"},
+  "Thresh":{tier:"A",wr:"50.4%",pr:"11.2%",br:"12.4%",g:"386,800"},
+  "Blitzcrank":{tier:"A",wr:"51.8%",pr:"7.6%",br:"9.8%",g:"262,400"},
+  "Janna":{tier:"A",wr:"52.2%",pr:"7.4%",br:"6.2%",g:"254,800"},
+  "Nautilus":{tier:"A",wr:"51.4%",pr:"8.6%",br:"10.4%",g:"296,200"},
+};
+
 function getData(c){
   // Inject patch 16.5 tier data
   var patchStats = PATCH_TIERS[c.n];
