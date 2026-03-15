@@ -3,10 +3,49 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Que me counterea?</title>
+<title>Que Pickeo? — Counters, ítems y runas de League of Legends</title>
+
+<!-- SEO básico -->
+<meta name="description" content="Encontrá los mejores counters, ítems y runas para cada campeón de League of Legends. Guía actualizada para LAN, LAS y todas las regiones."/>
+<meta name="keywords" content="league of legends counters, que pickeo, counters LoL, runas LoL, items LoL, mejores counters, guia campeones lol, lol tier list, quepickeo"/>
+<meta name="author" content="Quepickeo.lol"/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://quepickeo.lol/"/>
+
+<!-- Open Graph (Facebook, WhatsApp, Discord) -->
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://quepickeo.lol/"/>
+<meta property="og:title" content="Que Pickeo? — Counters de League of Legends"/>
+<meta property="og:description" content="Encontrá los mejores counters, ítems y runas para cada campeón. Gratis, rápido y en español."/>
+<meta property="og:image" content="https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_0.jpg"/>
+<meta property="og:locale" content="es_ES"/>
+<meta property="og:site_name" content="Quepickeo.lol"/>
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Que Pickeo? — Counters de League of Legends"/>
+<meta name="twitter:description" content="Counters, ítems y runas para todos los campeones. Gratis y en español."/>
+<meta name="twitter:image" content="https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Yasuo_0.jpg"/>
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Quepickeo.lol",
+  "url": "https://quepickeo.lol",
+  "description": "Guía de counters, ítems y runas para League of Legends en español",
+  "inLanguage": "es",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://quepickeo.lol/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2839760013557264"
-     crossorigin="anonymous"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2839760013557264" crossorigin="anonymous"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -16,7 +55,17 @@
   --blue:#1f6feb;--blue2:#388bfd;
   --gold:#d4af37;--gold2:#f0d060;
   --green:#3fb950;--red:#f85149;--orange:#f0883e;
+  --transition-theme:background .3s,color .3s,border-color .3s;
 }
+body.light-mode{
+  --bg:#f0f2f5;--bg2:#ffffff;--bg3:#e8eaed;--bg4:#dde1e7;
+  --border:#d0d5dd;--border2:#b8bec9;
+  --text:#1a1d23;--text2:#4a5568;--text3:#718096;
+}
+/* Light mode overlay más claro */
+body.light-mode #page-bg-overlay{background:linear-gradient(135deg,rgba(240,242,245,.88) 0%,rgba(240,242,245,.72) 50%,rgba(240,242,245,.85) 100%)}
+body.light-mode nav{background:rgba(255,255,255,.75)}
+body.light-mode .hero{background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(240,242,245,.55))}
 html,body{min-height:100vh;background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);position:relative}
 #page-bg{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center 20%;opacity:0;transition:opacity .8s ease;pointer-events:none}
 #page-bg-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(135deg,rgba(14,16,21,.75) 0%,rgba(14,16,21,.55) 50%,rgba(14,16,21,.72) 100%);pointer-events:none}
@@ -195,6 +244,85 @@ nav{background:rgba(22,27,34,.65);border-bottom:1px solid var(--border);padding:
 @keyframes spin{to{transform:rotate(360deg)}}
 .sum-spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--blue2);border-radius:50%;animation:spin .7s linear infinite}
 footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border-top:1px solid var(--border);margin-top:1.5rem}
+
+/* ── DARK/LIGHT TOGGLE ── */
+.theme-toggle{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:5px;transition:all .2s}
+.theme-toggle:hover{border-color:var(--border2);color:var(--text)}
+
+/* ── FAVORITES ── */
+.fav-btn{position:absolute;top:6px;right:6px;background:none;border:none;cursor:pointer;font-size:14px;opacity:.4;transition:opacity .2s,transform .2s;z-index:10;padding:2px}
+.fav-btn:hover{opacity:1}
+.fav-btn.active{opacity:1;transform:scale(1.15)}
+.fav-section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem;display:none}
+.fav-section.has-favs{display:block}
+.fav-grid{display:flex;gap:6px;flex-wrap:wrap;padding:.75rem}
+
+/* ── COMPARATOR ── */
+.compare-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:600;color:var(--blue2);cursor:pointer;transition:all .15s;margin-left:auto}
+.compare-btn:hover{background:rgba(56,139,253,.1)}
+.compare-btn.selected{background:rgba(56,139,253,.15);border-color:var(--blue2)}
+#compare-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(22,27,34,.97);border-top:1px solid var(--border2);padding:10px 1.5rem;backdrop-filter:blur(10px);animation:fadeInUp .3s ease}
+#compare-bar.visible{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.compare-slot{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:6px 10px;min-width:140px}
+.compare-slot-empty{border-style:dashed;color:var(--text3);font-size:12px;justify-content:center}
+.compare-slot img{width:32px;height:32px;border-radius:5px;object-fit:cover}
+.compare-slot-name{font-size:12px;font-weight:600;color:var(--text)}
+.compare-slot-role{font-size:10px;color:var(--text3)}
+.compare-slot-remove{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;margin-left:auto;padding:0 2px}
+.compare-slot-remove:hover{color:var(--red)}
+#compare-go{background:var(--blue);color:#fff;border:none;border-radius:7px;padding:8px 18px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;white-space:nowrap}
+#compare-go:hover{background:var(--blue2)}
+#compare-go:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed}
+#compare-clear{background:none;border:1px solid var(--border2);color:var(--text2);border-radius:7px;padding:8px 12px;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer}
+#compare-clear:hover{border-color:var(--red);color:var(--red)}
+.compare-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+
+/* ── COMPARE MODAL ── */
+#compare-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);overflow-y:auto}
+#compare-modal.visible{display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem}
+.compare-modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:900px;overflow:hidden;animation:fadeInUp .3s ease}
+.compare-modal-hd{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:var(--bg3);border-bottom:1px solid var(--border)}
+.compare-modal-title{font-size:15px;font-weight:700;color:var(--text)}
+.compare-modal-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:0 4px}
+.compare-modal-close:hover{color:var(--text)}
+.compare-cols{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.compare-col{padding:1.25rem}
+.compare-col:first-child{border-right:1px solid var(--border)}
+.compare-col-hd{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.compare-col-name{font-size:16px;font-weight:700}
+.compare-stat-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+.compare-stat-row:last-child{border-bottom:none}
+.compare-stat-lbl{color:var(--text2)}
+.compare-stat-val{font-weight:600}
+.compare-section-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:1rem 0 .5rem}
+.compare-champ-row{display:flex;align-items:center;gap:7px;padding:4px 0;font-size:12px}
+.compare-champ-row img{width:24px;height:24px;border-radius:4px;object-fit:cover}
+.compare-win{color:var(--green);font-weight:700;margin-left:auto}
+.compare-lose{color:var(--red);font-weight:700;margin-left:auto}
+@media(max-width:600px){.compare-cols{grid-template-columns:1fr}.compare-col:first-child{border-right:none;border-bottom:1px solid var(--border)}}
+
+/* ── MOBILE IMPROVEMENTS ── */
+@media(max-width:600px){
+  .hero h1{font-size:16px}
+  .hero p{font-size:12px}
+  nav{padding:0 1rem}
+  .logo{font-size:13px}
+  #nav-champ{display:none}
+  .main{margin:.75rem auto;gap:.75rem}
+  .cgrid{grid-template-columns:repeat(auto-fill,minmax(62px,1fr));max-height:280px}
+  .gc{grid-template-columns:1.8fr .7fr .7fr 1fr 60px}
+  .gg{grid-template-columns:1.8fr .7fr .7fr 1fr}
+  .items-grid{grid-template-columns:1fr 1fr}
+  .item-tooltip{display:none!important}
+  .champ-section .sec-hd{flex-wrap:wrap;gap:4px}
+  #compare-bar.visible{padding:8px 1rem;gap:8px}
+  .compare-slot{min-width:110px}
+  .compare-label{display:none}
+  div[style*="justify-content:space-between"]{flex-direction:column}
+  div[style*="justify-content:space-between"] > div:last-child{width:100%}
+  div[style*="justify-content:space-between"] > div:last-child input{width:100%!important}
+  #summoner-input{width:120px!important}
+}
 </style>
 </head>
 <body>
@@ -204,6 +332,7 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
   <div class="logo">⚔ Que Pickeo ?</div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="nav-champ" style="font-size:12px;color:var(--gold);font-weight:600;opacity:0;transition:opacity .4s"></span>
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Cambiar modo">🌙 Oscuro</button>
     <span class="patch">Patch 16.5</span>
   </div>
 </nav>
@@ -242,6 +371,14 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 
 <div class="main" id="mainWrap">
   <div>
+    <!-- FAVORITOS -->
+    <div class="fav-section" id="favSection">
+      <div class="sec-hd">
+        <span class="sec-title">⭐ Favoritos</span>
+        <span class="sec-count" id="fav-count"></span>
+      </div>
+      <div class="fav-grid" id="favGrid"></div>
+    </div>
     <div class="champ-section">
       <div class="sec-hd">
         <span class="sec-title">Campeones</span>
@@ -252,6 +389,26 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
     <div id="sideInfo"><div class="placeholder">Seleccioná un campeón ↑</div></div>
   </div>
   <div id="mainInfo"><div class="placeholder" style="padding:5rem 2rem">← Seleccioná un campeón del panel izquierdo para ver sus counters, ítems y runas</div></div>
+</div>
+
+<!-- COMPARE BAR -->
+<div id="compare-bar">
+  <span class="compare-label">Comparar</span>
+  <div id="compare-slot-1" class="compare-slot compare-slot-empty">+ Campeón 1</div>
+  <div id="compare-slot-2" class="compare-slot compare-slot-empty">+ Campeón 2</div>
+  <button id="compare-go" onclick="openCompareModal()" disabled>Comparar →</button>
+  <button id="compare-clear" onclick="clearCompare()">Limpiar</button>
+</div>
+
+<!-- COMPARE MODAL -->
+<div id="compare-modal" onclick="if(event.target===this)closeCompareModal()">
+  <div class="compare-modal-box">
+    <div class="compare-modal-hd">
+      <span class="compare-modal-title" id="compare-modal-title">Comparando campeones</span>
+      <button class="compare-modal-close" onclick="closeCompareModal()">✕</button>
+    </div>
+    <div class="compare-cols" id="compare-cols"></div>
+  </div>
 </div>
 
 <footer>
@@ -857,13 +1014,13 @@ var activeRole="Todos";
 var selChamp=null;
 document.getElementById('roleTabs').innerHTML=ROLES.map(function(r){return '<button class="rtab'+(r==='Todos'?' on':'')+'" onclick="setRole(\''+r+'\')">'+r+'</button>';}).join('');
 function setRole(r){activeRole=r;document.querySelectorAll('.rtab').forEach(function(b){b.classList.toggle('on',b.textContent===r);});filterGrid();}
-function filterGrid(){var q=document.getElementById('si').value.toLowerCase().trim();var filtered=ALL.filter(function(c){return(!q||c.n.toLowerCase().indexOf(q)>=0)&&(activeRole==='Todos'||c.r===activeRole);});if(activeRole==='Todos'){var seen={};filtered=filtered.filter(function(c){if(seen[c.n])return false;seen[c.n]=true;return true;});}document.getElementById('ccount').textContent=filtered.length+' campeones';document.getElementById('cgrid').innerHTML=filtered.map(function(c){var active=selChamp&&selChamp.n===c.n;return '<button class="cbtn role-'+c.r+(active?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')">'+ portrait(c.n,c.r,48)+'<span class="cname">'+c.n+'</span><span class="crole">'+c.r+'</span></button>';}).join('');}
+function filterGrid(){var q=document.getElementById('si').value.toLowerCase().trim();var filtered=ALL.filter(function(c){return(!q||c.n.toLowerCase().indexOf(q)>=0)&&(activeRole==='Todos'||c.r===activeRole);});if(activeRole==='Todos'){var seen={};filtered=filtered.filter(function(c){if(seen[c.n])return false;seen[c.n]=true;return true;});}document.getElementById('ccount').textContent=filtered.length+' campeones';document.getElementById('cgrid').innerHTML=filtered.map(function(c){var active=selChamp&&selChamp.n===c.n;var isFav=favs.indexOf(c.n)>=0;var inCompare=compareChamps.find(function(x){return x&&x.n===c.n;});return '<div style="position:relative">'+'<button class="cbtn role-'+c.r+(active?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')">'+ portrait(c.n,c.r,48)+'<span class="cname">'+c.n+'</span><span class="crole">'+c.r+'</span></button>'+'<button class="fav-btn'+(isFav?' active':'')+'" onclick="toggleFav(\''+c.n.replace(/'/g,"\\'")+'\',event)" title="'+(isFav?'Quitar favorito':'Agregar a favoritos')+'">'+(isFav?'⭐':'☆')+'</button>'+'</div>';}).join('');}
 function pickChamp(name,role){selChamp=ALL.find(function(c){return c.n===name&&(role?c.r===role:true);});if(!selChamp)selChamp=ALL.find(function(c){return c.n===name;});filterGrid();renderSide(selChamp);renderMain(selChamp);updatePageBg(selChamp);if(window.innerWidth<800)window.scrollTo({top:0,behavior:'smooth'});}
 
 /* ════════════════════════════════════
    RENDER SIDEBAR
 ════════════════════════════════════ */
-function renderSide(c){var d=getData(c);var st=d.stats;var splashUrl='https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(c.n)+'_0.jpg';var roleClass='role-'+c.r;var accentClass='role-accent-'+c.r;document.getElementById('sideInfo').innerHTML='<div class="champ-card anim-side '+roleClass+'" style="animation-delay:0s"><div class="champ-hd"><div class="champ-hd-bg"></div><div class="champ-hd-splash" style="background-image:url(\''+splashUrl+'\')"></div><div class="champ-hd-content">'+portrait(c.n,c.r,64)+'<div><div class="champ-name">'+c.n+'</div><div class="champ-role-lbl"><span class="'+accentClass+'">'+c.r+'</span></div><span class="tier-pill '+tierCls(st.tier)+'">Tier '+st.tier+'</span></div></div></div><div class="champ-stats"><div class="srow"><span class="slbl">Win Rate</span><span class="sval '+wrCls(st.wr)+'">'+st.wr+'</span></div><div class="srow"><span class="slbl">Pick Rate</span><span class="sval">'+st.pr+'</span></div><div class="srow"><span class="slbl">Ban Rate</span><span class="sval" style="color:var(--red)">'+st.br+'</span></div><div class="srow"><span class="slbl">Partidas</span><span class="sval">'+st.g+'</span></div></div></div>'+(function(){var spells=getSpells(c);return '<div class="spells-card"><div class="rcard-hd">Hechizos de Invocador</div><div class="spells-body"><div class="spells-pair">'+spells.map(function(s){return spellImg(s,36);}).join('')+'</div></div></div>';}())+'<div class="rune-card"><div class="rcard-hd">Runas Recomendadas</div><div class="rcard-body"><div class="rpath-hd">'+rpsvg(d.runes.p.path,20)+'<span class="rpath-name" style="color:'+getPathCol(d.runes.p.path)+'">'+d.runes.p.path+'</span></div><div class="rks-row">'+runeImgEl(d.runes.p.ks,true,28)+'<div><div class="rks-name" style="color:'+getPathCol(d.runes.p.path)+'">'+d.runes.p.ks+'</div><div class="rks-sub">Keystone</div></div></div>'+d.runes.p.s.map(function(r){return '<div class="rmin">'+runeImgEl(r,false,18)+'<span class="rmin-name">'+r+'</span></div>';}).join('')+'<div class="rdiv"></div><div class="rpath-hd">'+rpsvg(d.runes.s.path,20)+'<span class="rpath-name" style="color:'+getPathCol(d.runes.s.path)+'">'+d.runes.s.path+'</span></div>'+d.runes.s.picks.map(function(r){return '<div class="rmin">'+runeImgEl(r,false,18)+'<span class="rmin-name">'+r+'</span></div>';}).join('')+'<div class="shards"><div class="sh-row">'+shsvg('offense',d.runes.sh.o,16)+'<span class="sh-type">Ataque</span><span class="sh-val">'+d.runes.sh.o+'</span></div><div class="sh-row">'+shsvg('flex',d.runes.sh.f,16)+'<span class="sh-type">Flex</span><span class="sh-val">'+d.runes.sh.f+'</span></div><div class="sh-row">'+shsvg('defense',d.runes.sh.d,16)+'<span class="sh-type">Defensa</span><span class="sh-val">'+d.runes.sh.d+'</span></div></div></div></div>';}
+function renderSide(c){var d=getData(c);var st=d.stats;var splashUrl='https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(c.n)+'_0.jpg';var roleClass='role-'+c.r;var accentClass='role-accent-'+c.r;document.getElementById('sideInfo').innerHTML='<div class="champ-card anim-side '+roleClass+'" style="animation-delay:0s"><div class="champ-hd"><div class="champ-hd-bg"></div><div class="champ-hd-splash" style="background-image:url(\''+splashUrl+'\')"></div><div class="champ-hd-content">'+portrait(c.n,c.r,64)+'<div><div class="champ-name">'+c.n+'</div><div class="champ-role-lbl"><span class="'+accentClass+'">'+c.r+'</span></div><span class="tier-pill '+tierCls(st.tier)+'">Tier '+st.tier+'</span></div></div></div><div class="champ-stats"><div class="srow"><span class="slbl">Win Rate</span><span class="sval '+wrCls(st.wr)+'">'+st.wr+'</span></div><div class="srow"><span class="slbl">Pick Rate</span><span class="sval">'+st.pr+'</span></div><div class="srow"><span class="slbl">Ban Rate</span><span class="sval" style="color:var(--red)">'+st.br+'</span></div><div class="srow"><span class="slbl">Partidas</span><span class="sval">'+st.g+'</span></div><div class="srow" style="border-bottom:none;padding-top:8px"><button class="compare-btn" onclick="addToCompare(selChamp)">⚖ Agregar al comparador</button></div></div></div>'+(function(){var spells=getSpells(c);return '<div class="spells-card"><div class="rcard-hd">Hechizos de Invocador</div><div class="spells-body"><div class="spells-pair">'+spells.map(function(s){return spellImg(s,36);}).join('')+'</div></div></div>';}())+'<div class="rune-card"><div class="rcard-hd">Runas Recomendadas</div><div class="rcard-body"><div class="rpath-hd">'+rpsvg(d.runes.p.path,20)+'<span class="rpath-name" style="color:'+getPathCol(d.runes.p.path)+'">'+d.runes.p.path+'</span></div><div class="rks-row">'+runeImgEl(d.runes.p.ks,true,28)+'<div><div class="rks-name" style="color:'+getPathCol(d.runes.p.path)+'">'+d.runes.p.ks+'</div><div class="rks-sub">Keystone</div></div></div>'+d.runes.p.s.map(function(r){return '<div class="rmin">'+runeImgEl(r,false,18)+'<span class="rmin-name">'+r+'</span></div>';}).join('')+'<div class="rdiv"></div><div class="rpath-hd">'+rpsvg(d.runes.s.path,20)+'<span class="rpath-name" style="color:'+getPathCol(d.runes.s.path)+'">'+d.runes.s.path+'</span></div>'+d.runes.s.picks.map(function(r){return '<div class="rmin">'+runeImgEl(r,false,18)+'<span class="rmin-name">'+r+'</span></div>';}).join('')+'<div class="shards"><div class="sh-row">'+shsvg('offense',d.runes.sh.o,16)+'<span class="sh-type">Ataque</span><span class="sh-val">'+d.runes.sh.o+'</span></div><div class="sh-row">'+shsvg('flex',d.runes.sh.f,16)+'<span class="sh-type">Flex</span><span class="sh-val">'+d.runes.sh.f+'</span></div><div class="sh-row">'+shsvg('defense',d.runes.sh.d,16)+'<span class="sh-type">Defensa</span><span class="sh-val">'+d.runes.sh.d+'</span></div></div></div></div>';}
 
 /* ════════════════════════════════════
    RENDER MAIN
@@ -875,8 +1032,163 @@ function renderMain(c){var d=getData(c);var ctrs=d.ctr.map(function(row,i){var n
 ════════════════════════════════════ */
 function updatePageBg(champ){var bg=document.getElementById('page-bg');var nc=document.getElementById('nav-champ');var url='https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(champ.n)+'_0.jpg';var img=new Image();img.onload=function(){bg.style.backgroundImage='url('+url+')';bg.style.opacity='1';};img.src=url;nc.textContent=champ.n+' · '+champ.r;nc.style.opacity='1';}
 
+/* ════════════════════════════════════
+   DARK / LIGHT MODE
+════════════════════════════════════ */
+var isDark = true;
+function toggleTheme(){
+  isDark = !isDark;
+  document.body.classList.toggle('light-mode', !isDark);
+  var btn = document.getElementById('theme-btn');
+  btn.textContent = isDark ? '🌙 Oscuro' : '☀️ Claro';
+  try{ localStorage.setItem('qp-theme', isDark?'dark':'light'); }catch(e){}
+}
+(function(){
+  try{
+    var t = localStorage.getItem('qp-theme');
+    if(t === 'light'){ isDark=false; document.body.classList.add('light-mode'); }
+  }catch(e){}
+})();
+
+/* ════════════════════════════════════
+   FAVORITES
+════════════════════════════════════ */
+var favs = [];
+try{ favs = JSON.parse(localStorage.getItem('qp-favs')||'[]'); }catch(e){}
+
+function saveFavs(){
+  try{ localStorage.setItem('qp-favs', JSON.stringify(favs)); }catch(e){}
+}
+
+function toggleFav(name, evt){
+  evt.stopPropagation();
+  var idx = favs.indexOf(name);
+  if(idx >= 0) favs.splice(idx,1);
+  else favs.push(name);
+  saveFavs();
+  renderFavs();
+  filterGrid();
+}
+
+function renderFavs(){
+  var sec  = document.getElementById('favSection');
+  var grid = document.getElementById('favGrid');
+  var cnt  = document.getElementById('fav-count');
+  if(!favs.length){ sec.classList.remove('has-favs'); return; }
+  sec.classList.add('has-favs');
+  cnt.textContent = favs.length;
+  grid.innerHTML = favs.map(function(name){
+    var c = ALL.find(function(x){ return x.n===name; });
+    if(!c) return '';
+    return '<div style="position:relative;display:inline-block">'
+      +'<button class="cbtn role-'+c.r+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')" style="width:70px">'
+      +portrait(c.n,c.r,48)+'<span class="cname">'+c.n+'</span></button>'
+      +'<button class="fav-btn active" onclick="toggleFav(\''+c.n.replace(/'/g,"\\'")+'\',event)" title="Quitar favorito">⭐</button>'
+      +'</div>';
+  }).join('');
+}
+
+/* ════════════════════════════════════
+   COMPARATOR
+════════════════════════════════════ */
+var compareChamps = [null, null];
+
+function addToCompare(champ){
+  if(compareChamps[0]&&compareChamps[0].n===champ.n) return;
+  if(compareChamps[1]&&compareChamps[1].n===champ.n) return;
+  if(!compareChamps[0]) compareChamps[0]=champ;
+  else if(!compareChamps[1]) compareChamps[1]=champ;
+  else{ compareChamps[0]=compareChamps[1]; compareChamps[1]=champ; }
+  renderCompareBar();
+}
+
+function removeFromCompare(idx){
+  compareChamps[idx]=null;
+  renderCompareBar();
+}
+
+function clearCompare(){
+  compareChamps=[null,null];
+  renderCompareBar();
+}
+
+function renderCompareBar(){
+  var bar=document.getElementById('compare-bar');
+  var go=document.getElementById('compare-go');
+  var filled=compareChamps.filter(Boolean).length;
+  if(filled===0){ bar.classList.remove('visible'); return; }
+  bar.classList.add('visible');
+  go.disabled = filled<2;
+
+  [0,1].forEach(function(i){
+    var slot=document.getElementById('compare-slot-'+(i+1));
+    var c=compareChamps[i];
+    if(!c){
+      slot.className='compare-slot compare-slot-empty';
+      slot.innerHTML='+ Campeón '+(i+1);
+    } else {
+      slot.className='compare-slot';
+      slot.innerHTML='<img src="'+cimgUrl(c.n)+'" onerror="this.style.opacity=.3"/>'
+        +'<div><div class="compare-slot-name">'+c.n+'</div><div class="compare-slot-role">'+c.r+'</div></div>'
+        +'<button class="compare-slot-remove" onclick="removeFromCompare('+i+')">✕</button>';
+    }
+  });
+}
+
+function openCompareModal(){
+  var c1=compareChamps[0], c2=compareChamps[1];
+  if(!c1||!c2) return;
+  var d1=getData(c1), d2=getData(c2);
+  document.getElementById('compare-modal-title').textContent=c1.n+' vs '+c2.n;
+
+  function colHtml(c,d){
+    var countersShared = d.ctr.slice(0,5).map(function(row){
+      return '<div class="compare-champ-row">'
+        +'<img src="'+cimgUrl(row[0])+'" onerror="this.style.opacity=.3"/>'
+        +'<span>'+row[0]+'</span>'
+        +'<span class="compare-win">'+parseFloat(row[1]).toFixed(1)+'%</span>'
+        +'</div>';
+    }).join('');
+
+    var itemsHtml = d.items.slice(0,4).map(function(it){
+      return '<div class="compare-champ-row">'
+        +'<img src="'+(function(){var id=IIDS[it.n];return id?('https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/'+id+'.png'):'';})()
+        +'" onerror="this.style.opacity=.3" style="border-radius:4px"/>'
+        +'<span>'+it.n+'</span>'
+        +'</div>';
+    }).join('');
+
+    return '<div class="compare-col">'
+      +'<div class="compare-col-hd">'+portrait(c.n,c.r,40)+'<div><div class="compare-col-name">'+c.n+'</div><div style="font-size:11px;color:var(--text3)">'+c.r+'</div></div>'
+      +'<span class="tier-pill '+tierCls(d.stats.tier)+'" style="margin-left:auto">Tier '+d.stats.tier+'</span></div>'
+      +'<div class="compare-stat-row"><span class="compare-stat-lbl">Win Rate</span><span class="compare-stat-val '+wrCls(d.stats.wr)+'">'+d.stats.wr+'</span></div>'
+      +'<div class="compare-stat-row"><span class="compare-stat-lbl">Pick Rate</span><span class="compare-stat-val">'+d.stats.pr+'</span></div>'
+      +'<div class="compare-stat-row"><span class="compare-stat-lbl">Ban Rate</span><span class="compare-stat-val" style="color:var(--red)">'+d.stats.br+'</span></div>'
+      +'<div class="compare-stat-row"><span class="compare-stat-lbl">Partidas</span><span class="compare-stat-val">'+d.stats.g+'</span></div>'
+      +'<div class="compare-section-title">Top counters</div>'+countersShared
+      +'<div class="compare-section-title">Build principal</div>'+itemsHtml
+      +'<div class="compare-section-title">Keystone</div>'
+      +'<div class="compare-champ-row" style="gap:8px">'+runeImgEl(d.runes.p.ks,true,22)+'<span>'+d.runes.p.ks+'</span></div>'
+      +'</div>';
+  }
+
+  document.getElementById('compare-cols').innerHTML = colHtml(c1,d1)+colHtml(c2,d2);
+  document.getElementById('compare-modal').classList.add('visible');
+  document.body.style.overflow='hidden';
+}
+
+function closeCompareModal(){
+  document.getElementById('compare-modal').classList.remove('visible');
+  document.body.style.overflow='';
+}
+
 /* INIT */
 filterGrid();
+renderFavs();
+(function(){
+  var btn=document.getElementById('theme-btn');
+  if(btn) btn.textContent=isDark?'🌙 Oscuro':'☀️ Claro';
+})();
 </script>
 </body>
 </html>
