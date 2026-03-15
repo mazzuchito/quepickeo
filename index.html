@@ -277,7 +277,34 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 #compare-clear:hover{border-color:var(--red);color:var(--red)}
 .compare-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
 
-/* ── COMPARE PICKER ── */
+/* ── SPLASH SCREEN ── */
+#splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0e1015;transition:opacity .6s ease,visibility .6s ease}
+#splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+#splash-bg{position:absolute;inset:0;background-size:cover;background-position:center 20%;opacity:0;transition:opacity 1.2s ease}
+#splash-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(14,16,21,.6) 0%,rgba(14,16,21,.85) 100%)}
+#splash-content{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+#splash-logo{font-size:42px;font-weight:700;color:var(--gold);letter-spacing:-1px;opacity:0;transform:translateY(20px);transition:opacity .6s ease .3s,transform .6s ease .3s}
+#splash-logo.show{opacity:1;transform:translateY(0)}
+#splash-sub{font-size:15px;color:var(--text2);opacity:0;transition:opacity .6s ease .6s}
+#splash-sub.show{opacity:1}
+#splash-bar-wrap{width:200px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;opacity:0;transition:opacity .4s ease .8s}
+#splash-bar-wrap.show{opacity:1}
+#splash-bar{height:100%;width:0%;background:var(--gold);border-radius:2px;transition:width 1.8s ease}
+#splash-champ{font-size:11px;color:var(--text3);opacity:0;transition:opacity .4s ease 1s;margin-top:4px}
+#splash-champ.show{opacity:1}
+
+/* ── MATCHUP RESULT ── */
+.matchup-banner{display:flex;align-items:center;justify-content:center;gap:0;margin:1rem 0;border-radius:10px;overflow:hidden;border:1px solid var(--border2)}
+.matchup-side{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px 10px;gap:6px;position:relative;overflow:hidden}
+.matchup-side-bg{position:absolute;inset:0;background-size:cover;background-position:center 20%;opacity:.18}
+.matchup-side-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px;width:100%}
+.matchup-side-name{font-size:13px;font-weight:700}
+.matchup-side-wr{font-size:11px;font-weight:600}
+.matchup-vs-center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 12px;background:var(--bg3);z-index:1;gap:4px;flex-shrink:0}
+.matchup-winner-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:2px 8px;border-radius:10px}
+.matchup-bar-wrap{width:100%;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;display:flex}
+.matchup-bar-1{height:100%;background:var(--blue2);transition:width .8s ease}
+.matchup-bar-2{height:100%;background:var(--red);transition:width .8s ease}
 #compare-picker{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);backdrop-filter:blur(3px)}
 #compare-picker.visible{display:flex;align-items:center;justify-content:center}
 .compare-picker-box{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;width:min(480px,95vw);max-height:80vh;overflow:hidden;display:flex;flex-direction:column;animation:fadeInUp .25s ease}
@@ -341,6 +368,16 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 </style>
 </head>
 <body>
+<div id="splash">
+  <div id="splash-bg"></div>
+  <div id="splash-overlay"></div>
+  <div id="splash-content">
+    <div id="splash-logo">⚔ Que Pickeo?</div>
+    <div id="splash-sub">Counters · Ítems · Runas para League of Legends</div>
+    <div id="splash-bar-wrap"><div id="splash-bar"></div></div>
+    <div id="splash-champ"></div>
+  </div>
+</div>
 <div id="page-bg"></div>
 <div id="page-bg-overlay"></div>
 <nav>
@@ -356,8 +393,8 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
   <div style="max-width:1100px;margin:0 auto">
     <h1>Counters de Campeones</h1>
     <p>Seleccioná un campeón para ver sus counters, ítems y runas recomendadas</p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:.75rem;justify-content:space-between">
-      <div style="flex:1;min-width:200px;max-width:480px;display:flex;flex-direction:column;gap:4px">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:.75rem">
+      <div style="flex:1;min-width:200px;max-width:420px;display:flex;flex-direction:column;gap:4px">
         <span style="font-size:11px;font-weight:600;color:transparent;text-transform:uppercase;letter-spacing:.5px;user-select:none">Buscar</span>
         <div style="position:relative">
           <span class="sico">🔍</span>
@@ -367,16 +404,16 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
       <div style="display:flex;gap:6px;flex-shrink:0;flex-direction:column">
         <span style="font-size:11px;font-weight:600;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px">⚖ Comparador</span>
         <div style="display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;height:42px">
-          <div id="hero-slot-1" style="display:flex;align-items:center;gap:6px;cursor:pointer;min-width:90px" onclick="openComparePicker(0)" title="Elegí un campeón para comparar">
-            <div style="width:28px;height:28px;border-radius:5px;border:1px dashed var(--border2);background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);flex-shrink:0" id="hero-slot-1-img">+</div>
+          <div onclick="openComparePicker(0)" style="display:flex;align-items:center;gap:6px;cursor:pointer;min-width:90px">
+            <div style="width:28px;height:28px;border-radius:5px;border:1px dashed var(--border2);background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);flex-shrink:0;overflow:hidden" id="hero-slot-1-img">+</div>
             <span style="font-size:11px;color:var(--text3)" id="hero-slot-1-name">Campeón 1</span>
           </div>
           <span style="color:var(--text3);font-size:12px;font-weight:600;flex-shrink:0">vs</span>
-          <div id="hero-slot-2" style="display:flex;align-items:center;gap:6px;cursor:pointer;min-width:90px" onclick="openComparePicker(1)" title="Elegí un campeón para comparar">
-            <div style="width:28px;height:28px;border-radius:5px;border:1px dashed var(--border2);background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);flex-shrink:0" id="hero-slot-2-img">+</div>
+          <div onclick="openComparePicker(1)" style="display:flex;align-items:center;gap:6px;cursor:pointer;min-width:90px">
+            <div style="width:28px;height:28px;border-radius:5px;border:1px dashed var(--border2);background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);flex-shrink:0;overflow:hidden" id="hero-slot-2-img">+</div>
             <span style="font-size:11px;color:var(--text3)" id="hero-slot-2-name">Campeón 2</span>
           </div>
-          <button id="hero-compare-go" onclick="openCompareModal()" disabled style="background:var(--blue);border:none;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:0 10px;height:28px;border-radius:5px;cursor:pointer;transition:background .15s;white-space:nowrap;opacity:.4" onmouseover="if(!this.disabled)this.style.background='var(--blue2)'" onmouseout="this.style.background='var(--blue)'">Comparar</button>
+          <button id="hero-compare-go" onclick="openCompareModal()" disabled style="background:var(--blue);border:none;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:0 10px;height:28px;border-radius:5px;cursor:not-allowed;transition:all .15s;white-space:nowrap;opacity:.4">Comparar</button>
         </div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0;flex-direction:column">
@@ -1285,6 +1322,65 @@ function openCompareModal(){
   var d1=getData(c1), d2=getData(c2);
   document.getElementById('compare-modal-title').textContent=c1.n+' vs '+c2.n;
 
+  // ── Matchup: check if c2 is in c1's counters or c1 is in c2's counters
+  var wr1=parseFloat(d1.stats.wr);
+  var wr2=parseFloat(d2.stats.wr);
+  var c2InC1Ctr = d1.ctr.find(function(r){ return r[0].toLowerCase()===c2.n.toLowerCase(); });
+  var c1InC2Ctr = d2.ctr.find(function(r){ return r[0].toLowerCase()===c1.n.toLowerCase(); });
+  var matchupWr1, matchupWr2, verdict;
+  if(c2InC1Ctr){
+    // c2 counters c1 — c2 wins
+    matchupWr2 = parseFloat(c2InC1Ctr[1]);
+    matchupWr1 = (100 - matchupWr2).toFixed(1);
+    matchupWr2 = matchupWr2.toFixed(1);
+    verdict = 2;
+  } else if(c1InC2Ctr){
+    // c1 counters c2 — c1 wins
+    matchupWr1 = parseFloat(c1InC2Ctr[1]);
+    matchupWr2 = (100 - matchupWr1).toFixed(1);
+    matchupWr1 = matchupWr1.toFixed(1);
+    verdict = 1;
+  } else {
+    // No direct matchup data — compare global WR
+    matchupWr1 = wr1.toFixed(1);
+    matchupWr2 = wr2.toFixed(1);
+    verdict = wr1 >= wr2 ? 1 : 2;
+  }
+  var pct1 = Math.round(parseFloat(matchupWr1)/(parseFloat(matchupWr1)+parseFloat(matchupWr2))*100);
+  var pct2 = 100-pct1;
+  var splash1='https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(c1.n)+'_0.jpg';
+  var splash2='https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(c2.n)+'_0.jpg';
+
+  var matchupHtml = '<div class="matchup-banner">'
+    +'<div class="matchup-side" style="background:'+(verdict===1?'rgba(56,139,253,.08)':'rgba(248,81,73,.05)')+'">'
+      +'<div class="matchup-side-bg" style="background-image:url(\''+splash1+'\')"></div>'
+      +'<div class="matchup-side-content">'
+        +portrait(c1.n,c1.r,48)
+        +'<div class="matchup-side-name">'+c1.n+'</div>'
+        +'<div class="matchup-side-wr" style="color:'+(verdict===1?'var(--green)':'var(--red)')+'">'+matchupWr1+'% WR</div>'
+        +(verdict===1?'<div class="matchup-winner-badge" style="background:rgba(63,185,80,.15);color:var(--green)">✓ Ventaja</div>':'')
+      +'</div>'
+    +'</div>'
+    +'<div class="matchup-vs-center">'
+      +'<div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Matchup</div>'
+      +'<div style="font-size:18px;font-weight:700;color:var(--text)">VS</div>'
+      +'<div class="matchup-bar-wrap" style="width:80px;margin-top:6px">'
+        +'<div class="matchup-bar-1" style="width:'+pct1+'%"></div>'
+        +'<div class="matchup-bar-2" style="width:'+pct2+'%"></div>'
+      +'</div>'
+      +(c2InC1Ctr||c1InC2Ctr?'<div style="font-size:9px;color:var(--text3);margin-top:4px">dato directo</div>':'<div style="font-size:9px;color:var(--text3);margin-top:4px">WR general</div>')
+    +'</div>'
+    +'<div class="matchup-side" style="background:'+(verdict===2?'rgba(56,139,253,.08)':'rgba(248,81,73,.05)')+'">'
+      +'<div class="matchup-side-bg" style="background-image:url(\''+splash2+'\')"></div>'
+      +'<div class="matchup-side-content">'
+        +portrait(c2.n,c2.r,48)
+        +'<div class="matchup-side-name">'+c2.n+'</div>'
+        +'<div class="matchup-side-wr" style="color:'+(verdict===2?'var(--green)':'var(--red)')+'">'+matchupWr2+'% WR</div>'
+        +(verdict===2?'<div class="matchup-winner-badge" style="background:rgba(63,185,80,.15);color:var(--green)">✓ Ventaja</div>':'')
+      +'</div>'
+    +'</div>'
+    +'</div>';
+
   function colHtml(c,d){
     var countersShared = d.ctr.slice(0,5).map(function(row){
       return '<div class="compare-champ-row">'
@@ -1293,7 +1389,6 @@ function openCompareModal(){
         +'<span class="compare-win">'+parseFloat(row[1]).toFixed(1)+'%</span>'
         +'</div>';
     }).join('');
-
     var itemsHtml = d.items.slice(0,4).map(function(it){
       return '<div class="compare-champ-row">'
         +'<img src="'+(function(){var id=IIDS[it.n];return id?('https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/'+id+'.png'):'';})()
@@ -1301,7 +1396,6 @@ function openCompareModal(){
         +'<span>'+it.n+'</span>'
         +'</div>';
     }).join('');
-
     return '<div class="compare-col">'
       +'<div class="compare-col-hd">'+portrait(c.n,c.r,40)+'<div><div class="compare-col-name">'+c.n+'</div><div style="font-size:11px;color:var(--text3)">'+c.r+'</div></div>'
       +'<span class="tier-pill '+tierCls(d.stats.tier)+'" style="margin-left:auto">Tier '+d.stats.tier+'</span></div>'
@@ -1316,7 +1410,11 @@ function openCompareModal(){
       +'</div>';
   }
 
-  document.getElementById('compare-cols').innerHTML = colHtml(c1,d1)+colHtml(c2,d2);
+  document.getElementById('compare-modal-title').innerHTML=
+    '<span style="color:var(--blue2)">'+c1.n+'</span>'
+    +' <span style="color:var(--text3);font-weight:400">vs</span> '
+    +'<span style="color:var(--red)">'+c2.n+'</span>';
+  document.getElementById('compare-cols').innerHTML = matchupHtml+'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--border)">'+colHtml(c1,d1)+colHtml(c2,d2)+'</div>';
   document.getElementById('compare-modal').classList.add('visible');
   document.body.style.overflow='hidden';
 }
@@ -1332,6 +1430,37 @@ renderFavs();
 (function(){
   var btn=document.getElementById('theme-btn');
   if(btn) btn.textContent=isDark?'🌙 Oscuro':'☀️ Claro';
+})();
+
+/* ── SPLASH SCREEN ── */
+(function(){
+  var splashChamps=['Yasuo','Ahri','Jinx','Thresh','Zed','Lux','Darius','Lee Sin','Katarina','Vi','Caitlyn','Akali','Yone','Syndra','Jinx','Lux'];
+  var picked = splashChamps[Math.floor(Math.random()*splashChamps.length)];
+  var bg = document.getElementById('splash-bg');
+  var logo = document.getElementById('splash-logo');
+  var sub = document.getElementById('splash-sub');
+  var barWrap = document.getElementById('splash-bar-wrap');
+  var bar = document.getElementById('splash-bar');
+  var champEl = document.getElementById('splash-champ');
+
+  // Set random champ splash
+  bg.style.backgroundImage = 'url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(picked)+'_0.jpg)';
+  setTimeout(function(){ bg.style.opacity='1'; }, 50);
+
+  // Animate elements in
+  setTimeout(function(){ logo.classList.add('show'); }, 100);
+  setTimeout(function(){ sub.classList.add('show'); }, 200);
+  setTimeout(function(){
+    barWrap.classList.add('show');
+    champEl.classList.add('show');
+    champEl.textContent = picked;
+    setTimeout(function(){ bar.style.width='100%'; }, 50);
+  }, 400);
+
+  // Hide splash
+  setTimeout(function(){
+    document.getElementById('splash').classList.add('hide');
+  }, 2400);
 })();
 </script>
 </body>
