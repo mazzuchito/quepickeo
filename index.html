@@ -213,9 +213,12 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
     <h1>Counters de Campeones</h1>
     <p>Seleccioná un campeón para ver sus counters, ítems y runas recomendadas</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:.75rem">
-      <div class="search-wrap" style="margin-bottom:0;flex:1;min-width:200px">
-        <span class="sico">🔍</span>
-        <input id="si" type="text" placeholder="Buscar campeón..." oninput="filterGrid()"/>
+      <div class="search-wrap" style="margin-bottom:0;flex:1;min-width:200px;display:flex;flex-direction:column;gap:4px">
+        <span style="font-size:11px;font-weight:600;color:transparent;text-transform:uppercase;letter-spacing:.5px;user-select:none">Buscar</span>
+        <div style="position:relative">
+          <span class="sico">🔍</span>
+          <input id="si" type="text" placeholder="Buscar campeón..." oninput="filterGrid()" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px 10px 40px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border .2s,box-shadow .2s"/>
+        </div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0;flex-direction:column">
         <span style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px">Tus estadísticas</span>
@@ -818,7 +821,7 @@ var SURL='https://ddragon.leagueoflegends.com/cdn/14.24.1/img/spell/';
 var SPELL_IMGS={'Flash':SURL+'SummonerFlash.png','Ignite':SURL+'SummonerDot.png','Teleport':SURL+'SummonerTeleport.png','Smite':SURL+'SummonerSmite.png','Ghost':SURL+'SummonerHaste.png','Exhaust':SURL+'SummonerExhaust.png','Barrier':SURL+'SummonerBarrier.png','Heal':SURL+'SummonerHeal.png','Cleanse':SURL+'SummonerBoost.png'};
 var SPELL_ROLE={Top:['Flash','Teleport'],Jungle:['Flash','Smite'],Mid:['Flash','Ignite'],ADC:['Flash','Heal'],Support:['Flash','Ignite']};
 var SPELL_DATA={"Darius":['Flash','Ghost'],"Garen":['Ghost','Teleport'],"Singed":['Ghost','Teleport'],"Tryndamere":['Flash','Ignite'],"Nasus":['Flash','Teleport'],"Malphite":['Flash','Teleport'],"Sion":['Flash','Teleport'],"Urgot":['Flash','Teleport'],"Mordekaiser":['Flash','Ignite'],"Cho'Gath":['Flash','Teleport'],"Dr. Mundo":['Flash','Teleport'],"K'Sante":['Flash','Teleport'],"Ornn":['Flash','Teleport'],"Tahm Kench":['Flash','Teleport'],"Shen":['Flash','Teleport'],"Poppy":['Flash','Teleport'],"Gragas":['Flash','Ignite'],"Gangplank":['Flash','Teleport'],"Jayce":['Flash','Teleport'],"Riven":['Flash','Ignite'],"Fiora":['Flash','Ignite'],"Camille":['Flash','Teleport'],"Irelia":['Flash','Teleport'],"Jax":['Flash','Teleport'],"Gwen":['Flash','Ignite'],"Renekton":['Flash','Ignite'],"Kennen":['Flash','Teleport'],"Rumble":['Flash','Teleport'],"Gnar":['Flash','Teleport'],"Quinn":['Flash','Teleport'],"Pantheon":['Flash','Teleport'],"Ambessa":['Flash','Ignite'],"Aurora":['Flash','Teleport'],"Kled":['Flash','Ignite'],"Aatrox":['Flash','Teleport'],"Vladimir":['Flash','Teleport'],"Kayle":['Flash','Teleport'],"Teemo":['Flash','Ignite'],"Yorick":['Flash','Teleport'],"Trundle":['Flash','Ignite'],"Wukong":['Flash','Ignite'],"Olaf":['Flash','Ghost'],"Volibear":['Flash','Teleport'],"Warwick":['Flash','Ignite'],"Shyvana":['Flash','Teleport'],"Lee Sin":['Flash','Smite'],"Vi":['Flash','Smite'],"Hecarim":['Flash','Smite'],"Graves":['Flash','Smite'],"Kha'Zix":['Flash','Smite'],"Elise":['Flash','Smite'],"Kindred":['Flash','Smite'],"Nidalee":['Flash','Smite'],"Diana":['Flash','Smite'],"Ekko":['Flash','Smite'],"Evelynn":['Flash','Smite'],"Fiddlesticks":['Flash','Smite'],"Kayn":['Flash','Smite'],"Rengar":['Flash','Smite'],"Shaco":['Flash','Smite'],"Nocturne":['Flash','Smite'],"Rammus":['Flash','Smite'],"Amumu":['Flash','Smite'],"Sejuani":['Flash','Smite'],"Nunu & Willump":['Flash','Smite'],"Zac":['Flash','Smite'],"Jarvan IV":['Flash','Smite'],"Master Yi":['Flash','Smite'],"Xin Zhao":['Flash','Smite'],"Udyr":['Flash','Smite'],"Briar":['Flash','Smite'],"Viego":['Flash','Smite'],"Ivern":['Flash','Smite'],"Taliyah":['Flash','Smite'],"Lillia":['Flash','Smite'],"Skarner":['Flash','Smite'],"Bel'Veth":['Flash','Smite'],"Rek'Sai":['Flash','Smite'],"Qiyana":['Flash','Smite'],"Talon":['Flash','Smite'],"Sylas":['Flash','Smite'],"Katarina":['Flash','Smite'],"Ahri":['Flash','Ignite'],"Zed":['Flash','Ignite'],"Yasuo":['Flash','Ignite'],"Yone":['Flash','Ignite'],"Cassiopeia":['Ghost','Ignite'],"Twisted Fate":['Flash','Ghost'],"Lissandra":['Flash','Ignite'],"Malzahar":['Flash','Ignite'],"Ryze":['Flash','Ghost'],"Kassadin":['Flash','Ignite'],"Annie":['Flash','Ignite'],"Anivia":['Flash','Ignite'],"Galio":['Flash','Teleport'],"Karthus":['Flash','Teleport'],"Vayne":['Flash','Ignite'],"Jinx":['Flash','Heal'],"Caitlyn":['Flash','Heal'],"Draven":['Flash','Heal'],"Ezreal":['Flash','Heal'],"Jhin":['Flash','Heal'],"Ashe":['Flash','Heal'],"Kai'Sa":['Flash','Heal'],"Samira":['Flash','Ignite'],"Lucian":['Flash','Ignite'],"Tristana":['Flash','Heal'],"Varus":['Flash','Heal'],"Xayah":['Flash','Heal'],"Miss Fortune":['Flash','Heal'],"Kog'Maw":['Flash','Heal'],"Sivir":['Flash','Heal'],"Twitch":['Flash','Heal'],"Kalista":['Flash','Heal'],"Aphelios":['Flash','Heal'],"Zeri":['Flash','Heal'],"Smolder":['Flash','Heal'],"Nilah":['Flash','Ignite'],"Yunara":['Flash','Heal'],"Senna":['Flash','Heal'],"Thresh":['Flash','Ignite'],"Blitzcrank":['Flash','Ignite'],"Nautilus":['Flash','Ignite'],"Leona":['Flash','Ignite'],"Lulu":['Flash','Exhaust'],"Janna":['Flash','Exhaust'],"Soraka":['Flash','Exhaust'],"Nami":['Flash','Ignite'],"Yuumi":['Exhaust','Ignite'],"Bard":['Flash','Ignite'],"Milio":['Flash','Exhaust'],"Pyke":['Flash','Ignite'],"Sona":['Flash','Exhaust'],"Rakan":['Flash','Ignite'],"Rell":['Flash','Ignite'],"Alistar":['Flash','Ignite'],"Braum":['Flash','Ignite'],"Taric":['Flash','Ignite'],"Renata Glasc":['Flash','Ignite'],"Maokai":['Flash','Ignite'],"Brand":['Flash','Ignite'],"Zyra":['Flash','Ignite'],"Xerath":['Flash','Ignite'],"Vel'Koz":['Flash','Ignite'],"Swain":['Flash','Ignite'],"Seraphine":['Flash','Ignite'],"Karma":['Flash','Ignite'],"Morgana":['Flash','Ignite'],"Lux":['Flash','Ignite'],"Veigar":['Flash','Ignite'],"Neeko":['Flash','Ignite']};
-function getSpells(c){return SPELL_DATA[c.n]||SPELL_ROLE[c.r]||['Flash','Ignite'];}
+function getSpells(c){if(c.r==='Jungle')return['Flash','Smite'];var custom=SPELL_DATA[c.n];if(custom)return custom;return SPELL_ROLE[c.r]||['Flash','Ignite'];}
 function spellImg(name,sz){var src=SPELL_IMGS[name];var s=sz||32;var h='<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:'+s+'px;height:'+s+'px;border-radius:5px;overflow:hidden;border:1px solid var(--border2);background:var(--bg4);flex-shrink:0">';if(src)h+='<img src="'+src+'" width="'+s+'" height="'+s+'" style="display:block;object-fit:cover" onerror="this.style.display=\'none\'">';h+='</div><span style="font-size:9px;color:var(--text3);white-space:nowrap">'+name+'</span></div>';return h;}
 
 /* ════════════════════════════════════
@@ -832,7 +835,67 @@ function showSummonerLoading(){var el=document.getElementById('summoner-result')
 function showSummonerError(msg){var el=document.getElementById('summoner-result');el.style.display='block';el.innerHTML='<span class="sum-error">'+msg+'</span>';}
 function showSummonerData(name,tier,div,lp,wins,losses,champData){var el=document.getElementById('summoner-result');tier=(tier||'UNRANKED').toUpperCase();var ri=RANK_ICONS[tier]||RANK_ICONS['UNRANKED'];var rc=RANK_COLORS[tier]||'#6e7681';var rt=tier==='UNRANKED'?'Sin clasificar':tier+' '+(div||'');var total=(wins||0)+(losses||0);var wr=total>0?Math.round((wins||0)/total*100):0;var lpt=tier==='UNRANKED'?'':(lp||0)+' LP · '+(wins||0)+'V '+(losses||0)+'D'+(total?' · '+wr+'% WR':'');var ch='';if(champData&&champData.length){ch='<div class="sum-divider"></div><div><div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Más jugados</div><div class="sum-champs">'+champData.slice(0,5).map(function(c){var cw=(c.wins+c.losses)>0?Math.round(c.wins/(c.wins+c.losses)*100):0;var col=cw>=55?'var(--green)':cw<=45?'var(--red)':'var(--text2)';var f=ALL.find(function(x){return x.n.toLowerCase()===c.name.toLowerCase();});var oc=f?'onclick="pickChamp(\''+f.n.replace(/'/g,"\\'")+'\',\''+f.r+'\')"':'';return '<div class="sum-champ" '+oc+'><img class="sum-champ-img" src="'+cimgUrl(c.name)+'" onerror="this.style.opacity=\'.3\'"/><span class="sum-champ-name">'+c.name+'</span><span class="sum-champ-wr" style="color:'+col+'">'+cw+'%</span></div>';}).join('')+'</div></div>';}el.style.display='block';el.innerHTML='<div class="sum-card"><img class="sum-rank-icon" src="'+ri+'" onerror="this.style.display=\'none\'"/><div><div class="sum-name">'+name+'</div><div class="sum-rank" style="color:'+rc+'">'+rt+'</div>'+(lpt?'<div class="sum-lp">'+lpt+'</div>':'')+'</div>'+ch+'</div>';}
 function parseSummonerData(data,raw){var list=data&&(data.data||data);var s=Array.isArray(list)?list[0]:list;if(!s||s.status===404||s.error)return null;var ranked=(s.league_stats||s.rankedLeagues||[]).find(function(l){return(l.queue_info&&l.queue_info.queue_type==='RANKED_SOLO_5x5')||l.queueType==='RANKED_SOLO_5x5';});var tier,div,lp,wins,losses,champs;if(ranked&&ranked.tier_info){tier=ranked.tier_info.tier;div=ranked.tier_info.division;lp=ranked.tier_info.lp;wins=ranked.win;losses=ranked.lose;}else if(ranked){tier=ranked.tier;div=ranked.rank;lp=ranked.leaguePoints;wins=ranked.wins;losses=ranked.losses;}else{tier='UNRANKED';div='';lp=0;wins=0;losses=0;}champs=(s.most_champions||s.topChampions||[]).map(function(c){return{name:(c.champion&&c.champion.name)||c.championName||c.name||'',wins:c.win||c.wins||0,losses:c.lose||(c.games?(c.games-(c.wins||0)):0)||0};});return{name:s.summoner_name||s.name||raw,tier:tier,div:div,lp:lp,wins:wins,losses:losses,champs:champs};}
-function searchSummoner(){var raw=document.getElementById('summoner-input').value.trim();var region=document.getElementById('summoner-region').value;if(!raw)return;var opggRegion={la1:'lan',la2:'las',br1:'br',na1:'na',euw1:'euw'}[region]||'lan';var encoded=encodeURIComponent(raw);showSummonerLoading();var urls=['https://op.gg/api/v1.0/internal/bypass/summoners/'+opggRegion+'/summoners?summonerNames='+encoded+'&hl=es_ES','https://lolprofile.net/api/v1/summoner/'+opggRegion+'/'+encoded];function tryUrl(i){if(i>=urls.length){showSummonerError('Invocador no encontrado. Verificá el nombre y la región.');return;}fetchWithProxies(urls[i],CORS_PROXIES,0).then(function(data){var r=parseSummonerData(data,raw);if(!r){tryUrl(i+1);return;}showSummonerData(r.name,r.tier,r.div,r.lp,r.wins,r.losses,r.champs);}).catch(function(){tryUrl(i+1);});}tryUrl(0);}
+function searchSummoner(){
+  var raw=document.getElementById('summoner-input').value.trim();
+  var region=document.getElementById('summoner-region').value;
+  if(!raw)return;
+  var opggRegion={la1:'lan',la2:'las',br1:'br',na1:'na',euw1:'euw'}[region]||'lan';
+  var encoded=encodeURIComponent(raw);
+  showSummonerLoading();
+
+  // Try op.gg directly with proper headers
+  var url='https://op.gg/api/v1.0/internal/bypass/summoners/'+opggRegion+'/summoners?summonerNames='+encoded+'&hl=es_ES';
+
+  fetch(url, {
+    method:'GET',
+    headers:{
+      'Accept':'application/json, text/plain, */*',
+      'Accept-Language':'es-ES,es;q=0.9',
+      'Origin':'https://op.gg',
+      'Referer':'https://op.gg/',
+      'sec-fetch-dest':'empty',
+      'sec-fetch-mode':'cors',
+      'sec-fetch-site':'same-origin'
+    },
+    credentials:'include'
+  })
+  .then(function(r){
+    if(!r.ok) throw new Error(r.status);
+    return r.json();
+  })
+  .then(function(data){
+    var list=data&&(data.data||data);
+    var s=Array.isArray(list)?list[0]:list;
+    if(!s||s.status===404||s.error) throw new Error('not found');
+    var ranked=(s.league_stats||[]).find(function(l){
+      return l.queue_info&&l.queue_info.queue_type==='RANKED_SOLO_5x5';
+    });
+    var tier=ranked?ranked.tier_info.tier:'UNRANKED';
+    var div=ranked?ranked.tier_info.division:'';
+    var lp=ranked?ranked.tier_info.lp:0;
+    var wins=ranked?ranked.win:0;
+    var losses=ranked?ranked.lose:0;
+    var champs=(s.most_champions||[]).map(function(c){
+      return{name:(c.champion&&c.champion.name)||c.name||'',wins:c.win||0,losses:c.lose||0};
+    });
+    showSummonerData(s.summoner_name||raw,tier,div,lp,wins,losses,champs);
+  })
+  .catch(function(){
+    // Fallback: open op.gg in new tab
+    var parts=raw.split('#');
+    var name=parts[0].trim();
+    var tag=parts[1]?parts[1].trim():'';
+    var opggUrl=tag
+      ?'https://www.op.gg/summoners/'+opggRegion+'/'+encodeURIComponent(name)+'-'+encodeURIComponent(tag)
+      :'https://www.op.gg/summoners/'+opggRegion+'/'+encodeURIComponent(name);
+    var el=document.getElementById('summoner-result');
+    el.style.display='block';
+    el.innerHTML='<div class="sum-card" style="gap:12px">'
+      +'<div style="font-size:13px;color:var(--text2)">No se pudo cargar directamente.</div>'
+      +'<a href="'+opggUrl+'" target="_blank" style="background:var(--blue);color:#fff;font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;text-decoration:none;white-space:nowrap">Ver en op.gg →</a>'
+      +'</div>';
+  });
+}
 
 /* ════════════════════════════════════
    SEARCH & GRID
