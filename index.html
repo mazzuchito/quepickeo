@@ -738,7 +738,7 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 /* ── SEARCH POPUP ── */
 #search-popup{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:150;pointer-events:none}
 #search-popup.visible{pointer-events:all}
-#search-popup-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);opacity:0;transition:opacity .2s}
+#search-popup-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);opacity:0;transition:opacity .2s;cursor:pointer}
 #search-popup.visible #search-popup-backdrop{opacity:1}
 #search-popup-box{position:absolute;top:50%;left:50%;transform:translate(-50%,-48%) scale(.97);background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:min(560px,94vw);max-height:75vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);opacity:0;transition:all .22s cubic-bezier(.34,1.56,.64,1)}
 #search-popup.visible #search-popup-box{opacity:1;transform:translate(-50%,-50%) scale(1)}
@@ -806,7 +806,7 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
         <span style="font-size:11px;font-weight:600;color:transparent;text-transform:uppercase;letter-spacing:.5px;user-select:none">Buscar</span>
         <div style="position:relative">
           <span class="sico">🔍</span>
-          <input id="si" type="text" placeholder="Buscar campeón..." oninput="filterGrid()" onclick="openSearchPopup()" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px 10px 40px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);outline:none;cursor:pointer;transition:border .2s,box-shadow .2s"/>
+          <input id="si" type="text" placeholder="Buscar campeón..." oninput="filterGrid()" onclick="openSearchPopup()" onfocus="openSearchPopup()" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px 10px 40px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);outline:none;cursor:pointer;transition:border .2s,box-shadow .2s"/>
         </div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0;flex-direction:column">
@@ -964,8 +964,8 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 </div>
 
 <!-- SEARCH POPUP -->
-<div id="search-popup" onclick="if(event.target===document.getElementById('search-popup-backdrop'))closeSearchPopup()">
-  <div id="search-popup-backdrop"></div>
+<div id="search-popup">
+  <div id="search-popup-backdrop" onclick="closeSearchPopup()"></div>
   <div id="search-popup-box">
     <div id="search-popup-hd">
       <span class="sico">🔍</span>
