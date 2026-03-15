@@ -1272,8 +1272,175 @@ function tierCls(t){ return 't'+(t||'B'); }
 function thrEl(t){ if(t==='h')return '<span class="thr thr-h">Difícil</span>'; if(t==='m')return '<span class="thr thr-m">Moderado</span>'; return '<span class="thr thr-l">Fácil</span>'; }
 
 /* ════════════════════════════════════
-   SUMMONER SEARCH (via corsproxy.io)
+   SUMMONER SEARCH (multi-proxy fallback)
 ════════════════════════════════════ */
+var RANK_ICONS = {
+  'IRON':        'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-iron.png',
+  'BRONZE':      'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-bronze.png',
+  'SILVER':      'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-silver.png',
+  'GOLD':        'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-gold.png',
+  'PLATINUM':    'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-platinum.png',
+  'EMERALD':     'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-emerald.png',
+  'DIAMOND':     'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-diamond.png',
+  'MASTER':      'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-master.png',
+  'GRANDMASTER': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-grandmaster.png',
+  'CHALLENGER':  'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-challenger.png',
+  'UNRANKED':    'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-iron.png',
+};
+var RANK_COLORS = {
+  'IRON':'#a0a0b0','BRONZE':'#cd7f32','SILVER':'#b0b8c8','GOLD':'#d4af37',
+  'PLATINUM':'#4fc9b0','EMERALD':'#3fb950','DIAMOND':'#7ab8e8',
+  'MASTER':'#a371f7','GRANDMASTER':'#f85149','CHALLENGER':'#f0d060','UNRANKED':'#6e7681'
+};
+
+// Multiple CORS proxies to try in order
+var CORS_PROXIES = [
+  function(url){ return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url); },
+  function(url){ return 'https://corsproxy.io/?url=' + encodeURIComponent(url); },
+  function(url){ return 'https://proxy.cors.sh/' + url; },
+  function(url){ return 'https://thingproxy.freeboard.io/fetch/' + url; },
+];
+
+function fetchWithProxies(url, proxies, index) {
+  if (index >= proxies.length) return Promise.reject(new Error('All proxies failed'));
+  var proxyUrl = proxies[index](url);
+  return fetch(proxyUrl, {headers:{'x-requested-with':'XMLHttpRequest'}})
+    .then(function(r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    })
+    .catch(function() {
+      return fetchWithProxies(url, proxies, index + 1);
+    });
+}
+
+function showSummonerLoading() {
+  var el = document.getElementById('summoner-result');
+  el.style.display = 'block';
+  el.innerHTML = '<div class="sum-loading"><div class="sum-spinner"></div><span>Buscando invocador...</span></div>';
+}
+function showSummonerError(msg) {
+  var el = document.getElementById('summoner-result');
+  el.style.display = 'block';
+  el.innerHTML = '<span class="sum-error">'+msg+'</span>';
+}
+
+function showSummonerData(name, tier, div, lp, wins, losses, champData) {
+  var el = document.getElementById('summoner-result');
+  tier = (tier||'UNRANKED').toUpperCase();
+  var rankIcon  = RANK_ICONS[tier]  || RANK_ICONS['UNRANKED'];
+  var rankColor = RANK_COLORS[tier] || '#6e7681';
+  var rankText  = tier === 'UNRANKED' ? 'Sin clasificar' : tier + ' ' + (div||'');
+  var total = (wins||0) + (losses||0);
+  var wr    = total > 0 ? Math.round((wins||0)/total*100) : 0;
+  var lpText = tier === 'UNRANKED' ? '' : (lp||0)+' LP · '+(wins||0)+'V '+(losses||0)+'D'+(total?' · '+wr+'% WR':'');
+
+  var champsHtml = '';
+  if (champData && champData.length) {
+    champsHtml = '<div class="sum-divider"></div>'
+      +'<div><div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Más jugados</div>'
+      +'<div class="sum-champs">'
+      + champData.slice(0,5).map(function(ch){
+          var cWr = (ch.wins+ch.losses)>0 ? Math.round(ch.wins/(ch.wins+ch.losses)*100) : 0;
+          var col = cWr>=55?'var(--green)':cWr<=45?'var(--red)':'var(--text2)';
+          var found = ALL.find(function(c){ return c.n.toLowerCase()===ch.name.toLowerCase(); });
+          var oc = found ? 'onclick="pickChamp(\''+found.n.replace(/'/g,"\\'")+"','"+found.r+'\')"' : '';
+          return '<div class="sum-champ" '+oc+'>'
+            +'<img class="sum-champ-img" src="'+cimgUrl(ch.name)+'" onerror="this.style.opacity=\'.3\'"/>'
+            +'<span class="sum-champ-name">'+ch.name+'</span>'
+            +'<span class="sum-champ-wr" style="color:'+col+'">'+cWr+'%</span>'
+            +'</div>';
+        }).join('')
+      +'</div></div>';
+  }
+
+  el.style.display = 'block';
+  el.innerHTML = '<div class="sum-card">'
+    +'<img class="sum-rank-icon" src="'+rankIcon+'" onerror="this.style.display=\'none\'"/>'
+    +'<div>'
+      +'<div class="sum-name">'+name+'</div>'
+      +'<div class="sum-rank" style="color:'+rankColor+'">'+rankText+'</div>'
+      +(lpText?'<div class="sum-lp">'+lpText+'</div>':'')
+    +'</div>'
+    +champsHtml
+    +'</div>';
+}
+
+function parseSummonerData(data, raw) {
+  // Handle op.gg format
+  var list = data && (data.data || data);
+  var s    = Array.isArray(list) ? list[0] : list;
+  if (!s || s.status === 404 || s.error) return null;
+
+  var ranked = (s.league_stats||s.rankedLeagues||[]).find(function(l){
+    return (l.queue_info && l.queue_info.queue_type==='RANKED_SOLO_5x5')
+        || l.queueType==='RANKED_SOLO_5x5';
+  });
+
+  var tier, div, lp, wins, losses, champs;
+  if (ranked && ranked.tier_info) {
+    // op.gg format
+    tier   = ranked.tier_info.tier;
+    div    = ranked.tier_info.division;
+    lp     = ranked.tier_info.lp;
+    wins   = ranked.win;
+    losses = ranked.lose;
+  } else if (ranked) {
+    // lolprofile format
+    tier   = ranked.tier;
+    div    = ranked.rank;
+    lp     = ranked.leaguePoints;
+    wins   = ranked.wins;
+    losses = ranked.losses;
+  } else {
+    tier = 'UNRANKED'; div=''; lp=0; wins=0; losses=0;
+  }
+
+  champs = (s.most_champions||s.topChampions||[]).map(function(c){
+    return {
+      name: (c.champion&&c.champion.name)||c.championName||c.name||'',
+      wins: c.win||c.wins||0,
+      losses: c.lose||(c.games?(c.games-(c.wins||0)):0)||0
+    };
+  });
+
+  return {
+    name: s.summoner_name||s.name||raw,
+    tier: tier, div: div, lp: lp,
+    wins: wins, losses: losses, champs: champs
+  };
+}
+
+function searchSummoner() {
+  var raw    = document.getElementById('summoner-input').value.trim();
+  var region = document.getElementById('summoner-region').value;
+  if (!raw) return;
+
+  var opggRegion = {la1:'lan',la2:'las',br1:'br',na1:'na',euw1:'euw'}[region]||'lan';
+  var encoded    = encodeURIComponent(raw);
+  showSummonerLoading();
+
+  var urls = [
+    'https://op.gg/api/v1.0/internal/bypass/summoners/'+opggRegion+'/summoners?summonerNames='+encoded+'&hl=es_ES',
+    'https://lolprofile.net/api/v1/summoner/'+opggRegion+'/'+encoded,
+  ];
+
+  function tryUrl(urlIndex) {
+    if (urlIndex >= urls.length) {
+      showSummonerError('Invocador no encontrado. Verificá el nombre y la región.');
+      return;
+    }
+    fetchWithProxies(urls[urlIndex], CORS_PROXIES, 0)
+      .then(function(data) {
+        var result = parseSummonerData(data, raw);
+        if (!result) { tryUrl(urlIndex + 1); return; }
+        showSummonerData(result.name, result.tier, result.div, result.lp, result.wins, result.losses, result.champs);
+      })
+      .catch(function() { tryUrl(urlIndex + 1); });
+  }
+
+  tryUrl(0);
+}
 var RANK_ICONS = {
   'IRON':        'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-iron.png',
   'BRONZE':      'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-bronze.png',
@@ -1381,339 +1548,6 @@ function searchSummoner() {
     .catch(function(){ tryFallback(raw, opggRegion); });
 }
 
-function tryFallback(raw, opggRegion) {
-  // Fallback: lolprofile.net public endpoint via corsproxy
-  var encoded = encodeURIComponent(raw);
-  var target2 = 'https://lolprofile.net/api/v1/summoner/'+opggRegion+'/'+encoded;
-  var proxy2  = 'https://corsproxy.io/?url='+encodeURIComponent(target2);
-
-  fetch(proxy2)
-    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function(data){
-      if (!data || data.error) { showSummonerError('Invocador no encontrado. Verificá el nombre y región.'); return; }
-      var ranked = (data.rankedLeagues||[]).find(function(l){ return l.queueType==='RANKED_SOLO_5x5'; });
-      var tier   = ranked ? ranked.tier     : 'UNRANKED';
-      var div    = ranked ? ranked.rank     : '';
-      var lp     = ranked ? ranked.leaguePoints : 0;
-      var wins   = ranked ? ranked.wins     : 0;
-      var losses = ranked ? ranked.losses   : 0;
-      var champs = (data.topChampions||[]).map(function(c){
-        return {name:c.championName||c.name||'', wins:c.wins||0, losses:c.games-(c.wins||0)||0};
-      });
-      showSummonerData(data.name||raw, tier, div, lp, wins, losses, champs);
-    })
-    .catch(function(){
-      showSummonerError('No se pudo obtener el perfil. Intentá de nuevo o verificá el nombre.');
-    });
-}
 
 /* ════════════════════════════════════
    SEARCH & GRID
-════════════════════════════════════ */
-var RANK_ICONS = {
-  'IRON':        'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-iron.png',
-  'BRONZE':      'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-bronze.png',
-  'SILVER':      'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-silver.png',
-  'GOLD':        'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-gold.png',
-  'PLATINUM':    'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-platinum.png',
-  'EMERALD':     'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-emerald.png',
-  'DIAMOND':     'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-diamond.png',
-  'MASTER':      'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-master.png',
-  'GRANDMASTER': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-grandmaster.png',
-  'CHALLENGER':  'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-challenger.png',
-  'UNRANKED':    'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-iron.png',
-};
-
-var RANK_COLORS = {
-  'IRON':'#a0a0b0','BRONZE':'#cd7f32','SILVER':'#b0b8c8','GOLD':'#d4af37',
-  'PLATINUM':'#4fc9b0','EMERALD':'#3fb950','DIAMOND':'#7ab8e8',
-  'MASTER':'#a371f7','GRANDMASTER':'#f85149','CHALLENGER':'#f0d060','UNRANKED':'#6e7681'
-};
-
-var DIVISION_MAP = {'I':'I','II':'II','III':'III','IV':'IV'};
-
-function showSummonerLoading() {
-  var el = document.getElementById('summoner-result');
-  el.style.display = 'block';
-  el.innerHTML = '<div class="sum-loading"><div class="sum-spinner"></div><span>Buscando invocador...</span></div>';
-}
-
-function showSummonerError(msg) {
-  var el = document.getElementById('summoner-result');
-  el.style.display = 'block';
-  el.innerHTML = '<span class="sum-error">'+msg+'</span>';
-}
-
-function showSummonerData(name, rankTier, rankDiv, lp, wins, losses, champData) {
-  var el = document.getElementById('summoner-result');
-  var tier = (rankTier || 'UNRANKED').toUpperCase();
-  var rankIcon = RANK_ICONS[tier] || RANK_ICONS['UNRANKED'];
-  var rankColor = RANK_COLORS[tier] || '#6e7681';
-  var rankText = tier === 'UNRANKED' ? 'Sin clasificar' : tier + ' ' + (rankDiv||'');
-  var lpText = tier === 'UNRANKED' ? '' : (lp||0) + ' LP · ' + (wins||0) + 'V ' + (losses||0) + 'D';
-  var wr = (wins||0) + (losses||0) > 0 ? Math.round((wins||0)/((wins||0)+(losses||0))*100) : 0;
-
-  var champsHtml = '';
-  if (champData && champData.length) {
-    champsHtml = '<div class="sum-divider"></div>'
-      + '<div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Más jugados</div>'
-      + '<div class="sum-champs">'
-      + champData.slice(0,5).map(function(ch) {
-          var chWr = ch.wins + ch.losses > 0 ? Math.round(ch.wins/(ch.wins+ch.losses)*100) : 0;
-          var wrColor = chWr >= 55 ? 'var(--green)' : chWr <= 45 ? 'var(--red)' : 'var(--text2)';
-          var champFound = ALL.find(function(c){ return c.n.toLowerCase() === ch.name.toLowerCase(); });
-          var onclick = champFound ? 'onclick="pickChamp(\''+champFound.n.replace(/'/g,"\\'")+"','"+champFound.r+'\')"' : '';
-          return '<div class="sum-champ" '+onclick+'>'
-            + '<img class="sum-champ-img" src="'+cimgUrl(ch.name)+'" onerror="this.src=\'\'"/>'
-            + '<span class="sum-champ-name">'+ch.name+'</span>'
-            + '<span class="sum-champ-wr" style="color:'+wrColor+'">'+chWr+'%</span>'
-            + '</div>';
-        }).join('')
-      + '</div></div>';
-  }
-
-  el.style.display = 'block';
-  el.innerHTML = '<div class="sum-card">'
-    + '<img class="sum-rank-icon" src="'+rankIcon+'" onerror="this.style.display=\'none\'"/>'
-    + '<div>'
-      + '<div class="sum-name">'+name+'</div>'
-      + '<div class="sum-rank" style="color:'+rankColor+'">'+rankText+'</div>'
-      + (lpText ? '<div class="sum-lp">'+lpText+(wr?' · '+wr+'% WR':'')+'</div>' : '')
-    + '</div>'
-    + champsHtml
-    + '</div>';
-}
-
-function searchSummoner() {
-  var raw = document.getElementById('summoner-input').value.trim();
-  var region = document.getElementById('summoner-region').value;
-  if (!raw) return;
-
-  // Parse "Name#TAG" or just "Name"
-  var parts = raw.split('#');
-  var gameName = encodeURIComponent(parts[0].trim());
-  var tagLine  = encodeURIComponent(parts[1] ? parts[1].trim() : 'LAN');
-
-  showSummonerLoading();
-
-  // Use op.gg public API
-  var opggRegion = {la1:'lan',la2:'las',br1:'br',na1:'na',euw1:'euw'}[region] || 'lan';
-  var url = 'https://op.gg/api/v1.0/internal/bypass/summoners/'+opggRegion+'/summoners?summonerNames='+encodeURIComponent(raw)+'&hl=es_ES';
-
-  fetch(url)
-    .then(function(r){ return r.json(); })
-    .then(function(data) {
-      if (!data || !data.data || !data.data[0]) {
-        // fallback: try without tag
-        return fetchOpggDirect(gameName, opggRegion);
-      }
-      var s = data.data[0];
-      var ranked = s.league_stats && s.league_stats.find(function(l){ return l.queue_info && l.queue_info.queue_type === 'RANKED_SOLO_5x5'; });
-      var tier = ranked ? ranked.tier_info.tier : 'UNRANKED';
-      var div  = ranked ? ranked.tier_info.division : '';
-      var lp   = ranked ? ranked.tier_info.lp : 0;
-      var wins = ranked ? ranked.win : 0;
-      var losses = ranked ? ranked.lose : 0;
-      var champs = (s.most_champions || []).map(function(c){ return {name:c.champion && c.champion.name || c.name, wins:c.win||0, losses:c.lose||0}; });
-      showSummonerData(s.summoner_name || raw, tier, div, lp, wins, losses, champs);
-    })
-    .catch(function() {
-      fetchOpggDirect(gameName, opggRegion);
-    });
-}
-
-function fetchOpggDirect(gameName, opggRegion) {
-  var url2 = 'https://op.gg/api/v1.0/internal/bypass/summoners/'+opggRegion+'/'+gameName+'/renewal?hl=es_ES';
-  fetch(url2)
-    .then(function(r){ return r.json(); })
-    .then(function(data) {
-      if (!data || data.status === 404 || (data.data && data.data.status === 404)) {
-        showSummonerError('Invocador no encontrado. Verificá el nombre y la región.');
-        return;
-      }
-      var s = data.data || data;
-      var ranked = s.league_stats && s.league_stats.find(function(l){ return l.queue_info && l.queue_info.queue_type === 'RANKED_SOLO_5x5'; });
-      var tier = ranked ? ranked.tier_info.tier : 'UNRANKED';
-      var div  = ranked ? ranked.tier_info.division : '';
-      var lp   = ranked ? ranked.tier_info.lp : 0;
-      var wins = ranked ? ranked.win : 0;
-      var losses = ranked ? ranked.lose : 0;
-      var champs = (s.most_champions || []).map(function(c){ return {name:c.champion&&c.champion.name||c.name, wins:c.win||0, losses:c.lose||0}; });
-      showSummonerData(s.summoner_name || decodeURIComponent(gameName), tier, div, lp, wins, losses, champs);
-    })
-    .catch(function() {
-      showSummonerError('No se pudo conectar. Intentá de nuevo en un momento.');
-    });
-}
-
-/* ════════════════════════════════════
-   SEARCH & GRID
-════════════════════════════════════ */
-var ROLES = ["Todos","Top","Jungle","Mid","ADC","Support"];
-var activeRole = "Todos";
-var selChamp = null;
-
-document.getElementById('roleTabs').innerHTML = ROLES.map(function(r){
-  return '<button class="rtab'+(r==='Todos'?' on':'')+'" onclick="setRole(\''+r+'\')">'+r+'</button>';
-}).join('');
-
-function setRole(r){
-  activeRole = r;
-  document.querySelectorAll('.rtab').forEach(function(b){ b.classList.toggle('on', b.textContent===r); });
-  filterGrid();
-}
-
-function filterGrid(){
-  var q = document.getElementById('si').value.toLowerCase().trim();
-  var filtered = ALL.filter(function(c){
-    return (!q || c.n.toLowerCase().indexOf(q)>=0) && (activeRole==='Todos' || c.r===activeRole);
-  });
-  // Deduplicate when showing Todos
-  if(activeRole==='Todos'){
-    var seen = {};
-    filtered = filtered.filter(function(c){
-      if(seen[c.n]) return false;
-      seen[c.n] = true;
-      return true;
-    });
-  }
-  document.getElementById('ccount').textContent = filtered.length + ' campeones';
-  document.getElementById('cgrid').innerHTML = filtered.map(function(c){
-    var active = selChamp && selChamp.n===c.n;
-    return '<button class="cbtn role-'+c.r+(active?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+"','"+c.r+'\')">'
-      + portrait(c.n, c.r, 48)
-      + '<span class="cname">'+c.n+'</span>'
-      + '<span class="crole">'+c.r+'</span>'
-      + '</button>';
-  }).join('');
-}
-
-function updatePageBg(champ) {
-  var bg = document.getElementById('page-bg');
-  var navChamp = document.getElementById('nav-champ');
-  var url = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/' + ckey(champ.n) + '_0.jpg';
-  var img = new Image();
-  img.onload = function() {
-    bg.style.backgroundImage = 'url(' + url + ')';
-    bg.style.opacity = '1';
-  };
-  img.src = url;
-  navChamp.textContent = champ.n + ' · ' + champ.r;
-  navChamp.style.opacity = '1';
-}
-
-function pickChamp(name, role){
-  selChamp = ALL.find(function(c){ return c.n===name && (role ? c.r===role : true); });
-  if(!selChamp) selChamp = ALL.find(function(c){ return c.n===name; });
-  filterGrid();
-  renderSide(selChamp);
-  renderMain(selChamp);
-  updatePageBg(selChamp);
-  if(window.innerWidth < 800) window.scrollTo({top:0,behavior:'smooth'});
-}
-
-/* ════════════════════════════════════
-   RENDER SIDEBAR
-════════════════════════════════════ */
-function renderSide(c){
-  var d = getData(c);
-  var st = d.stats;
-  var splashUrl = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/' + ckey(c.n) + '_0.jpg';
-  var roleClass = 'role-' + c.r;
-  var accentClass = 'role-accent-' + c.r;
-  document.getElementById('sideInfo').innerHTML =
-    '<div class="champ-card anim-side '+roleClass+'" style="animation-delay:0s">'
-    + '<div class="champ-hd">'
-    + '<div class="champ-hd-bg"></div>'
-    + '<div class="champ-hd-splash" style="background-image:url(\''+splashUrl+'\')"></div>'
-    + '<div class="champ-hd-content">'
-    + portrait(c.n, c.r, 64)
-    + '<div><div class="champ-name">'+c.n+'</div>'
-    + '<div class="champ-role-lbl"><span class="'+accentClass+'">'+c.r+'</span></div>'
-    + '<span class="tier-pill '+tierCls(st.tier)+'">Tier '+st.tier+'</span></div>'
-    + '</div>'
-    + '</div>'
-    + '<div class="champ-stats">'
-    + '<div class="srow"><span class="slbl">Win Rate</span><span class="sval '+wrCls(st.wr)+'">'+st.wr+'</span></div>'
-    + '<div class="srow"><span class="slbl">Pick Rate</span><span class="sval">'+st.pr+'</span></div>'
-    + '<div class="srow"><span class="slbl">Ban Rate</span><span class="sval" style="color:var(--red)">'+st.br+'</span></div>'
-    + '<div class="srow"><span class="slbl">Partidas</span><span class="sval">'+st.g+'</span></div>'
-    + '</div></div>'
-    + (function(){
-        var spells = getSpells(c);
-        return '<div class="spells-card">'
-          + '<div class="rcard-hd">Hechizos de Invocador</div>'
-          + '<div class="spells-body"><div class="spells-pair">'
-          + spells.map(function(s){ return spellImg(s, 36); }).join('')
-          + '</div></div></div>';
-      }())
-    + '<div class="rune-card">'
-    + '<div class="rcard-hd">Runas Recomendadas</div>'
-    + '<div class="rcard-body">'
-    + '<div class="rpath-hd">'+rpsvg(d.runes.p.path,20)+'<span class="rpath-name" style="color:'+getPathCol(d.runes.p.path)+'">'+d.runes.p.path+'</span></div>'
-    + '<div class="rks-row">'+runeImgEl(d.runes.p.ks,true,28)+'<div><div class="rks-name" style="color:'+getPathCol(d.runes.p.path)+'">'+d.runes.p.ks+'</div><div class="rks-sub">Keystone</div></div></div>'
-    + d.runes.p.s.map(function(r){ return '<div class="rmin">'+runeImgEl(r,false,18)+'<span class="rmin-name">'+r+'</span></div>'; }).join('')
-    + '<div class="rdiv"></div>'
-    + '<div class="rpath-hd">'+rpsvg(d.runes.s.path,20)+'<span class="rpath-name" style="color:'+getPathCol(d.runes.s.path)+'">'+d.runes.s.path+'</span></div>'
-    + d.runes.s.picks.map(function(r){ return '<div class="rmin">'+runeImgEl(r,false,18)+'<span class="rmin-name">'+r+'</span></div>'; }).join('')
-    + '<div class="shards">'
-    + '<div class="sh-row">'+shsvg('offense',d.runes.sh.o,16)+'<span class="sh-type">Ataque</span><span class="sh-val">'+d.runes.sh.o+'</span></div>'
-    + '<div class="sh-row">'+shsvg('flex',d.runes.sh.f,16)+'<span class="sh-type">Flex</span><span class="sh-val">'+d.runes.sh.f+'</span></div>'
-    + '<div class="sh-row">'+shsvg('defense',d.runes.sh.d,16)+'<span class="sh-type">Defensa</span><span class="sh-val">'+d.runes.sh.d+'</span></div>'
-    + '</div></div></div>';
-}
-
-/* ════════════════════════════════════
-   RENDER MAIN
-════════════════════════════════════ */
-function renderMain(c){
-  var d = getData(c);
-
-  var ctrs = d.ctr.map(function(row, i){
-    var nm=row[0], wr=row[1], gms=row[2], thr=row[3], rsn=row[4];
-    return '<div class="trow gc anim-row" style="animation-delay:'+(i*0.05)+'s">'
-      + '<div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div>'
-      + '<div class="wr wb">'+parseFloat(wr).toFixed(1)+'%</div>'
-      + '<div class="gms">'+Number(gms).toLocaleString()+'</div>'
-      + '<div><div class="bar-bg"><div class="bar-f bar-red" style="width:'+barPct(wr)+'%"></div></div><div class="bar-note">'+rsn+'</div></div>'
-      + '<div>'+thrEl(thr)+'</div>'
-      + '</div>';
-  }).join('');
-
-  var good = d.good.map(function(row, i){
-    var nm=row[0], wr=row[1], gms=row[2], rsn=row[3];
-    return '<div class="trow gg anim-row" style="animation-delay:'+(i*0.05)+'s">'
-      + '<div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div>'
-      + '<div class="wr wg">'+parseFloat(wr).toFixed(1)+'%</div>'
-      + '<div class="gms">'+Number(gms).toLocaleString()+'</div>'
-      + '<div><div class="bar-bg"><div class="bar-f bar-green" style="width:'+barPctGood(wr)+'%"></div></div><div class="bar-note">'+rsn+'</div></div>'
-      + '</div>';
-  }).join('');
-
-  var items = d.items.map(function(it, i){
-    return '<div class="item-card anim-row" style="animation-delay:'+(i*0.06)+'s">'
-      + itemPort(it.n, 40)
-      + '<div><div class="iorder">#'+it.o+'</div><div class="iname">'+it.n+'</div><div class="ireason">'+it.r+'</div><div class="icost">'+it.c+' de oro</div></div>'
-      + '<div class="item-tooltip"><div class="itt-name">'+it.n+'</div><div class="itt-cost">'+it.c+' de oro</div><div class="itt-reason">'+it.r+'</div></div>'
-      + '</div>';
-  }).join('');
-
-  document.getElementById('mainInfo').innerHTML =
-    '<div class="card">'
-    + '<div class="card-hd">Counters de '+c.n+' — campeones que le ganan</div>'
-    + '<div class="thd gc"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div><div>Dificultad</div></div>'
-    + ctrs + '</div>'
-    + '<div class="card">'
-    + '<div class="card-hd">'+c.n+' le gana a estos campeones</div>'
-    + '<div class="thd gg"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div></div>'
-    + good + '</div>'
-    + '<div class="card"><div class="card-hd">Build Recomendada — '+c.n+'</div>'
-    + '<div class="items-grid">'+items+'</div></div>';
-}
-
-/* INIT */
-filterGrid();
-
-</script>
-</body>
-</html>
