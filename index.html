@@ -575,10 +575,7 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
   <br/><br/>
   <div class="visit-counter">
     <span class="visit-counter-label">👁 Visitas</span>
-    <div class="visit-counter-nums" id="visit-nums">
-      <img src="https://counter9.optistats.ovh/private/freecounterstat.php?c=8m8l8u6y8n5w3p1u7z6u4b8r9q2j1l5y" style="display:none" id="visit-img-hidden" alt="visitas"/>
-      <span class="visit-digit">-</span>
-    </div>
+    <div class="visit-counter-nums" id="visit-nums"></div>
   </div>
 </footer>
 
@@ -1454,97 +1451,95 @@ function openCompareModal(){
     +'</div>';
 
   function colHtml(c, d, enemy, dEnemy){
-    // Find direct matchup data: how does 'enemy' fare against 'c'
-    var enemyInMyCtrs  = d.ctr.find(function(r){ return r[0].toLowerCase()===enemy.n.toLowerCase(); });
-    var enemyInMyGood  = d.good.find(function(r){ return r[0].toLowerCase()===enemy.n.toLowerCase(); });
-    var directMatchup  = enemyInMyCtrs || enemyInMyGood;
-    var iLose          = !!enemyInMyCtrs;
-    var iWin           = !!enemyInMyGood;
+    var enemyInMyCtrs = d.ctr.find(function(r){ return r[0].toLowerCase()===enemy.n.toLowerCase(); });
+    var enemyInMyGood = d.good.find(function(r){ return r[0].toLowerCase()===enemy.n.toLowerCase(); });
+    var iLose = !!enemyInMyCtrs;
+    var iWin  = !!enemyInMyGood;
+    var matchData = enemyInMyCtrs || enemyInMyGood;
+    var matchWr = matchData ? parseFloat(matchData[1]).toFixed(1) : null;
+    var matchTip = matchData ? (matchData[4]||matchData[3]||'') : '';
+    var diff = enemyInMyCtrs ? (enemyInMyCtrs[3]||'') : '';
+    var diffLabel = diff==='h'?' · Difícil':diff==='m'?' · Moderado':'';
 
-    // Matchup WR from my perspective
-    var matchWr = directMatchup ? parseFloat(directMatchup[1]).toFixed(1) : null;
-    var matchTip = directMatchup ? (directMatchup[4]||directMatchup[3]||'') : '';
-    var matchDiff = enemyInMyCtrs ? (enemyInMyCtrs[3]||'') : '';
-
-    // Items specific to this matchup role
-    var itemsHtml = d.items.slice(0,3).map(function(it){
-      return '<div class="compare-champ-row">'
-        +'<img src="'+(function(){var id=IIDS[it.n];return id?('https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/'+id+'.png'):'';})()
-        +'" onerror="this.style.opacity=.3" style="border-radius:4px"/>'
-        +'<span style="flex:1">'+it.n+'</span>'
-        +'<span style="font-size:9px;color:var(--text3)">'+it.r+'</span>'
-        +'</div>';
-    }).join('');
-
-    // Strengths vs this enemy: what c does well against enemy
-    // Use c's "good" list for general strengths, and enemy's counters list for what enemy fears
-    var strengths = [];
-    if(iWin && enemyInMyGood){
-      strengths.push(enemyInMyGood[3]||'');
-    }
-    // Pull from enemy's counters - if c appears there as feared
-    var cInEnemyCtrs = dEnemy.ctr.find(function(r){ return r[0].toLowerCase()===c.n.toLowerCase(); });
-    if(cInEnemyCtrs) strengths.push(cInEnemyCtrs[4]||'');
-
-    // Weaknesses: what enemy does to c (from c's counter list)
-    var weaknesses = [];
-    if(iLose && enemyInMyCtrs){
-      weaknesses.push(enemyInMyCtrs[4]||'');
-    }
-
-    // Tips: what to do in this matchup
-    var tipsHtml = '';
+    // Build practical tips
+    var tips = [], avoid = [];
     if(iWin){
-      tipsHtml = '<div style="background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.2);border-radius:6px;padding:8px 10px;margin-bottom:6px">'
-        +'<div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:4px">✓ VENTAJA EN ESTE MATCHUP</div>'
-        +(matchTip?'<div style="font-size:11px;color:var(--text2);line-height:1.5">'+matchTip+'</div>':'')
+      tips.push('Aprovechá tu ventaja: ' + (matchTip||'tenés el upper hand en este matchup'));
+      tips.push('Jugá agresivo en nivel 2-3 antes de que escale o llegue el jungle');
+      tips.push('Controlá la oleada y forzá peleas cortas donde brillás');
+      avoid.push('No dejes que llegue a mid/late sin presionarlo temprano');
+      avoid.push('No subestimes — puede ganar si comete menos errores');
+    } else if(iLose){
+      tips.push('Jugá safe bajo torre y farmá sin tomar trades innecesarios');
+      tips.push('Pedí gank a tu jungla — no podés ganar el 1v1 solo en este matchup');
+      tips.push('Esperá nivel 6 o tu primer ítem para intentar peleas');
+      avoid.push('Evitá tradear directamente: ' + (matchTip||'tiene ventaja clara en duelo'));
+      avoid.push('No overextendas — te puede one-shot si avanza tu lado');
+    } else {
+      tips.push('Matchup parejo — la diferencia la hace la mecánica y las decisiones');
+      tips.push('Priorizá control de oleada y coordination con tu jungla');
+      tips.push('Buscá el 2v2 cuando tengas prioridad de lane');
+      avoid.push('No tomes peleas sin tener wave controlado');
+      avoid.push('Evitá arriesgar sin ventaja de HP o habilidades');
+    }
+
+    // Verdict banner
+    var verdictHtml;
+    if(iWin){
+      verdictHtml = '<div style="background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.25);border-radius:8px;padding:10px 12px;margin-bottom:10px">'
+        +'<div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:3px">✓ VENTAJA EN ESTE MATCHUP</div>'
+        +(matchWr?'<div style="font-size:12px;color:var(--text2)">WR vs '+enemy.n+': <strong style="color:var(--green)">'+matchWr+'%</strong></div>':'')
         +'</div>';
     } else if(iLose){
-      tipsHtml = '<div style="background:rgba(248,81,73,.06);border:1px solid rgba(248,81,73,.15);border-radius:6px;padding:8px 10px;margin-bottom:6px">'
-        +'<div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:4px">✗ EN DESVENTAJA'+( matchDiff==='h'?' — Difícil': matchDiff==='m'?' — Moderado':'')+' </div>'
-        +(matchTip?'<div style="font-size:11px;color:var(--text2);line-height:1.5">'+matchTip+'</div>':'')
+      verdictHtml = '<div style="background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:8px;padding:10px 12px;margin-bottom:10px">'
+        +'<div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:3px">✗ EN DESVENTAJA'+diffLabel+'</div>'
+        +(matchWr?'<div style="font-size:12px;color:var(--text2)">WR vs '+enemy.n+': <strong style="color:var(--red)">'+matchWr+'%</strong></div>':'')
         +'</div>';
     } else {
-      tipsHtml = '<div style="background:rgba(139,148,158,.08);border:1px solid var(--border);border-radius:6px;padding:8px 10px;margin-bottom:6px">'
-        +'<div style="font-size:10px;font-weight:700;color:var(--text2);margin-bottom:2px">~ MATCHUP PAREJO</div>'
-        +'<div style="font-size:11px;color:var(--text3)">Sin datos directos. Depende de la ejecución.</div>'
+      verdictHtml = '<div style="background:rgba(139,148,158,.08);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:10px">'
+        +'<div style="font-size:11px;font-weight:700;color:var(--text2)">~ MATCHUP PAREJO</div>'
+        +'<div style="font-size:11px;color:var(--text3);margin-top:2px">Sin datos directos. Depende de la ejecución.</div>'
         +'</div>';
     }
 
-    // Spells for this champ
+    // Tips HTML
+    var tipsHtml = '<div class="compare-section-title">💡 Cómo ganarle</div>'
+      +tips.map(function(t){
+        return '<div style="display:flex;gap:6px;padding:5px 0;font-size:11px;color:var(--text2);line-height:1.4;border-bottom:1px solid var(--border)">'
+          +'<span style="color:var(--green);flex-shrink:0">▸</span><span>'+t+'</span></div>';
+      }).join('');
+
+    var avoidHtml = '<div class="compare-section-title" style="color:var(--orange)">⚠ Qué evitar</div>'
+      +avoid.map(function(t){
+        return '<div style="display:flex;gap:6px;padding:5px 0;font-size:11px;color:var(--text2);line-height:1.4;border-bottom:1px solid var(--border)">'
+          +'<span style="color:var(--orange);flex-shrink:0">▸</span><span>'+t+'</span></div>';
+      }).join('');
+
+    // Items
+    var itemsHtml = '<div class="compare-section-title">🛡 Build recomendada</div>'
+      +d.items.slice(0,3).map(function(it){
+        var id=IIDS[it.n];
+        return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">'
+          +(id?'<img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/'+id+'.png" style="width:28px;height:28px;border-radius:4px;flex-shrink:0" onerror="this.style.opacity=.3"/>':'')
+          +'<div><div style="font-size:11px;font-weight:600;color:var(--text)">'+it.n+'</div>'
+          +'<div style="font-size:10px;color:var(--text3)">'+it.r+'</div></div></div>';
+      }).join('');
+
+    // Keystone + spells
     var spells = getSpells(c);
-    var spellsHtml = spells.map(function(s){
-      return spellImg(s, 28);
-    }).join('');
+    var runesHtml = '<div class="compare-section-title">⚔ Runas y hechizos</div>'
+      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:4px">'
+      +runeImgEl(d.runes.p.ks,true,24)
+      +'<span style="font-size:11px;flex:1;color:var(--text2)">'+d.runes.p.ks+'</span>'
+      +'<div style="display:flex;gap:4px">'+spells.map(function(s){return spellImg(s,28);}).join('')+'</div>'
+      +'</div>';
 
     return '<div class="compare-col">'
-      // Header
       +'<div class="compare-col-hd">'+portrait(c.n,c.r,40)
         +'<div><div class="compare-col-name">'+c.n+'</div>'
         +'<div style="font-size:11px;color:var(--text3)">'+c.r+'</div></div>'
         +'<span class="tier-pill '+tierCls(d.stats.tier)+'" style="margin-left:auto">Tier '+d.stats.tier+'</span></div>'
-
-      // Matchup result
-      +tipsHtml
-
-      // WR in this matchup
-      +(matchWr?'<div class="compare-stat-row"><span class="compare-stat-lbl">WR vs '+enemy.n+'</span><span class="compare-stat-val" style="color:'+(iWin?'var(--green)':'var(--red)')+'">'+matchWr+'%</span></div>':'')
-
-      // General stats
-      +'<div class="compare-stat-row"><span class="compare-stat-lbl">Win Rate general</span><span class="compare-stat-val '+wrCls(d.stats.wr)+'">'+d.stats.wr+'</span></div>'
-      +'<div class="compare-stat-row"><span class="compare-stat-lbl">Tier</span><span class="compare-stat-val">'+d.stats.tier+'</span></div>'
-
-      // Items recomendados en este matchup
-      +'<div class="compare-section-title">Ítems recomendados</div>'
-      +itemsHtml
-
-      // Keystone + spells
-      +'<div class="compare-section-title">Runas y hechizos</div>'
-      +'<div class="compare-champ-row" style="gap:8px;flex-wrap:wrap">'
-        +runeImgEl(d.runes.p.ks,true,22)
-        +'<span style="flex:1;font-size:11px">'+d.runes.p.ks+'</span>'
-        +'<div style="display:flex;gap:4px">'+spellsHtml+'</div>'
-      +'</div>'
+      +verdictHtml+tipsHtml+avoidHtml+itemsHtml+runesHtml
       +'</div>';
   }
 
@@ -1702,15 +1697,6 @@ function setTlRole(r){
    VISIT COUNTER CUSTOM
 ════════════════════════════════════ */
 (function(){
-  var img = document.getElementById('visit-img-hidden');
-  if(!img) return;
-  img.onload = function(){
-    // Extract number from URL counter via fetching
-    fetch('https://counter9.optistats.ovh/private/freecounterstat.php?c=8m8l8u6y8n5w3p1u7z6u4b8r9q2j1l5y')
-      .then(function(r){ return r.text(); })
-      .catch(function(){});
-  };
-  // Fallback: just show the original image nicely
   var nums = document.getElementById('visit-nums');
   if(nums){
     nums.innerHTML = '<img src="https://counter9.optistats.ovh/private/freecounterstat.php?c=8m8l8u6y8n5w3p1u7z6u4b8r9q2j1l5y" style="height:24px;filter:invert(1) brightness(2);vertical-align:middle" alt="visitas"/>';
