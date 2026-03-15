@@ -1750,10 +1750,12 @@ function filterPickerGrid(){
   });
   document.getElementById('compare-picker-grid').innerHTML = filtered.map(function(c){
     var isSel = compareChamps[pickerSlot] && compareChamps[pickerSlot].n===c.n;
-    return '<button class="cbtn role-'+c.r+(isSel?' active':'')+'" onclick="selectPickerChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')" style="width:100%;padding:5px 4px 7px">'
-      +portrait(c.n,c.r,52)
-      +'<span class="cname" style="font-size:9px;margin-top:2px">'+c.n+'</span>'
-      +'<span class="crole" style="font-size:8px">'+c.r+'</span>'
+    var imgUrl = 'https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/'+ckey(c.n)+'.png';
+    var roleColor = {Top:'var(--gold)',Jungle:'var(--green)',Mid:'var(--blue2)',ADC:'var(--red)',Support:'var(--gold2)'}[c.r]||'var(--text3)';
+    return '<button class="cbtn role-'+c.r+(isSel?' active':'')+'" onclick="selectPickerChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')" style="width:100%;padding:6px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:80px">'
+      +'<img src="'+imgUrl+'" style="width:52px;height:52px;border-radius:6px;object-fit:cover;border:2px solid '+(isSel?roleColor:'var(--border2)')+';" onerror="this.style.opacity=.3"/>'
+      +'<span style="font-size:9px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center;max-width:70px">'+c.n+'</span>'
+      +'<span style="font-size:8px;color:'+roleColor+';font-weight:600">'+c.r+'</span>'
       +'</button>';
   }).join('');
 }
