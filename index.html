@@ -65,14 +65,43 @@ nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 1.5rem
 .cgrid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 .cbtn{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 3px 6px;cursor:pointer;text-align:center;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px}
 .cbtn:hover{border-color:var(--gold);background:var(--bg4)}
-.cbtn.active{border-color:var(--gold);background:rgba(212,175,55,.08)}
+/* role border en grid */
+.cbtn.role-Top    {border-bottom:2px solid rgba(212,175,55,.4)}
+.cbtn.role-Jungle {border-bottom:2px solid rgba(63,185,80,.4)}
+.cbtn.role-Mid    {border-bottom:2px solid rgba(56,139,253,.4)}
+.cbtn.role-ADC    {border-bottom:2px solid rgba(248,81,73,.4)}
+.cbtn.role-Support{border-bottom:2px solid rgba(240,208,96,.4)}
+.cbtn.active.role-Top    {border-color:var(--gold);background:rgba(212,175,55,.1)}
+.cbtn.active.role-Jungle {border-color:var(--green);background:rgba(63,185,80,.08)}
+.cbtn.active.role-Mid    {border-color:var(--blue2);background:rgba(56,139,253,.08)}
+.cbtn.active.role-ADC    {border-color:var(--red);background:rgba(248,81,73,.08)}
+.cbtn.active.role-Support{border-color:var(--gold2);background:rgba(240,208,96,.08)}
 .cbtn .cname{font-size:9px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center}
 .cbtn:hover .cname,.cbtn.active .cname{color:var(--gold)}
 .cbtn .crole{font-size:8px;color:var(--text3)}
 
 /* ── SIDEBAR CHAMP CARD ── */
 .champ-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
-.champ-hd{padding:1rem;background:var(--bg3);display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+/* ── ROLE COLORS ── */
+.champ-hd{padding:1rem;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;min-height:90px}
+.champ-hd-bg{position:absolute;inset:0;z-index:0}
+.champ-hd-splash{position:absolute;right:-10px;top:0;bottom:0;width:55%;z-index:1;background-size:cover;background-position:center top;mask-image:linear-gradient(to left,rgba(0,0,0,.7) 0%,transparent 100%);-webkit-mask-image:linear-gradient(to left,rgba(0,0,0,.7) 0%,transparent 100%)}
+.champ-hd-content{position:relative;z-index:2;display:flex;align-items:center;gap:12px}
+.role-Top    .champ-hd-bg{background:linear-gradient(135deg,#1f1a0e 0%,#2d2210 100%)}
+.role-Jungle .champ-hd-bg{background:linear-gradient(135deg,#0e1f0e 0%,#102810 100%)}
+.role-Mid    .champ-hd-bg{background:linear-gradient(135deg,#0e1520 0%,#0e1a30 100%)}
+.role-ADC    .champ-hd-bg{background:linear-gradient(135deg,#1f0e0e 0%,#2d1010 100%)}
+.role-Support.champ-hd-bg{background:linear-gradient(135deg,#1a1700 0%,#252000 100%)}
+.role-Top    .champ-hd-splash{border-right:2px solid rgba(212,175,55,.3)}
+.role-Jungle .champ-hd-splash{border-right:2px solid rgba(63,185,80,.3)}
+.role-Mid    .champ-hd-splash{border-right:2px solid rgba(56,139,253,.3)}
+.role-ADC    .champ-hd-splash{border-right:2px solid rgba(248,81,73,.3)}
+.role-Support.champ-hd-splash{border-right:2px solid rgba(240,208,96,.3)}
+.role-accent-Top    {color:var(--gold)}
+.role-accent-Jungle {color:var(--green)}
+.role-accent-Mid    {color:var(--blue2)}
+.role-accent-ADC    {color:var(--red)}
+.role-accent-Support{color:var(--gold2)}
 .champ-name{font-size:17px;font-weight:700}
 .champ-role-lbl{font-size:12px;color:var(--text2);margin-top:2px;margin-bottom:6px}
 .tier-pill{display:inline-flex;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700}
@@ -128,7 +157,28 @@ nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 1.5rem
 .thr-m{background:rgba(240,136,62,.12);color:var(--orange);border:1px solid rgba(240,136,62,.25)}
 .thr-l{background:rgba(63,185,80,.1);color:var(--green);border:1px solid rgba(63,185,80,.2)}
 
-/* ── ITEMS ── */
+/* ── ANIMATIONS ── */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInLeft{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.anim-row{animation:fadeInUp .25s ease both}
+.anim-side{animation:fadeInLeft .3s ease both}
+
+/* ── ITEM TOOLTIP ── */
+.item-card{position:relative}
+.item-tooltip{
+  display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:var(--bg3);border:1px solid var(--border2);border-radius:8px;
+  padding:10px 12px;width:190px;z-index:100;pointer-events:none;
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+}
+.item-card:hover .item-tooltip{display:block}
+.item-tooltip::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:var(--border2);
+}
+.itt-name{font-size:12px;font-weight:700;color:var(--gold2);margin-bottom:3px}
+.itt-cost{font-size:11px;color:var(--gold);margin-bottom:6px}
+.itt-reason{font-size:11px;color:var(--text2);line-height:1.5}
 .items-grid{padding:.75rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.65rem}
 .item-card{display:flex;align-items:flex-start;gap:9px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.7rem}
 .iorder{font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;margin-bottom:1px}
@@ -963,15 +1013,198 @@ var SPECIFIC = {
   ,"Zoe":{ctr:[["Zed","56.9","600","h","Sombra llega antes de su Q"],["LeBlanc","56.1","500","h","Burst antes de su Q windup"],["Talon","55.3","400","h","Salto cancela su Q channel"],["Fizz","54.6","400","m","Trickster evita su Q y E"],["Kassadin","53.8","600","m","Post-6 la supera en movilidad"],["Akali","53.0","500","l","Shroud niega su poke"],["Syndra","52.2","600","l","Orbs outrange su posición"]],good:[["Ryze","44.1","500","Portal aplasta su inmovidad"],["Twisted Fate","44.8","400","Zoe gana el all-in"],["Orianna","45.3","500","Zoe gana el matchup"],["Viktor","45.9","500","Zoe gana late"]],items:[{n:"Luden's Tempest",o:1,c:"3200",r:"Poke y movilidad"},{n:"Shadowflame",o:2,c:"3000",r:"Anti-escudos"},{n:"Rabadon's Deathcap",o:3,c:"3800",r:"AP multiplicador"},{n:"Void Staff",o:4,c:"2800",r:"Anti-MR"},{n:"Zhonya's Hourglass",o:5,c:"2600",r:"Anti-assassins"},{n:"Cosmic Drive",o:6,c:"3000",r:"Movilidad y AP extra"}]}
 };
 
+/* ════════════════════════════════════
+   RUNE DATA POR CAMPEÓN
+════════════════════════════════════ */
+var RUNE_DATA = {
+  // TOP
+  "Aatrox":      {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Revitalizar"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Ambessa":     {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Aurora":      {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Camille":     {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Cassiopeia":  {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Cho'Gath":    {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Darius":      {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Golpe de Escudo","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Precisión",picks:["Leyenda: Tenacidad","Último Bastión"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Dr. Mundo":   {p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Revitalizar"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Fiora":       {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Gangplank":   {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Garen":       {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Golpe de Escudo","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Tenacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Gnar":        {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Gwen":        {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Precisión",picks:["Triunfo","Último Bastión"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Illaoi":      {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Golpe de Escudo","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Tenacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Irelia":      {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Jax":         {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Jayce":       {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "K'Sante":     {p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Kayle":       {p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Segar"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Kennen":      {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Kled":        {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Mordekaiser": {p:{path:"Dominación",ks:"Oscurecer",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Voraz"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Sobrecrecimiento"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Nasus":       {p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Olaf":        {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Ornn":        {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Pantheon":    {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Poppy":       {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Quinn":       {p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Renekton":    {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Riven":       {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Rumble":      {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Sett":        {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Shen":        {p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Acondicionamiento","Revitalizar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Shyvana":     {p:{path:"Dominación",ks:"Oscurecer",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Voraz"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Sion":        {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Singed":      {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Sobrecrecimiento"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Tahm Kench":  {p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Teemo":       {p:{path:"Dominación",ks:"Oscurecer",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Voraz"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Trundle":     {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Tryndamere":  {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Urgot":       {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Vladimir":    {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Dominación",picks:["Sabor a Sangre","Cazador Voraz"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Volibear":    {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Warwick":     {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Wukong":      {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Yorick":      {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  // JUNGLE
+  "Amumu":       {p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Bel'Veth":    {p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Briar":       {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Diana":       {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Ekko":        {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Elise":       {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Evelynn":     {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Fiddlesticks":{p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Dominación",picks:["Sabor a Sangre","Cazador Voraz"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Gragas":      {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Graves":      {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Hecarim":     {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Ivern":       {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Jarvan IV":   {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Kayn":        {p:{path:"Dominación",ks:"Oscurecer",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Kha'Zix":     {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Kindred":     {p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Karthus":     {p:{path:"Dominación",ks:"Oscurecer",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Voraz"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Lillia":      {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Dominación",picks:["Sabor a Sangre","Cazador Voraz"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Maokai":      {p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Master Yi":   {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Nidalee":     {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Dominación",picks:["Sabor a Sangre","Cazador Implacable"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Nocturne":    {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Nunu & Willump":{p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Qiyana":      {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Rammus":      {p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Rek'Sai":     {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Rengar":      {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Sejuani":     {p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Shaco":       {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Skarner":     {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Tenacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Sylas":       {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Dominación",picks:["Sabor a Sangre","Cazador Implacable"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Taliyah":     {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Dominación",picks:["Sabor a Sangre","Cazador Implacable"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Udyr":        {p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Vi":          {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Tenacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Viego":       {p:{path:"Dominación",ks:"Oscurecer",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Xin Zhao":    {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Zac":         {p:{path:"Determinación",ks:"Segunda Piel",s:["Fuente de Vida","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  // MID
+  "Ahri":        {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Akali":       {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Trascendencia","Achicharrar"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Akshan":      {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Anivia":      {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Annie":       {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Aurelion Sol":{p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Azir":        {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Corki":       {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Fizz":        {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Trascendencia","Achicharrar"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Galio":       {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Heimerdinger":{p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Hwei":        {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Kassadin":    {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Katarina":    {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Trascendencia","Achicharrar"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "LeBlanc":     {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Lissandra":   {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Lux":         {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Malzahar":    {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Mel":         {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Naafiri":     {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Neeko":       {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Dominación",picks:["Sabor a Sangre","Cazador Implacable"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Orianna":     {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Ryze":        {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Syndra":      {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Dominación",picks:["Sabor a Sangre","Cazador Implacable"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Sylas":       {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Dominación",picks:["Sabor a Sangre","Cazador Implacable"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Swain":       {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Sobrecrecimiento"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Talon":       {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Twisted Fate":{p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Veigar":      {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Vel'Koz":     {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Vex":         {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Brujería",picks:["Banda de Flujo de Maná","Trascendencia"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Viktor":      {p:{path:"Brujería",ks:"Fase de Fuerza",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Xerath":      {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Yasuo":       {p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Yone":        {p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Zed":         {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Ziggs":       {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Zilean":      {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Zoe":         {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Dominación",picks:["Sabor a Sangre","Cazador Implacable"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  // ADC
+  "Aphelios":    {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Ashe":        {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Draven":      {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Sabor a Sangre","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Ezreal":      {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Último Bastión"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Jhin":        {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Jinx":        {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Kai'Sa":      {p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Kalista":     {p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Kog'Maw":     {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Lucian":      {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Miss Fortune":{p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Sabor a Sangre","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Nilah":       {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Samira":      {p:{path:"Dominación",ks:"Conquistador de Oscuridad",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Precisión",picks:["Triunfo","Leyenda: Alacidad"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Senna":       {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Sivir":       {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Smolder":     {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Tristana":    {p:{path:"Precisión",ks:"Tempo Letal",s:["Triunfo","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Twitch":      {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Sabor a Sangre","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Varus":       {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Vayne":       {p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Determinación",picks:["Revestimiento Óseo","Impertérrito"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Xayah":       {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Yunara":      {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Entrega de Galletas"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  "Zeri":        {p:{path:"Precisión",ks:"Tempo Letal",s:["Presencia Mental","Leyenda: Alacidad","Segar"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},
+  // SUPPORT
+  "Alistar":     {p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Acondicionamiento","Revitalizar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Bard":        {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Blitzcrank":  {p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Acondicionamiento","Revitalizar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Brand":       {p:{path:"Dominación",ks:"Oscurecer",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Voraz"]},s:{path:"Brujería",picks:["Trascendencia","Reunir Tormenta"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Braum":       {p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Acondicionamiento","Revitalizar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Janna":       {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Karma":       {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Leona":       {p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Revestimiento Óseo","Revitalizar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Lulu":        {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Malphite":    {p:{path:"Determinación",ks:"Garra del No Muerto",s:["Golpe de Escudo","Acondicionamiento","Sobrecrecimiento"]},s:{path:"Precisión",picks:["Leyenda: Tenacidad","Último Bastión"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Milio":       {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Morgana":     {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Nami":        {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Nautilus":    {p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Revestimiento Óseo","Revitalizar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Pyke":        {p:{path:"Dominación",ks:"Electrocutar",s:["Sabor a Sangre","Colección de Globos Oculares","Cazador Implacable"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Daño Adaptable",f:"Daño Adaptable",d:"Vida"}},
+  "Rakan":       {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Rell":        {p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Acondicionamiento","Revitalizar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Renata Glasc":{p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Seraphine":   {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Sona":        {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Soraka":      {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Taric":       {p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Acondicionamiento","Revitalizar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Thresh":      {p:{path:"Determinación",ks:"Réplica",s:["Fuente de Vida","Revestimiento Óseo","Impertérrito"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Xerath":      {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Yuumi":       {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Reunir Tormenta"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+  "Zyra":        {p:{path:"Brujería",ks:"Cometa Arcano",s:["Banda de Flujo de Maná","Trascendencia","Achicharrar"]},s:{path:"Inspiración",picks:["Calzado Mágico","Perspicacia Cósmica"]},sh:{o:"Habilidad",f:"Daño Adaptable",d:"Vida"}},
+};
+
 function getData(c){
   var s=SPECIFIC[c.n];
   var r=ROLE_DATA[c.r]||ROLE_DATA.Mid;
-  if(!s) return r;
+  var runes=RUNE_DATA[c.n]||(s&&s.runes)||r.runes;
+  if(!s) return Object.assign({},r,{runes:runes});
   return {
     ctr:   s.ctr   || r.ctr,
     good:  s.good  || r.good,
     items: s.items || r.items,
-    runes: s.runes || r.runes,
+    runes: runes,
     spells:s.spells|| r.spells,
     stats: s.stats || r.stats
   };
@@ -1017,7 +1250,7 @@ function filterGrid(){
   document.getElementById('ccount').textContent = filtered.length + ' campeones';
   document.getElementById('cgrid').innerHTML = filtered.map(function(c){
     var active = selChamp && selChamp.n===c.n;
-    return '<button class="cbtn'+(active?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+"','"+c.r+'\')">'
+    return '<button class="cbtn role-'+c.r+(active?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+"','"+c.r+'\')">'
       + portrait(c.n, c.r, 48)
       + '<span class="cname">'+c.n+'</span>'
       + '<span class="crole">'+c.r+'</span>'
@@ -1040,13 +1273,20 @@ function pickChamp(name, role){
 function renderSide(c){
   var d = getData(c);
   var st = d.stats;
+  var splashUrl = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/' + ckey(c.n) + '_0.jpg';
+  var roleClass = 'role-' + c.r;
+  var accentClass = 'role-accent-' + c.r;
   document.getElementById('sideInfo').innerHTML =
-    '<div class="champ-card">'
+    '<div class="champ-card anim-side '+roleClass+'" style="animation-delay:0s">'
     + '<div class="champ-hd">'
+    + '<div class="champ-hd-bg"></div>'
+    + '<div class="champ-hd-splash" style="background-image:url(\''+splashUrl+'\')"></div>'
+    + '<div class="champ-hd-content">'
     + portrait(c.n, c.r, 64)
     + '<div><div class="champ-name">'+c.n+'</div>'
-    + '<div class="champ-role-lbl">'+c.r+'</div>'
+    + '<div class="champ-role-lbl"><span class="'+accentClass+'">'+c.r+'</span></div>'
     + '<span class="tier-pill '+tierCls(st.tier)+'">Tier '+st.tier+'</span></div>'
+    + '</div>'
     + '</div>'
     + '<div class="champ-stats">'
     + '<div class="srow"><span class="slbl">Win Rate</span><span class="sval '+wrCls(st.wr)+'">'+st.wr+'</span></div>'
@@ -1084,9 +1324,9 @@ function renderSide(c){
 function renderMain(c){
   var d = getData(c);
 
-  var ctrs = d.ctr.map(function(row){
+  var ctrs = d.ctr.map(function(row, i){
     var nm=row[0], wr=row[1], gms=row[2], thr=row[3], rsn=row[4];
-    return '<div class="trow gc">'
+    return '<div class="trow gc anim-row" style="animation-delay:'+(i*0.05)+'s">'
       + '<div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div>'
       + '<div class="wr wb">'+parseFloat(wr).toFixed(1)+'%</div>'
       + '<div class="gms">'+Number(gms).toLocaleString()+'</div>'
@@ -1095,9 +1335,9 @@ function renderMain(c){
       + '</div>';
   }).join('');
 
-  var good = d.good.map(function(row){
+  var good = d.good.map(function(row, i){
     var nm=row[0], wr=row[1], gms=row[2], rsn=row[3];
-    return '<div class="trow gg">'
+    return '<div class="trow gg anim-row" style="animation-delay:'+(i*0.05)+'s">'
       + '<div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div>'
       + '<div class="wr wg">'+parseFloat(wr).toFixed(1)+'%</div>'
       + '<div class="gms">'+Number(gms).toLocaleString()+'</div>'
@@ -1105,10 +1345,11 @@ function renderMain(c){
       + '</div>';
   }).join('');
 
-  var items = d.items.map(function(it){
-    return '<div class="item-card">'
+  var items = d.items.map(function(it, i){
+    return '<div class="item-card anim-row" style="animation-delay:'+(i*0.06)+'s">'
       + itemPort(it.n, 40)
       + '<div><div class="iorder">#'+it.o+'</div><div class="iname">'+it.n+'</div><div class="ireason">'+it.r+'</div><div class="icost">'+it.c+' de oro</div></div>'
+      + '<div class="item-tooltip"><div class="itt-name">'+it.n+'</div><div class="itt-cost">'+it.c+' de oro</div><div class="itt-reason">'+it.r+'</div></div>'
       + '</div>';
   }).join('');
 
@@ -1128,132 +1369,6 @@ function renderMain(c){
 /* INIT */
 filterGrid();
 
-/* ════════ MUSIC PLAYER ════════ */
-var TRACKS=[
-  {name:"Warriors",artist:"Imagine Dragons",icon:"⚔",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"},
-  {name:"RISE",artist:"Glitch Mob, Mako",icon:"🏆",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"},
-  {name:"Legends Never Die",artist:"Against The Current",icon:"🌟",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"},
-  {name:"Phoenix",artist:"Cailin Russo & Chrissy Costanza",icon:"🔥",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"},
-  {name:"GODS",artist:"NewJeans",icon:"🎵",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"},
-  {name:"Heavy is the Crown",artist:"Linkin Park",icon:"👑",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"},
-  {name:"POP/STARS",artist:"K/DA",icon:"💜",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3"},
-  {name:"IGNITE",artist:"Zedd",icon:"⚡",url:"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"},
-];
-var curTrack=0,isPlaying=false;
-var audioEl=document.getElementById('audioEl');
-
-function loadTrack(i){
-  var t=TRACKS[i];
-  document.getElementById('trackName').textContent=t.name;
-  document.getElementById('trackArtist').textContent=t.artist;
-  document.getElementById('trackIcon').textContent=t.icon;
-  document.getElementById('trackBar').style.width='0%';
-  audioEl.src=t.url;
-}
-function togglePlay(){
-  if(isPlaying){audioEl.pause();document.getElementById('playBtn').textContent='▶';isPlaying=false;}
-  else{audioEl.play();document.getElementById('playBtn').textContent='⏸';isPlaying=true;}
-}
-function nextTrack(){curTrack=(curTrack+1)%TRACKS.length;loadTrack(curTrack);if(isPlaying)audioEl.play();}
-function prevTrack(){curTrack=(curTrack-1+TRACKS.length)%TRACKS.length;loadTrack(curTrack);if(isPlaying)audioEl.play();}
-function updateBar(){if(audioEl.duration){document.getElementById('trackBar').style.width=(audioEl.currentTime/audioEl.duration*100)+'%';}}
-function setVol(v){audioEl.volume=parseFloat(v);}
-function setVol(v){audioEl.volume=v;}
-loadTrack(0);
-
-/* ════════ CUSTOM SOUNDCLOUD PLAYER ════════ */
-var THEMES = {
-  gold:   {color:'#d4af37', bg:'rgba(212,175,55,.15)',  icon:'⚔'},
-  blue:   {color:'#388bfd', bg:'rgba(56,139,253,.15)',   icon:'🌊'},
-  green:  {color:'#3fb950', bg:'rgba(63,185,80,.15)',    icon:'🌿'},
-  red:    {color:'#f85149', bg:'rgba(248,81,73,.15)',    icon:'🔥'},
-  purple: {color:'#a371f7', bg:'rgba(163,113,247,.15)', icon:'💜'},
-};
-var curTheme = 'gold';
-var scWidget = null;
-var scPlaying = false;
-var scDuration = 0;
-
-function applyTheme(name) {
-  var t = THEMES[name] || THEMES.gold;
-  curTheme = name;
-  document.getElementById('pl-prog').style.background = t.color;
-  document.getElementById('pl-play').style.background = t.color;
-  document.getElementById('pl-icon').style.background = t.bg;
-  document.getElementById('pl-icon').textContent = t.icon;
-  document.getElementById('pl-title').style.color = t.color;
-  document.getElementById('pl-vol').style.accentColor = t.color;
-  // highlight active theme button
-  var btns = document.querySelectorAll('#player-box button[onclick^="setTheme"]');
-  btns.forEach(function(b){ b.style.borderColor = '#555'; });
-  var idx = {gold:0,blue:1,green:2,red:3,purple:4}[name];
-  if (btns[idx]) btns[idx].style.borderColor = t.color;
-}
-
-function setTheme(name) { applyTheme(name); }
-
-function fmtTime(ms) {
-  var s = Math.floor(ms/1000);
-  return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
-}
-
-window.addEventListener('load', function() {
-  var iframe = document.getElementById('sc-iframe');
-  if (!iframe || typeof SC === 'undefined') return;
-  scWidget = SC.Widget(iframe);
-  scWidget.bind(SC.Widget.Events.READY, function() {
-    scWidget.setVolume(80);
-    scWidget.getDuration(function(d){ scDuration = d; });
-    scWidget.getCurrentSound(function(s){
-      if(s) {
-        document.getElementById('pl-title').textContent = s.title || 'updbeats';
-        document.getElementById('pl-artist').textContent = s.user ? s.user.username : 'SoundCloud';
-      }
-    });
-  });
-  scWidget.bind(SC.Widget.Events.PLAY, function() {
-    scPlaying = true;
-    document.getElementById('pl-play').textContent = '⏸';
-    scWidget.getDuration(function(d){ scDuration = d; });
-  });
-  scWidget.bind(SC.Widget.Events.PAUSE, function() {
-    scPlaying = false;
-    document.getElementById('pl-play').textContent = '▶';
-  });
-  scWidget.bind(SC.Widget.Events.PLAY_PROGRESS, function(e) {
-    if (scDuration > 0) {
-      document.getElementById('pl-prog').style.width = (e.currentPosition/scDuration*100)+'%';
-      document.getElementById('pl-time').textContent = fmtTime(e.currentPosition);
-    }
-  });
-  scWidget.bind(SC.Widget.Events.FINISH, function() {
-    scPlaying = false;
-    document.getElementById('pl-play').textContent = '▶';
-  });
-  scWidget.bind(SC.Widget.Events.SEEK, function(){});
-  // track change
-  scWidget.bind(SC.Widget.Events.PLAY, function() {
-    scWidget.getCurrentSound(function(s){
-      if(s) {
-        document.getElementById('pl-title').textContent = s.title || 'updbeats';
-        document.getElementById('pl-artist').textContent = s.user ? s.user.username : 'SoundCloud';
-      }
-    });
-  });
-  applyTheme('gold');
-});
-
-function scToggle() {
-  if (!scWidget) return;
-  scWidget.toggle();
-}
-function scNext() { if (scWidget) scWidget.next(); }
-function scPrev() { if (scWidget) scWidget.prev(); }
-function scVol(v) { if (scWidget) scWidget.setVolume(parseInt(v)); }
-function scSeek(pct) {
-  if (!scWidget || !scDuration) return;
-  scWidget.seekTo(Math.floor(scDuration * pct / 100));
-}
 </script>
 </body>
 </html>
