@@ -284,6 +284,67 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 .tier-champ-name{font-size:8px;color:var(--text2);white-space:nowrap;max-width:48px;overflow:hidden;text-overflow:ellipsis;text-align:center}
 
 /* ── VISIT COUNTER CUSTOM ── */
+
+/* ── SYNERGIES ── */
+.syn-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.syn-row{display:flex;align-items:center;gap:10px;padding:.55rem 1rem;border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+.syn-row:last-child{border-bottom:none}
+.syn-row:hover{background:var(--bg3)}
+.syn-name{font-size:12px;font-weight:600;flex:1}
+.syn-role{font-size:10px;color:var(--text3)}
+.syn-reason{font-size:10px;color:var(--text2);flex:2}
+.syn-score{font-size:11px;font-weight:700;color:var(--green)}
+
+/* ── DRAFT MODAL ── */
+#draft-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);overflow-y:auto}
+#draft-modal.visible{display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem}
+.draft-box{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:1000px;overflow:hidden;animation:fadeInUp .3s ease}
+.draft-hd{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:var(--bg3);border-bottom:1px solid var(--border)}
+.draft-title{font-size:15px;font-weight:700;color:var(--text)}
+.draft-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer}
+.draft-close:hover{color:var(--text)}
+.draft-teams{display:grid;grid-template-columns:1fr 60px 1fr;gap:0;min-height:400px}
+.draft-team{padding:1rem}
+.draft-team-blue{border-right:1px solid var(--border)}
+.draft-team-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem;display:flex;align-items:center;gap:6px}
+.draft-team-title.blue{color:#4488ff}
+.draft-team-title.red{color:#ff4444}
+.draft-bans{display:flex;gap:5px;margin-bottom:.75rem;flex-wrap:wrap}
+.draft-ban-slot{width:36px;height:36px;border-radius:6px;border:1px dashed var(--border2);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;position:relative;transition:border-color .15s}
+.draft-ban-slot:hover{border-color:var(--red)}
+.draft-ban-slot.filled{border-style:solid;border-color:var(--border2)}
+.draft-ban-slot img{width:100%;height:100%;border-radius:5px;object-fit:cover;filter:grayscale(60%) brightness(.7)}
+.draft-ban-slot .draft-x{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--red);opacity:0;transition:opacity .15s;background:rgba(0,0,0,.5);border-radius:5px}
+.draft-ban-slot:hover .draft-x{opacity:1}
+.draft-picks{display:flex;flex-direction:column;gap:5px}
+.draft-pick-slot{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px dashed var(--border2);border-radius:8px;padding:6px 10px;cursor:pointer;transition:all .15s;min-height:52px}
+.draft-pick-slot:hover{border-color:var(--gold);background:var(--bg4)}
+.draft-pick-slot.filled{border-style:solid;border-color:var(--border)}
+.draft-pick-slot.active{border-color:var(--gold);background:rgba(212,175,55,.08);animation:pulse-gold 1.5s infinite}
+.draft-pick-slot img{width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0}
+.draft-pick-slot .draft-slot-role{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--text3);letter-spacing:.3px}
+.draft-pick-slot .draft-slot-name{font-size:12px;font-weight:600;color:var(--text)}
+.draft-pick-slot .draft-slot-empty{font-size:11px;color:var(--text3)}
+.draft-pick-slot .draft-remove{margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:12px;padding:0 2px;opacity:0;transition:opacity .15s}
+.draft-pick-slot:hover .draft-remove{opacity:1}
+.draft-pick-slot .draft-remove:hover{color:var(--red)}
+.draft-center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem .5rem;gap:10px}
+.draft-vs{font-size:18px;font-weight:800;color:var(--text3)}
+.draft-suggest-btn{background:var(--blue);color:#fff;border:none;border-radius:7px;padding:8px 12px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:background .15s;writing-mode:vertical-rl;white-space:nowrap}
+.draft-suggest-btn:hover{background:var(--blue2)}
+.draft-suggest-btn:disabled{background:var(--bg4);color:var(--text3);cursor:not-allowed}
+.draft-footer{padding:.75rem 1.25rem;background:var(--bg3);border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.draft-suggest-panel{flex:1;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.draft-suggest-label{font-size:11px;color:var(--text2);font-weight:600;white-space:nowrap}
+.draft-suggestion{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.draft-suggestion img{width:38px;height:38px;border-radius:6px;object-fit:cover;border:2px solid var(--border2);transition:border-color .15s}
+.draft-suggestion:hover img{border-color:var(--gold)}
+.draft-suggestion-name{font-size:8px;color:var(--text2);white-space:nowrap}
+.draft-suggestion-wr{font-size:8px;font-weight:700;color:var(--green)}
+.draft-reset{background:none;border:1px solid var(--border2);color:var(--text2);border-radius:6px;padding:6px 12px;font-family:'Inter',sans-serif;font-size:11px;cursor:pointer}
+.draft-reset:hover{border-color:var(--red);color:var(--red)}
+@media(max-width:700px){.draft-teams{grid-template-columns:1fr}.draft-team-blue{border-right:none;border-bottom:1px solid var(--border)}.draft-center{flex-direction:row}.draft-suggest-btn{writing-mode:horizontal-tb}}
+
 .visit-counter{display:inline-flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 14px;margin-top:12px}
 .visit-counter-label{font-size:11px;color:var(--text3)}
 .visit-counter-nums{display:flex;gap:2px}
@@ -429,6 +490,7 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
   <div class="logo">⚔ Que Pickeo ?</div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="nav-champ" style="font-size:12px;color:var(--gold);font-weight:600;opacity:0;transition:opacity .4s"></span>
+    <button class="theme-toggle" onclick="openDraft()" style="color:#4488ff;border-color:rgba(68,136,255,.3)">⚔ Modo Draft</button>
     <button class="theme-toggle" onclick="openTierList()" style="color:var(--gold2);border-color:rgba(212,175,55,.3)">📊 Tier List</button>
     <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Cambiar modo">🌙 Oscuro</button>
     <span class="patch">Patch 16.5</span>
@@ -525,6 +587,45 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
       </div>
     </div>
     <div class="tierlist-body" id="tl-body"></div>
+  </div>
+</div>
+
+<!-- DRAFT MODAL -->
+<div id="draft-modal" onclick="if(event.target===this)closeDraft()">
+  <div class="draft-box">
+    <div class="draft-hd">
+      <span class="draft-title">⚔ Modo Draft — Simulá el Pick/Ban</span>
+      <button class="draft-close" onclick="closeDraft()">✕</button>
+    </div>
+    <div class="draft-teams">
+      <!-- BLUE TEAM -->
+      <div class="draft-team draft-team-blue">
+        <div class="draft-team-title blue">🔵 Equipo Azul</div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Bans</div>
+        <div class="draft-bans" id="blue-bans"></div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Picks</div>
+        <div class="draft-picks" id="blue-picks"></div>
+      </div>
+      <!-- CENTER -->
+      <div class="draft-center">
+        <div class="draft-vs">VS</div>
+        <button class="draft-suggest-btn" id="draft-suggest-btn" onclick="getDraftSuggestions()">Sugerir pick</button>
+      </div>
+      <!-- RED TEAM -->
+      <div class="draft-team">
+        <div class="draft-team-title red">🔴 Equipo Rojo</div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Bans</div>
+        <div class="draft-bans" id="red-bans"></div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">Picks</div>
+        <div class="draft-picks" id="red-picks"></div>
+      </div>
+    </div>
+    <div class="draft-footer">
+      <div class="draft-suggest-panel" id="draft-suggest-panel">
+        <span class="draft-suggest-label">💡 Agregá campeones y pedí sugerencias</span>
+      </div>
+      <button class="draft-reset" onclick="resetDraft()">↺ Resetear</button>
+    </div>
   </div>
 </div>
 
@@ -1301,6 +1402,60 @@ function getArchetypeTips(myChamp, enemyChamp, iWin, iLose, matchTip, diffLabel)
   return { tips: tips, avoid: avoid };
 }
 
+
+/* ════════════════════════════════════
+   SYNERGY DATA
+════════════════════════════════════ */
+var SYNERGY = {
+  // TOP SYNERGIES [champName, role, reason, synergyScore]
+  Top: {
+    engage:    [["Malphite","Top","R + engage es imparable",95],["Jarvan IV","Jungle","Crea zona para tus combos",90],["Amumu","Jungle","Doble engage devastador",88],["Leona","Support","CC encadenado masivo",85],["Nautilus","Support","Dos R = teamfight ganado",83]],
+    poke:      [["Jayce","Top","Poke + dive combo ideal",88],["Gangplank","Top","Poke + burst en zona",85],["Ezreal","ADC","Ambos pokean sin comprometerse",82],["Karma","Support","Shield + poke sostenido",80],["Lux","Support","Rango máximo",78]],
+    splitpush: [["Twisted Fate","Mid","TF teleporta a teamfights mientras vos spliteas",92],["Jhin","ADC","Presión global con W",85],["Shen","Top","R salva a allies cuando spliteas",80]],
+    tank:      [["Jinx","ADC","Tu engage le da peleas largas",90],["Kog'Maw","ADC","Tu CC protege su range",88],["Janna","Support","Peel extra sobre tu engage",85],["Lulu","Support","Amplifica tu engage con R",83]],
+    default:   [["Amumu","Jungle","Engage combo perfecto",88],["Jinx","ADC","Se beneficia de tus peleas",85],["Lulu","Support","Protección y amplificación",82],["Twisted Fate","Mid","Presión global",80],["Sejuani","Jungle","Doble engage de frontline",78]],
+  },
+  Jungle: {
+    default:   [["Orianna","Mid","Ball en tu zona de engage",92],["Jarvan IV","Top","Doble engage con contención",88],["Jinx","ADC","Se beneficia de tus kills",86],["Lulu","Support","Amplifica tu dive",84],["Malphite","Top","Doble engage si ambos junglas",80]],
+    dive:      [["Orianna","Mid","Ball posicionado en dive",90],["Leona","Support","CC extra en target",87],["Caitlyn","ADC","Headshot en targets CC",85],["Malphite","Top","Doble engage",82]],
+    cc:        [["Jinx","ADC","Explota el CC con daño",90],["Miss Fortune","ADC","R durante tu CC = teamwipe",92],["Seraphine","Mid","Amplifica el CC encadenado",88]],
+    farm:      [["Lux","Mid","Poke mientras farmeas",80],["Ziggs","Mid","Presión de lane mientras farmeas",78],["Ezreal","ADC","Ambos farmean y scalean",82]],
+  },
+  Mid: {
+    default:   [["Lee Sin","Jungle","Engage para tus combos",90],["Jinx","ADC","Explota tus picks",86],["Thresh","Support","Engage + peel combo",84],["Jarvan IV","Jungle","Zona de control para combos",82],["Lulu","Support","Protección en teamfight",80]],
+    burst:     [["Zac","Jungle","Engage para tu burst",92],["Blitzcrank","Support","Pull + tu burst = kill",90],["Leona","Support","Stun largo para full combo",88],["Lee Sin","Jungle","Kick da setup perfecto",86]],
+    poke:      [["Caitlyn","ADC","Máximo rango de poke",88],["Ezreal","ADC","Poke lane pasivo",85],["Zyra","Support","Poke doble sostenido",82],["Karma","Support","Shield + doble poke",80]],
+    control:   [["Jinx","ADC","Rockets en zonas controladas",88],["Jhin","ADC","W en lanes controladas",85],["Miss Fortune","ADC","R en zona controlada",92]],
+  },
+  ADC: {
+    default:   [["Thresh","Support","Engage + peel perfecto",95],["Leona","Support","Kill pressure máxima",90],["Blitzcrank","Support","Pull = kill segura",88],["Lulu","Support","Amplifica tu daño",86],["Nami","Support","Healing + engage",84]],
+    poke:      [["Karma","Support","Doble poke sostenido",88],["Zyra","Support","Daño + zona control",85],["Vel'Koz","Support","Poke máximo rango",82],["Lux","Support","Shield + poke",80]],
+    hyper:     [["Lulu","Support","R en teamfight = imparable",95],["Nami","Support","Speed + heals en pelea",88],["Janna","Support","Disengage si algo sale mal",85]],
+    engage:    [["Leona","Support","All-in desde nivel 2",92],["Nautilus","Support","R + gancho = kill",90],["Blitzcrank","Support","Pull para forzar fights",88],["Alistar","Support","Doble CC para engage",85]],
+  },
+  Support: {
+    default:   [["Caitlyn","ADC","Headshot en tu CC",92],["Miss Fortune","ADC","R durante tu engage",90],["Jinx","ADC","Explota los stuns",88],["Draven","ADC","Kill pressure máxima",86],["Jhin","ADC","Daño en targets CC",84]],
+    engage:    [["Draven","ADC","All-in desde nivel 2",92],["Miss Fortune","ADC","R en tu zona de engage",90],["Caitlyn","ADC","Headshot + trampas en engage",88]],
+    peel:      [["Jinx","ADC","Protegés su hyperscale",90],["Kog'Maw","ADC","Tu peel le da free damage",88],["Vayne","ADC","Protegés su 1v1",85]],
+    poke:      [["Ezreal","ADC","Poke doble sin commitear",88],["Varus","ADC","Poke + CC a distancia",85],["Jhin","ADC","Daño a distancia seguro",82]],
+  }
+};
+
+// Archetype to synergy style mapping
+var SYNERGY_STYLE = {
+  tank:"engage", bruiser:"engage", assassin:"dive", mage:"burst",
+  marksman:"hyper", support:"peel", artillery:"poke", diver:"dive"
+};
+
+function getSynergies(c) {
+  var roleData = SYNERGY[c.r] || SYNERGY.Mid;
+  var style = SYNERGY_STYLE[ARCHETYPE[c.n] || 'bruiser'];
+  var picks = roleData[style] || roleData.default || [];
+  // Fill up to 5 with defaults if needed
+  if(picks.length < 3) picks = (roleData.default || []).concat(picks).slice(0,5);
+  return picks.slice(0,5);
+}
+
 /* ════════════════════════════════════
    SUMMONER SEARCH
 ════════════════════════════════════ */
@@ -1345,7 +1500,19 @@ function renderSide(c){var d=getData(c);var st=d.stats;var splashUrl='https://dd
 /* ════════════════════════════════════
    RENDER MAIN
 ════════════════════════════════════ */
-function renderMain(c){var d=getData(c);var ctrs=d.ctr.map(function(row,i){var nm=row[0],wr=row[1],gms=row[2],thr=row[3],rsn=row[4];return '<div class="trow gc anim-row" style="animation-delay:'+(i*0.05)+'s"><div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div><div class="wr wb">'+parseFloat(wr).toFixed(1)+'%</div><div class="gms">'+Number(gms).toLocaleString()+'</div><div><div class="bar-bg"><div class="bar-f bar-red" style="width:'+barPct(wr)+'%"></div></div><div class="bar-note">'+rsn+'</div></div><div>'+thrEl(thr)+'</div></div>';}).join('');var good=d.good.map(function(row,i){var nm=row[0],wr=row[1],gms=row[2],rsn=row[3];return '<div class="trow gg anim-row" style="animation-delay:'+(i*0.05)+'s"><div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div><div class="wr wg">'+parseFloat(wr).toFixed(1)+'%</div><div class="gms">'+Number(gms).toLocaleString()+'</div><div><div class="bar-bg"><div class="bar-f bar-green" style="width:'+barPctGood(wr)+'%"></div></div><div class="bar-note">'+rsn+'</div></div></div>';}).join('');var items=d.items.map(function(it,i){return '<div class="item-card anim-row" style="animation-delay:'+(i*0.06)+'s">'+itemPort(it.n,40)+'<div><div class="iorder">#'+it.o+'</div><div class="iname">'+it.n+'</div><div class="ireason">'+it.r+'</div><div class="icost">'+it.c+' de oro</div></div><div class="item-tooltip"><div class="itt-name">'+it.n+'</div><div class="itt-cost">'+it.c+' de oro</div><div class="itt-reason">'+it.r+'</div></div></div>';}).join('');document.getElementById('mainInfo').innerHTML='<div class="card"><div class="card-hd">Counters de '+c.n+' — campeones que le ganan</div><div class="thd gc"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div><div>Dificultad</div></div>'+ctrs+'</div><div class="card"><div class="card-hd">'+c.n+' le gana a estos campeones</div><div class="thd gg"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div></div>'+good+'</div><div class="card"><div class="card-hd">Build Recomendada — '+c.n+'</div><div class="items-grid">'+items+'</div></div>';}
+function renderMain(c){var d=getData(c);var ctrs=d.ctr.map(function(row,i){var nm=row[0],wr=row[1],gms=row[2],thr=row[3],rsn=row[4];return '<div class="trow gc anim-row" style="animation-delay:'+(i*0.05)+'s"><div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div><div class="wr wb">'+parseFloat(wr).toFixed(1)+'%</div><div class="gms">'+Number(gms).toLocaleString()+'</div><div><div class="bar-bg"><div class="bar-f bar-red" style="width:'+barPct(wr)+'%"></div></div><div class="bar-note">'+rsn+'</div></div><div>'+thrEl(thr)+'</div></div>';}).join('');var good=d.good.map(function(row,i){var nm=row[0],wr=row[1],gms=row[2],rsn=row[3];return '<div class="trow gg anim-row" style="animation-delay:'+(i*0.05)+'s"><div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div><div class="wr wg">'+parseFloat(wr).toFixed(1)+'%</div><div class="gms">'+Number(gms).toLocaleString()+'</div><div><div class="bar-bg"><div class="bar-f bar-green" style="width:'+barPctGood(wr)+'%"></div></div><div class="bar-note">'+rsn+'</div></div></div>';}).join('');var items=d.items.map(function(it,i){return '<div class="item-card anim-row" style="animation-delay:'+(i*0.06)+'s">'+itemPort(it.n,40)+'<div><div class="iorder">#'+it.o+'</div><div class="iname">'+it.n+'</div><div class="ireason">'+it.r+'</div><div class="icost">'+it.c+' de oro</div></div><div class="item-tooltip"><div class="itt-name">'+it.n+'</div><div class="itt-cost">'+it.c+' de oro</div><div class="itt-reason">'+it.r+'</div></div></div>';}).join('');// Build synergies HTML
+var syns=getSynergies(c);
+var synHtml=syns.map(function(s){
+  var found=ALL.find(function(x){return x.n===s[0]&&x.r===s[1];})||ALL.find(function(x){return x.n===s[0];});
+  var onclick=found?'onclick="pickChamp(\''+found.n.replace(/'/g,"\\'")+'\'\,\''+found.r+'\')"':'';
+  return '<div class="syn-row" '+onclick+'>'
+    +portrait(s[0],s[1],32)
+    +'<div><div class="syn-name">'+s[0]+'</div><div class="syn-role">'+s[1]+'</div></div>'
+    +'<div class="syn-reason">'+s[2]+'</div>'
+    +'<div class="syn-score">+'+s[3]+'</div>'
+    +'</div>';
+}).join('');
+document.getElementById('mainInfo').innerHTML='<div class="syn-card"><div class="card-hd">Sinergias con '+c.n+' — mejores compañeros</div>'+synHtml+'</div>'+'<div class="card"><div class="card-hd">Counters de '+c.n+' — campeones que le ganan</div><div class="thd gc"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div><div>Dificultad</div></div>'+ctrs+'</div><div class="card"><div class="card-hd">'+c.n+' le gana a estos campeones</div><div class="thd gg"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div></div>'+good+'</div><div class="card"><div class="card-hd">Build Recomendada — '+c.n+'</div><div class="items-grid">'+items+'</div></div>';}
 
 /* ════════════════════════════════════
    PAGE BACKGROUND
@@ -1411,16 +1578,7 @@ function filterPickerGrid(){
   }).join('');
 }
 
-function selectPickerChamp(name, role){
-  var c = ALL.find(function(x){ return x.n===name && x.r===role; }) || ALL.find(function(x){ return x.n===name; });
-  if(!c) return;
-  // Don't allow same champ in both slots
-  var other = compareChamps[pickerSlot===0?1:0];
-  if(other && other.n===c.n){ closeComparePicker(); return; }
-  compareChamps[pickerSlot] = c;
-  renderCompareBar();
-  closeComparePicker();
-}
+
 
 /* ════════════════════════════════════
    DARK / LIGHT MODE
@@ -1855,6 +2013,193 @@ function setTlRole(r){
     nums.innerHTML = '<img src="https://counter9.optistats.ovh/private/freecounterstat.php?c=8m8l8u6y8n5w3p1u7z6u4b8r9q2j1l5y" style="height:24px;filter:invert(1) brightness(2);vertical-align:middle" alt="visitas"/>';
   }
 })();
+
+/* ════════════════════════════════════
+   DRAFT MODE
+════════════════════════════════════ */
+var DRAFT_ROLES = ['Top','Jungle','Mid','ADC','Support'];
+var draftState = {
+  blue: { bans: [null,null,null,null,null], picks: [null,null,null,null,null] },
+  red:  { bans: [null,null,null,null,null], picks: [null,null,null,null,null] },
+  activeTeam: null, activeType: null, activeIdx: null
+};
+
+function openDraft(){
+  resetDraft();
+  document.getElementById('draft-modal').classList.add('visible');
+  document.body.style.overflow='hidden';
+}
+function closeDraft(){
+  document.getElementById('draft-modal').classList.remove('visible');
+  document.body.style.overflow='';
+}
+function resetDraft(){
+  draftState = {
+    blue: { bans:[null,null,null,null,null], picks:[null,null,null,null,null] },
+    red:  { bans:[null,null,null,null,null], picks:[null,null,null,null,null] },
+    activeTeam:null, activeType:null, activeIdx:null
+  };
+  renderDraft();
+  document.getElementById('draft-suggest-panel').innerHTML='<span class="draft-suggest-label">💡 Agregá campeones y pedí sugerencias</span>';
+}
+
+function renderDraft(){
+  ['blue','red'].forEach(function(team){
+    var t = draftState[team];
+    // Bans
+    var bansEl = document.getElementById(team+'-bans');
+    if(bansEl) bansEl.innerHTML = t.bans.map(function(b,i){
+      var isActive = draftState.activeTeam===team && draftState.activeType==='ban' && draftState.activeIdx===i;
+      return '<div class="draft-ban-slot'+(isActive?' active':'')+'" onclick="setDraftActive(\''+team+'\',\'ban\','+i+')" title="'+(b?b.n:'Click para banear')+'">'
+        +(b?'<img src="'+cimgUrl(b.n)+'" onerror="this.style.opacity=.3"/>':'<span style="font-size:16px;color:var(--text3)">🚫</span>')
+        +(b?'<div class="draft-x">✕</div>':'')
+        +'</div>';
+    }).join('');
+
+    // Picks
+    var picksEl = document.getElementById(team+'-picks');
+    if(picksEl) picksEl.innerHTML = t.picks.map(function(p,i){
+      var role = DRAFT_ROLES[i];
+      var isActive = draftState.activeTeam===team && draftState.activeType==='pick' && draftState.activeIdx===i;
+      return '<div class="draft-pick-slot'+(p?' filled':'')+(isActive?' active':'')+'" onclick="setDraftActive(\''+team+'\',\'pick\','+i+')">'
+        +(p?'<img src="'+cimgUrl(p.n)+'" onerror="this.style.opacity=.3"/>':'<div style="width:36px;height:36px;border-radius:6px;border:1px dashed var(--border2);background:var(--bg4);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:10px;color:var(--text3)">+</span></div>')
+        +'<div><div class="draft-slot-role">'+role+'</div>'+(p?'<div class="draft-slot-name">'+p.n+'</div>':'<div class="draft-slot-empty">Click para pickear</div>')+'</div>'
+        +(p?'<button class="draft-remove" onclick="removeDraftPick(\''+team+'\','+i+',event)">✕</button>':'')
+        +'</div>';
+    }).join('');
+  });
+}
+
+function setDraftActive(team, type, idx){
+  // If clicking a filled ban, remove it
+  if(type==='ban' && draftState[team].bans[idx]){
+    draftState[team].bans[idx]=null;
+    renderDraft();
+    return;
+  }
+  draftState.activeTeam=team;
+  draftState.activeType=type;
+  draftState.activeIdx=idx;
+  renderDraft();
+  // Open picker
+  pickerSlot = type==='pick' ? (team==='blue'?0:1) : 0;
+  pickerRole = type==='pick' ? DRAFT_ROLES[idx] : 'Todos';
+  document.getElementById('compare-picker-title').textContent = (team==='blue'?'🔵':'🔴')+' '+team.charAt(0).toUpperCase()+team.slice(1)+' — '+(type==='ban'?'Elegí ban':'Elegí pick para '+DRAFT_ROLES[idx]);
+  document.getElementById('compare-picker-input').value='';
+  document.getElementById('compare-picker').classList.add('visible');
+  document.body.style.overflow='hidden';
+
+  // Override selectPickerChamp for draft
+  window._draftPickerMode = {team:team, type:type, idx:idx};
+  filterPickerGrid();
+  setTimeout(function(){ document.getElementById('compare-picker-input').focus(); },100);
+}
+
+function removeDraftPick(team, idx, evt){
+  evt && evt.stopPropagation();
+  draftState[team].picks[idx]=null;
+  renderDraft();
+}
+
+// Override selectPickerChamp to handle draft picks
+var _originalSelectPickerChamp = null;
+function selectPickerChamp(name, role){
+  if(window._draftPickerMode){
+    var m = window._draftPickerMode;
+    var c = ALL.find(function(x){return x.n===name&&x.r===role;})||ALL.find(function(x){return x.n===name;});
+    if(!c){closeComparePicker();return;}
+    if(m.type==='ban'){
+      draftState[m.team].bans[m.idx]=c;
+    } else {
+      draftState[m.team].picks[m.idx]=c;
+    }
+    window._draftPickerMode=null;
+    renderDraft();
+    closeComparePicker();
+    // Reopen draft modal
+    document.getElementById('draft-modal').classList.add('visible');
+    document.body.style.overflow='hidden';
+    return;
+  }
+  // Original behavior
+  var c2 = ALL.find(function(x){return x.n===name&&x.r===role;})||ALL.find(function(x){return x.n===name;});
+  if(!c2) return;
+  var other=compareChamps[pickerSlot===0?1:0];
+  if(other&&other.n===c2.n){closeComparePicker();return;}
+  compareChamps[pickerSlot]=c2;
+  renderCompareBar();
+  closeComparePicker();
+}
+
+function getDraftSuggestions(){
+  var panel = document.getElementById('draft-suggest-panel');
+  var bluePicks = draftState.blue.picks.filter(Boolean);
+  var redPicks  = draftState.red.picks.filter(Boolean);
+  var allPicked = bluePicks.concat(redPicks).map(function(c){return c.n;});
+  var allBanned = draftState.blue.bans.concat(draftState.red.bans).filter(Boolean).map(function(c){return c.n;});
+  var unavailable = allPicked.concat(allBanned);
+
+  // Find first empty blue pick slot
+  var emptySlotIdx = draftState.blue.picks.findIndex(function(p){return !p;});
+  if(emptySlotIdx<0){ panel.innerHTML='<span class="draft-suggest-label">✓ Todos los picks del equipo azul están completos</span>'; return; }
+  var role = DRAFT_ROLES[emptySlotIdx];
+
+  // Get enemy picks to find counters against
+  var enemyCtrTargets = redPicks.map(function(c){return c.n;});
+
+  // Score champions: prioritize those that counter enemy picks
+  var candidates = ALL.filter(function(c){
+    return c.r===role && unavailable.indexOf(c.n)<0;
+  });
+
+  // Deduplicate by name
+  var seen={};
+  candidates=candidates.filter(function(c){if(seen[c.n])return false;seen[c.n]=true;return true;});
+
+  // Score each candidate
+  var scored = candidates.map(function(c){
+    var score = 0;
+    var d = getData(c);
+    // Base score from tier
+    score += {S:40,A:30,B:20,C:10}[d.stats&&d.stats.tier||'B']||20;
+    // Counter score: does this champ counter any enemy picks?
+    enemyCtrTargets.forEach(function(enemy){
+      var inGood = d.good && d.good.find(function(r){return r[0].toLowerCase()===enemy.toLowerCase();});
+      if(inGood) score += 25;
+      var inCtr = d.ctr && d.ctr.find(function(r){return r[0].toLowerCase()===enemy.toLowerCase();});
+      if(inCtr) score -= 15; // enemy counters this champ
+    });
+    // Synergy score with existing blue picks
+    bluePicks.forEach(function(ally){
+      var syns = getSynergies(ally);
+      syns.forEach(function(s){if(s[0]===c.n) score+=s[3]/5;});
+    });
+    return {c:c, score:score, d:d};
+  });
+
+  scored.sort(function(a,b){return b.score-a.score;});
+  var top5 = scored.slice(0,5);
+
+  if(!top5.length){ panel.innerHTML='<span class="draft-suggest-label">No hay sugerencias disponibles</span>'; return; }
+
+  panel.innerHTML='<span class="draft-suggest-label">💡 Sugeridos para '+role+':</span>'
+    +top5.map(function(s){
+      var wr = s.d.stats&&s.d.stats.wr||'50%';
+      return '<div class="draft-suggestion" onclick="applyDraftSuggestion(\''+s.c.n.replace(/'/g,"\\'")+'\'\,\''+s.c.r+'\','+emptySlotIdx+')">'
+        +'<img src="'+cimgUrl(s.c.n)+'" onerror="this.style.opacity=.3" title="'+s.c.n+'"/>'
+        +'<span class="draft-suggestion-name">'+s.c.n+'</span>'
+        +'<span class="draft-suggestion-wr">'+wr+'</span>'
+        +'</div>';
+    }).join('');
+}
+
+function applyDraftSuggestion(name, role, idx){
+  var c = ALL.find(function(x){return x.n===name&&x.r===role;})||ALL.find(function(x){return x.n===name;});
+  if(!c) return;
+  draftState.blue.picks[idx]=c;
+  renderDraft();
+  getDraftSuggestions();
+}
 
 /* INIT */
 filterGrid();
