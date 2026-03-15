@@ -1557,7 +1557,14 @@ function getData(c){
   var patchStats = PATCH_TIERS[c.n];
   var s=SPECIFIC[c.n];
   var r=ROLE_DATA[c.r]||ROLE_DATA.Mid;
-  if(!s) return r;
+  if(!s) return {
+    ctr:   r.ctr,
+    good:  r.good,
+    items: r.items,
+    runes: r.runes,
+    spells:r.spells,
+    stats: patchStats || r.stats
+  };
 
   // Check if this champ's primary role in SPECIFIC matches the selected role
   // If selected role differs (e.g. Jax picked as Jungle but SPECIFIC has Top data),
