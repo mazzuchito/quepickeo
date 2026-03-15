@@ -59,14 +59,45 @@
   --transition-theme:background .3s,color .3s,border-color .3s;
 }
 body.light-mode{
-  --bg:#f0f2f5;--bg2:#ffffff;--bg3:#e8eaed;--bg4:#dde1e7;
-  --border:#d0d5dd;--border2:#b8bec9;
+  --bg:#f0f4f8;--bg2:#ffffff;--bg3:#f5f7fa;--bg4:#eaecf0;
+  --border:#d8dce5;--border2:#c4c9d4;
   --text:#1a1d23;--text2:#4a5568;--text3:#718096;
+  --blue:#1a5fd4;--blue2:#2d7aee;
+  --gold:#b8860b;--gold2:#d4a000;
+  --green:#1a7f3c;--red:#cc2222;--orange:#c05000;
 }
-/* Light mode overlay más claro */
-body.light-mode #page-bg-overlay{background:linear-gradient(135deg,rgba(240,242,245,.88) 0%,rgba(240,242,245,.72) 50%,rgba(240,242,245,.85) 100%)}
-body.light-mode nav{background:rgba(255,255,255,.75)}
-body.light-mode .hero{background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(240,242,245,.55))}
+body.light-mode #page-bg-overlay{background:linear-gradient(135deg,rgba(240,244,248,.92) 0%,rgba(240,244,248,.78) 50%,rgba(240,244,248,.88) 100%)}
+body.light-mode nav{background:rgba(255,255,255,.88);border-bottom-color:var(--border)}
+body.light-mode .hero{background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(240,244,248,.7))}
+body.light-mode .card,
+body.light-mode .champ-card,
+body.light-mode .rune-card,
+body.light-mode .spells-card,
+body.light-mode .syn-card,
+body.light-mode .champ-section,
+body.light-mode .fav-section,
+body.light-mode .hist-section{box-shadow:0 1px 4px rgba(0,0,0,.08)}
+body.light-mode .card-hd,
+body.light-mode .rcard-hd,
+body.light-mode .sec-hd{background:linear-gradient(90deg,#eaecf0,#f5f7fa)}
+body.light-mode .trow:hover{background:rgba(0,0,0,.03)}
+body.light-mode .cbtn{background:#f5f7fa;border-color:#d8dce5}
+body.light-mode .cbtn:hover{background:#eaecf0;border-color:#b8bec9}
+body.light-mode .patch{background:#eaecf0;color:#4a5568}
+body.light-mode .theme-toggle{background:#f5f7fa;border-color:#d8dce5;color:#4a5568}
+body.light-mode .tier-pill.tS{background:rgba(184,134,11,.12);color:#8a6000;border-color:rgba(184,134,11,.3)}
+body.light-mode .tier-pill.tA{background:rgba(26,95,212,.1);color:#1a5fd4;border-color:rgba(26,95,212,.2)}
+body.light-mode .tier-pill.tB{background:rgba(26,127,60,.1);color:#1a7f3c;border-color:rgba(26,127,60,.2)}
+body.light-mode .thr-h{background:rgba(204,34,34,.08);color:#cc2222;border-color:rgba(204,34,34,.2)}
+body.light-mode .thr-m{background:rgba(192,80,0,.08);color:#c05000;border-color:rgba(192,80,0,.2)}
+body.light-mode .thr-l{background:rgba(26,127,60,.08);color:#1a7f3c;border-color:rgba(26,127,60,.2)}
+body.light-mode .rtab{background:#f5f7fa;border-color:#d8dce5;color:#4a5568}
+body.light-mode .rtab:hover{background:#eaecf0;color:#1a1d23}
+body.light-mode .draft-hero-banner{background:linear-gradient(135deg,rgba(26,95,212,.08),rgba(26,45,90,.06));border-color:rgba(26,95,212,.3)}
+body.light-mode .draft-hero-banner-title{color:#1a5fd4}
+body.light-mode .draft-hero-banner-sub{color:#4a5568}
+body.light-mode .hero-syn-wrap{background:rgba(255,255,255,.85)}
+body.light-mode .sum-card{background:rgba(255,255,255,.95)}
 html,body{min-height:100vh;background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);position:relative}
 #page-bg{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center 20%;opacity:0;transition:opacity .8s ease;pointer-events:none}
 #page-bg-overlay{position:fixed;inset:0;z-index:1;background:linear-gradient(135deg,rgba(14,16,21,.75) 0%,rgba(14,16,21,.55) 50%,rgba(14,16,21,.72) 100%);pointer-events:none}
@@ -460,26 +491,85 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 @media(max-width:600px){.compare-cols{grid-template-columns:1fr}.compare-col:first-child{border-right:none;border-bottom:1px solid var(--border)}}
 
 /* ── MOBILE IMPROVEMENTS ── */
-@media(max-width:600px){
-  .hero h1{font-size:16px}
-  .hero p{font-size:12px}
-  nav{padding:0 1rem}
+@media(max-width:700px){
+  /* Nav */
+  nav{padding:0 .75rem;height:46px}
   .logo{font-size:13px}
   #nav-champ{display:none}
-  .main{margin:.75rem auto;gap:.75rem}
-  .cgrid{grid-template-columns:repeat(auto-fill,minmax(62px,1fr));max-height:280px}
-  .gc{grid-template-columns:1.8fr .7fr .7fr 1fr 60px}
-  .gg{grid-template-columns:1.8fr .7fr .7fr 1fr}
+  .theme-toggle{padding:3px 8px;font-size:11px}
+
+  /* Hero */
+  .hero{padding:1rem .75rem .75rem}
+  .hero h1{font-size:16px}
+  .hero p{font-size:11px;margin-bottom:.75rem}
+  .draft-hero-banner{padding:8px 10px;gap:8px}
+  .draft-hero-banner-icon{font-size:20px}
+  .draft-hero-banner-title{font-size:12px}
+  .draft-hero-banner-sub{display:none}
+  .draft-hero-banner-slots{display:none}
+  .draft-hero-banner-btn{padding:6px 10px;font-size:11px}
+  .hero-syn-wrap{gap:8px}
+  .hero-syn-label{display:none}
+
+  /* Search row */
+  div[style*="justify-content:space-between"]{flex-direction:column;gap:8px}
+  div[style*="justify-content:space-between"] > div{width:100%!important;max-width:100%!important}
+  #summoner-input{width:100%!important;flex:1}
+
+  /* Main layout */
+  .main{margin:.5rem auto;gap:.65rem;padding:0 .75rem}
+  .cgrid{grid-template-columns:repeat(auto-fill,minmax(68px,1fr));max-height:240px}
+  .cbtn{border-radius:7px}
+
+  /* Tables */
+  .gc{grid-template-columns:2fr .8fr 80px 55px}
+  .gg{grid-template-columns:2fr .8fr 2fr}
+  .thd.gc > div:nth-child(3){display:none}
+  .trow.gc > div:nth-child(3){display:none}
+  .gms{display:none}
+
+  /* Items */
   .items-grid{grid-template-columns:1fr 1fr}
   .item-tooltip{display:none!important}
-  .champ-section .sec-hd{flex-wrap:wrap;gap:4px}
-  #compare-bar.visible{padding:8px 1rem;gap:8px}
-  .compare-slot{min-width:110px}
+
+  /* Comparator bar */
+  #compare-bar.visible{padding:8px .75rem;gap:6px;flex-wrap:nowrap}
+  .compare-slot{min-width:100px;padding:4px 8px}
   .compare-label{display:none}
-  div[style*="justify-content:space-between"]{flex-direction:column}
-  div[style*="justify-content:space-between"] > div:last-child{width:100%}
-  div[style*="justify-content:space-between"] > div:last-child input{width:100%!important}
-  #summoner-input{width:120px!important}
+  #compare-go{padding:6px 10px;font-size:11px}
+  #compare-clear{padding:6px 8px;font-size:11px}
+
+  /* Comparator modal */
+  .compare-cols{grid-template-columns:1fr}
+  .compare-col:first-child{border-right:none;border-bottom:1px solid var(--border)}
+  .compare-modal-box{border-radius:10px}
+
+  /* Draft modal */
+  .draft-teams{grid-template-columns:1fr}
+  .draft-team-blue{border-right:none;border-bottom:1px solid var(--border)}
+  .draft-center{flex-direction:row;padding:.5rem}
+  .draft-suggest-btn{writing-mode:horizontal-tb;padding:6px 12px}
+  .draft-footer{padding:.5rem .75rem}
+
+  /* Picker */
+  .compare-picker-box{width:98vw;max-height:90vh}
+  .compare-picker-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr))}
+
+  /* Tier list */
+  .tier-row{gap:6px}
+  .tier-label{width:36px;min-height:44px;font-size:15px}
+
+  /* TFT */
+  .tft-box{border-radius:10px}
+  .tft-units{gap:4px}
+  .tft-unit-port{width:32px;height:32px}
+}
+
+@media(max-width:400px){
+  .cgrid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr))}
+  .gc{grid-template-columns:1.8fr .8fr 55px}
+  .thd.gc > div:nth-child(4){display:none}
+  .trow.gc > div:nth-child(4){display:none}
 }
 
 /* ── ROLE TABS — colored per role ── */
@@ -626,6 +716,23 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 .tft-aug-prismatic{background:rgba(240,208,96,.15);color:var(--gold2);border:1px solid rgba(240,208,96,.3)}
 .tft-aug-gold{background:rgba(212,175,55,.12);color:var(--gold);border:1px solid rgba(212,175,55,.25)}
 .tft-aug-silver{background:rgba(139,148,158,.1);color:var(--text2);border:1px solid var(--border)}
+
+
+/* ── REVERSE SEARCH ── */
+.reverse-search-wrap{position:relative;display:inline-block;width:100%}
+#reverse-input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px 10px 40px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border .2s,box-shadow .2s}
+#reverse-input:focus{border-color:#a371f7;box-shadow:0 0 0 3px rgba(163,113,247,.12)}
+#reverse-input::placeholder{color:var(--text3)}
+.reverse-sico{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.5;pointer-events:none;font-size:15px}
+#reverse-results{display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:10px;z-index:100;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.3);max-height:320px;overflow-y:auto;animation:fadeInUp .2s ease}
+.reverse-result-item{display:flex;align-items:center;gap:10px;padding:.65rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.reverse-result-item:last-child{border-bottom:none}
+.reverse-result-item:hover{background:var(--bg3)}
+.reverse-result-name{font-size:13px;font-weight:600;color:var(--text)}
+.reverse-result-role{font-size:10px;color:var(--text3)}
+.reverse-result-reason{font-size:11px;color:var(--text2);flex:1;text-align:right}
+.reverse-result-wr{font-size:12px;font-weight:700;color:var(--green);min-width:44px;text-align:right}
+.reverse-section-lbl{padding:.4rem 1rem;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;background:var(--bg3);border-bottom:1px solid var(--border)}
 
 </style>
 </head>
@@ -1697,7 +1804,30 @@ document.getElementById('mainInfo').innerHTML='<div class="card"><div class="car
 /* ════════════════════════════════════
    PAGE BACKGROUND
 ════════════════════════════════════ */
-function updatePageBg(champ){var bg=document.getElementById('page-bg');var nc=document.getElementById('nav-champ');var url='https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(champ.n)+'_0.jpg';var img=new Image();img.onload=function(){bg.style.backgroundImage='url('+url+')';bg.style.opacity='1';};img.src=url;nc.textContent=champ.n+' · '+champ.r;nc.style.opacity='1';}
+function updatePageBg(champ){
+  var bg=document.getElementById('page-bg');
+  var nc=document.getElementById('nav-champ');
+  var url='https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(champ.n)+'_0.jpg';
+  // Cinematic transition: fade out, swap, fade in
+  bg.style.transition='opacity .4s ease';
+  bg.style.opacity='0';
+  var img=new Image();
+  img.onload=function(){
+    setTimeout(function(){
+      bg.style.backgroundImage='url('+url+')';
+      bg.style.backgroundPosition='center 15%';
+      bg.style.transition='opacity .7s ease';
+      bg.style.opacity='1';
+    }, 200);
+  };
+  img.src=url;
+  nc.style.opacity='0';
+  setTimeout(function(){
+    nc.textContent=champ.n+' · '+champ.r;
+    nc.style.transition='opacity .5s ease';
+    nc.style.opacity='1';
+  }, 300);
+}
 
 /* ════════════════════════════════════
    COMPARE PICKER
@@ -2575,6 +2705,107 @@ function renderTFT(){
     body.innerHTML = html2;
   }
 }
+
+/* ════════════════════════════════════
+   REVERSE SEARCH
+════════════════════════════════════ */
+var searchMode = 'champ';
+
+function setSearchMode(mode){
+  searchMode = mode;
+  var champWrap   = document.getElementById('search-champ-wrap');
+  var counterWrap = document.getElementById('search-counter-wrap');
+  var btnChamp    = document.getElementById('search-mode-champ');
+  var btnCounter  = document.getElementById('search-mode-counter');
+
+  if(mode === 'champ'){
+    champWrap.style.display   = 'block';
+    counterWrap.style.display = 'none';
+    btnChamp.style.background  = 'rgba(56,139,253,.15)';
+    btnChamp.style.borderColor = 'var(--blue2)';
+    btnChamp.style.color       = 'var(--blue2)';
+    btnCounter.style.background  = 'var(--bg3)';
+    btnCounter.style.borderColor = 'var(--border)';
+    btnCounter.style.color       = 'var(--text2)';
+    document.getElementById('reverse-results').style.display = 'none';
+  } else {
+    champWrap.style.display   = 'none';
+    counterWrap.style.display = 'block';
+    btnCounter.style.background  = 'rgba(163,113,247,.15)';
+    btnCounter.style.borderColor = '#a371f7';
+    btnCounter.style.color       = '#a371f7';
+    btnChamp.style.background  = 'var(--bg3)';
+    btnChamp.style.borderColor = 'var(--border)';
+    btnChamp.style.color       = 'var(--text2)';
+    setTimeout(function(){ document.getElementById('reverse-input').focus(); }, 50);
+  }
+}
+
+function doReverseSearch(){
+  var q = document.getElementById('reverse-input').value.trim().toLowerCase();
+  var resultsEl = document.getElementById('reverse-results');
+
+  if(!q || q.length < 2){
+    resultsEl.style.display = 'none';
+    return;
+  }
+
+  // Find champs that match the query
+  var matches = [];
+  var seen = {};
+  ALL.forEach(function(c){
+    if(seen[c.n]) return;
+    if(c.n.toLowerCase().indexOf(q) < 0) return;
+    seen[c.n] = true;
+    matches.push(c);
+  });
+
+  if(!matches.length){
+    resultsEl.innerHTML = '<div class="reverse-section-lbl">Sin resultados para "'+q+'"</div>';
+    resultsEl.style.display = 'block';
+    return;
+  }
+
+  // For each match, find counters (champs that beat it)
+  var html = '';
+  matches.slice(0,3).forEach(function(enemy){
+    var d = getData(enemy);
+    html += '<div class="reverse-section-lbl">Counters para '+enemy.n+' ('+enemy.r+')</div>';
+    if(!d.ctr || !d.ctr.length){
+      html += '<div class="reverse-result-item"><span style="font-size:12px;color:var(--text3);padding:.25rem 0">Sin datos de counters</span></div>';
+      return;
+    }
+    d.ctr.slice(0,4).forEach(function(row, i){
+      var cName = row[0], wr = row[1], rsn = row[4]||row[3]||'';
+      var found = ALL.find(function(x){ return x.n===cName; });
+      var onclick = found ? 'onclick="pickChamp(\''+found.n.replace(/'/g,"\\'")+'\'\,\''+found.r+'\');closeReverseSearch()"' : '';
+      html += '<div class="reverse-result-item anim-row" style="animation-delay:'+(i*.05)+'s" '+onclick+'>'
+        +(found ? portrait(found.n, found.r, 32) : '')
+        +'<div><div class="reverse-result-name">'+cName+'</div>'
+        +'<div class="reverse-result-role">'+(found?found.r:'')+'</div></div>'
+        +'<div class="reverse-result-reason">'+rsn+'</div>'
+        +'<div class="reverse-result-wr">'+parseFloat(wr).toFixed(1)+'%</div>'
+        +'</div>';
+    });
+  });
+
+  resultsEl.innerHTML = html;
+  resultsEl.style.display = 'block';
+}
+
+function closeReverseSearch(){
+  document.getElementById('reverse-results').style.display = 'none';
+  document.getElementById('reverse-input').value = '';
+}
+
+// Close reverse search when clicking outside
+document.addEventListener('click', function(e){
+  var wrap = document.getElementById('search-counter-wrap');
+  if(wrap && !wrap.contains(e.target)){
+    var r = document.getElementById('reverse-results');
+    if(r) r.style.display = 'none';
+  }
+});
 
 /* INIT */
 filterGrid();
