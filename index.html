@@ -201,7 +201,24 @@ nav{background:rgba(22,27,34,.65);border-bottom:1px solid var(--border);padding:
 .ireason{font-size:10px;color:var(--text2);margin-top:2px;line-height:1.4}
 .icost{font-size:10px;color:var(--gold);margin-top:2px}
 
-.placeholder{color:var(--text3);font-size:13px;padding:2.5rem;text-align:center;line-height:1.8}
+/* ── SUMMONER PANEL ── */
+.sum-card{background:rgba(22,27,34,.9);border:1px solid var(--border2);border-radius:10px;padding:.85rem 1rem;display:flex;align-items:center;gap:16px;flex-wrap:wrap;backdrop-filter:blur(4px);animation:fadeInUp .3s ease both}
+.sum-rank-icon{width:52px;height:52px;object-fit:contain;flex-shrink:0}
+.sum-rank-icon-ph{width:52px;height:52px;border-radius:50%;background:var(--bg4);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.sum-name{font-size:15px;font-weight:700;color:var(--text)}
+.sum-rank{font-size:12px;color:var(--gold);font-weight:600;margin-top:2px}
+.sum-lp{font-size:11px;color:var(--text2);margin-top:1px}
+.sum-divider{width:1px;height:40px;background:var(--border);flex-shrink:0}
+.sum-champs{display:flex;gap:10px;flex-wrap:wrap}
+.sum-champ{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.sum-champ:hover .sum-champ-img{border-color:var(--gold)}
+.sum-champ-img{width:40px;height:40px;border-radius:6px;object-fit:cover;border:1px solid var(--border2);background:var(--bg4);transition:border-color .15s}
+.sum-champ-name{font-size:9px;color:var(--text2);white-space:nowrap}
+.sum-champ-wr{font-size:9px;font-weight:700}
+.sum-error{color:var(--red);font-size:12px;padding:.5rem .75rem;background:rgba(248,81,73,.08);border:1px solid rgba(248,81,73,.2);border-radius:6px;display:inline-block}
+.sum-loading{color:var(--text2);font-size:12px;display:flex;align-items:center;gap:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sum-spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--blue2);border-radius:50%;animation:spin .7s linear infinite}
 .spells-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem}
 .spells-body{padding:.65rem 1rem;display:flex;align-items:center;gap:16px}
 .spells-pair{display:flex;gap:10px;align-items:flex-start}
@@ -225,10 +242,28 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
   <div style="max-width:1100px;margin:0 auto">
     <h1>Counters de Campeones</h1>
     <p>Seleccioná un campeón para ver sus counters, ítems y runas recomendadas</p>
-    <div class="search-wrap">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:.75rem">
+      <div class="search-wrap" style="margin-bottom:0;flex:1;min-width:200px">
         <span class="sico">🔍</span>
         <input id="si" type="text" placeholder="Buscar campeón..." oninput="filterGrid()"/>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <div style="position:relative">
+          <div style="display:flex;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;overflow:hidden">
+            <select id="summoner-region" style="background:var(--bg4);border:none;border-right:1px solid var(--border2);color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;padding:0 10px;cursor:pointer;outline:none;height:42px">
+              <option value="la1">LAN</option>
+              <option value="la2">LAS</option>
+              <option value="br1">BR</option>
+              <option value="na1">NA</option>
+              <option value="euw1">EUW</option>
+            </select>
+            <input id="summoner-input" type="text" placeholder="Nombre#TAG" style="background:transparent;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:0 12px;outline:none;width:160px" onkeydown="if(event.key==='Enter')searchSummoner()"/>
+            <button onclick="searchSummoner()" style="background:var(--blue);border:none;color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:0 14px;cursor:pointer;transition:background .15s" onmouseover="this.style.background='var(--blue2)'" onmouseout="this.style.background='var(--blue)'">Buscar</button>
+          </div>
+        </div>
+      </div>
     </div>
+    <div id="summoner-result" style="display:none;margin-bottom:.75rem"></div>
     <div class="roles" id="roleTabs"></div>
   </div>
 </div>
@@ -1236,6 +1271,145 @@ function barPct(w){ return Math.min(100,Math.max(0,(parseFloat(w)-40)*5)); }
 function barPctGood(w){ return Math.min(100,Math.max(0,(55-parseFloat(w))*6)); }
 function tierCls(t){ return 't'+(t||'B'); }
 function thrEl(t){ if(t==='h')return '<span class="thr thr-h">Difícil</span>'; if(t==='m')return '<span class="thr thr-m">Moderado</span>'; return '<span class="thr thr-l">Fácil</span>'; }
+
+/* ════════════════════════════════════
+   SUMMONER SEARCH (op.gg public API)
+════════════════════════════════════ */
+var RANK_ICONS = {
+  'IRON':        'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-iron.png',
+  'BRONZE':      'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-bronze.png',
+  'SILVER':      'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-silver.png',
+  'GOLD':        'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-gold.png',
+  'PLATINUM':    'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-platinum.png',
+  'EMERALD':     'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-emerald.png',
+  'DIAMOND':     'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-diamond.png',
+  'MASTER':      'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-master.png',
+  'GRANDMASTER': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-grandmaster.png',
+  'CHALLENGER':  'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-challenger.png',
+  'UNRANKED':    'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-iron.png',
+};
+
+var RANK_COLORS = {
+  'IRON':'#a0a0b0','BRONZE':'#cd7f32','SILVER':'#b0b8c8','GOLD':'#d4af37',
+  'PLATINUM':'#4fc9b0','EMERALD':'#3fb950','DIAMOND':'#7ab8e8',
+  'MASTER':'#a371f7','GRANDMASTER':'#f85149','CHALLENGER':'#f0d060','UNRANKED':'#6e7681'
+};
+
+var DIVISION_MAP = {'I':'I','II':'II','III':'III','IV':'IV'};
+
+function showSummonerLoading() {
+  var el = document.getElementById('summoner-result');
+  el.style.display = 'block';
+  el.innerHTML = '<div class="sum-loading"><div class="sum-spinner"></div><span>Buscando invocador...</span></div>';
+}
+
+function showSummonerError(msg) {
+  var el = document.getElementById('summoner-result');
+  el.style.display = 'block';
+  el.innerHTML = '<span class="sum-error">'+msg+'</span>';
+}
+
+function showSummonerData(name, rankTier, rankDiv, lp, wins, losses, champData) {
+  var el = document.getElementById('summoner-result');
+  var tier = (rankTier || 'UNRANKED').toUpperCase();
+  var rankIcon = RANK_ICONS[tier] || RANK_ICONS['UNRANKED'];
+  var rankColor = RANK_COLORS[tier] || '#6e7681';
+  var rankText = tier === 'UNRANKED' ? 'Sin clasificar' : tier + ' ' + (rankDiv||'');
+  var lpText = tier === 'UNRANKED' ? '' : (lp||0) + ' LP · ' + (wins||0) + 'V ' + (losses||0) + 'D';
+  var wr = (wins||0) + (losses||0) > 0 ? Math.round((wins||0)/((wins||0)+(losses||0))*100) : 0;
+
+  var champsHtml = '';
+  if (champData && champData.length) {
+    champsHtml = '<div class="sum-divider"></div>'
+      + '<div style="display:flex;flex-direction:column;gap:2px"><div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Más jugados</div>'
+      + '<div class="sum-champs">'
+      + champData.slice(0,5).map(function(ch) {
+          var chWr = ch.wins + ch.losses > 0 ? Math.round(ch.wins/(ch.wins+ch.losses)*100) : 0;
+          var wrColor = chWr >= 55 ? 'var(--green)' : chWr <= 45 ? 'var(--red)' : 'var(--text2)';
+          var champFound = ALL.find(function(c){ return c.n.toLowerCase() === ch.name.toLowerCase(); });
+          var onclick = champFound ? 'onclick="pickChamp(\''+champFound.n.replace(/'/g,"\\'")+"','"+champFound.r+'\')"' : '';
+          return '<div class="sum-champ" '+onclick+'>'
+            + '<img class="sum-champ-img" src="'+cimgUrl(ch.name)+'" onerror="this.src=\'\'"/>'
+            + '<span class="sum-champ-name">'+ch.name+'</span>'
+            + '<span class="sum-champ-wr" style="color:'+wrColor+'">'+chWr+'%</span>'
+            + '</div>';
+        }).join('')
+      + '</div></div>';
+  }
+
+  el.style.display = 'block';
+  el.innerHTML = '<div class="sum-card">'
+    + '<img class="sum-rank-icon" src="'+rankIcon+'" onerror="this.style.display=\'none\'"/>'
+    + '<div>'
+      + '<div class="sum-name">'+name+'</div>'
+      + '<div class="sum-rank" style="color:'+rankColor+'">'+rankText+'</div>'
+      + (lpText ? '<div class="sum-lp">'+lpText+(wr?' · '+wr+'% WR':'')+'</div>' : '')
+    + '</div>'
+    + champsHtml
+    + '</div>';
+}
+
+function searchSummoner() {
+  var raw = document.getElementById('summoner-input').value.trim();
+  var region = document.getElementById('summoner-region').value;
+  if (!raw) return;
+
+  // Parse "Name#TAG" or just "Name"
+  var parts = raw.split('#');
+  var gameName = encodeURIComponent(parts[0].trim());
+  var tagLine  = encodeURIComponent(parts[1] ? parts[1].trim() : 'LAN');
+
+  showSummonerLoading();
+
+  // Use op.gg public API
+  var opggRegion = {la1:'lan',la2:'las',br1:'br',na1:'na',euw1:'euw'}[region] || 'lan';
+  var url = 'https://op.gg/api/v1.0/internal/bypass/summoners/'+opggRegion+'/summoners?summonerNames='+encodeURIComponent(raw)+'&hl=es_ES';
+
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (!data || !data.data || !data.data[0]) {
+        // fallback: try without tag
+        return fetchOpggDirect(gameName, opggRegion);
+      }
+      var s = data.data[0];
+      var ranked = s.league_stats && s.league_stats.find(function(l){ return l.queue_info && l.queue_info.queue_type === 'RANKED_SOLO_5x5'; });
+      var tier = ranked ? ranked.tier_info.tier : 'UNRANKED';
+      var div  = ranked ? ranked.tier_info.division : '';
+      var lp   = ranked ? ranked.tier_info.lp : 0;
+      var wins = ranked ? ranked.win : 0;
+      var losses = ranked ? ranked.lose : 0;
+      var champs = (s.most_champions || []).map(function(c){ return {name:c.champion && c.champion.name || c.name, wins:c.win||0, losses:c.lose||0}; });
+      showSummonerData(s.summoner_name || raw, tier, div, lp, wins, losses, champs);
+    })
+    .catch(function() {
+      fetchOpggDirect(gameName, opggRegion);
+    });
+}
+
+function fetchOpggDirect(gameName, opggRegion) {
+  var url2 = 'https://op.gg/api/v1.0/internal/bypass/summoners/'+opggRegion+'/'+gameName+'/renewal?hl=es_ES';
+  fetch(url2)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (!data || data.status === 404 || (data.data && data.data.status === 404)) {
+        showSummonerError('Invocador no encontrado. Verificá el nombre y la región.');
+        return;
+      }
+      var s = data.data || data;
+      var ranked = s.league_stats && s.league_stats.find(function(l){ return l.queue_info && l.queue_info.queue_type === 'RANKED_SOLO_5x5'; });
+      var tier = ranked ? ranked.tier_info.tier : 'UNRANKED';
+      var div  = ranked ? ranked.tier_info.division : '';
+      var lp   = ranked ? ranked.tier_info.lp : 0;
+      var wins = ranked ? ranked.win : 0;
+      var losses = ranked ? ranked.lose : 0;
+      var champs = (s.most_champions || []).map(function(c){ return {name:c.champion&&c.champion.name||c.name, wins:c.win||0, losses:c.lose||0}; });
+      showSummonerData(s.summoner_name || decodeURIComponent(gameName), tier, div, lp, wins, losses, champs);
+    })
+    .catch(function() {
+      showSummonerError('No se pudo conectar. Intentá de nuevo en un momento.');
+    });
+}
 
 /* ════════════════════════════════════
    SEARCH & GRID
