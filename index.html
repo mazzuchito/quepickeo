@@ -397,9 +397,10 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 .theme-toggle:hover{border-color:var(--border2);color:var(--text)}
 
 /* ── FAVORITES ── */
-.fav-btn{position:absolute;top:6px;right:6px;background:none;border:none;cursor:pointer;font-size:14px;opacity:.4;transition:opacity .2s,transform .2s;z-index:10;padding:2px}
-.fav-btn:hover{opacity:1}
-.fav-btn.active{opacity:1;transform:scale(1.15)}
+.fav-btn{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.4);border:none;cursor:pointer;font-size:13px;opacity:0;transition:opacity .2s,transform .2s,background .15s;z-index:10;padding:1px 3px;border-radius:4px;line-height:1}
+.cbtn:hover .fav-btn{opacity:.7}
+.fav-btn:hover{opacity:1!important;background:rgba(0,0,0,.7)}
+.fav-btn.active{opacity:1!important;transform:scale(1.1)}
 .fav-section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem;display:none}
 .fav-section.has-favs{display:block}
 .fav-grid{display:flex;gap:6px;flex-wrap:wrap;padding:.75rem}
@@ -768,6 +769,29 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 /* Difficulty badge pop */
 .thr{animation:wrPop .35s cubic-bezier(.34,1.4,.64,1) both}
 
+
+/* ── LOL CURSOR ── */
+body {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpolygon points='4,2 4,18 8,14 11,21 13,20 10,13 15,13' fill='%23C8AA6E' stroke='%230A1428' stroke-width='1.5'/%3E%3C/svg%3E") 4 2, crosshair;
+}
+button, a, .cbtn, .rtab, .trow, .syn-row, .tier-champ, .hist-item, .draft-suggestion, .sum-champ {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpolygon points='4,2 4,18 8,14 11,21 13,20 10,13 15,13' fill='%23C8AA6E' stroke='%230A1428' stroke-width='1.5'/%3E%3C/svg%3E") 4 2, pointer;
+}
+input, select, textarea {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpolygon points='4,2 4,18 8,14 11,21 13,20 10,13 15,13' fill='%23C8AA6E' stroke='%230A1428' stroke-width='1.5'/%3E%3C/svg%3E") 4 2, text;
+}
+
+
+/* ── COLLAPSIBLE LEFT PANEL ── */
+.main{transition:grid-template-columns .3s ease}
+.main.collapsed{grid-template-columns:0px 1fr}
+.left-panel{transition:opacity .3s ease, min-width .3s ease;min-width:0;overflow:hidden}
+.main.collapsed .left-panel{opacity:0;pointer-events:none}
+.collapse-btn{position:fixed;left:262px;top:50%;transform:translateY(-50%);z-index:100;background:var(--bg3);border:1px solid var(--border2);border-radius:0 8px 8px 0;width:18px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:left .3s ease, background .2s;color:var(--text2);font-size:11px}
+.collapse-btn:hover{background:var(--bg4);color:var(--text)}
+.main.collapsed .collapse-btn{left:0px}
+@media(max-width:700px){.collapse-btn{display:none}}
+
 </style>
 </head>
 <body>
@@ -861,8 +885,9 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
   </div>
 </div>
 
+<button class="collapse-btn" id="collapseBtn" onclick="togglePanel()" title="Minimizar panel">‹</button>
 <div class="main" id="mainWrap">
-  <div>
+  <div class="left-panel" id="leftPanel">
     <!-- HISTORIAL -->
     <div class="hist-section" id="histSection">
       <div class="sec-hd">
@@ -1042,7 +1067,7 @@ const CKEYS = {
   "Miss Fortune":"MissFortune","Nunu & Willump":"Nunu","Rek'Sai":"RekSai",
   "Renata Glasc":"Renata","Tahm Kench":"TahmKench","Twisted Fate":"TwistedFate",
   "Vel'Koz":"Velkoz","Xin Zhao":"XinZhao","Wukong":"MonkeyKing",
-  "Fiddlesticks":"FiddleSticks","Yunara":"Yunara"
+  "Fiddlesticks":"Fiddlesticks","Yunara":"Yunara","Mel":"Mel"
 };
 function ckey(n){ return CKEYS[n] || n.replace(/[^a-zA-Z]/g,''); }
 function cimgUrl(n){ return DDR + ckey(n) + '.png'; }
@@ -3171,6 +3196,27 @@ document.addEventListener('keydown', function(e){
     if(document.getElementById('search-popup').classList.contains('visible')) closeSearchPopup();
   }
 });
+
+/* ════════════════════════════════════
+   COLLAPSE PANEL
+════════════════════════════════════ */
+var panelCollapsed = false;
+function togglePanel(){
+  panelCollapsed = !panelCollapsed;
+  var wrap = document.getElementById('mainWrap');
+  var btn  = document.getElementById('collapseBtn');
+  if(panelCollapsed){
+    wrap.classList.add('collapsed');
+    wrap.style.gridTemplateColumns = '0px 1fr';
+    btn.textContent = '›';
+    btn.style.left = '0px';
+  } else {
+    wrap.classList.remove('collapsed');
+    wrap.style.gridTemplateColumns = '250px 1fr';
+    btn.textContent = '‹';
+    btn.style.left = '262px';
+  }
+}
 
 /* INIT */
 filterGrid();
