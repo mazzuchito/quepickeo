@@ -3156,7 +3156,7 @@ function filterSearchPopup(){
     var d = getData(c);
     var rc = roleColor[c.r]||'var(--text3)';
     var isActive = selChamp && selChamp.n===c.n;
-    return '<button class="cbtn role-'+c.r+(isActive?' active':'')+' onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\');closeSearchPopup()" style="padding:6px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:88px;width:100%">'
+    return '<button class="cbtn role-'+c.r+(isActive?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\');closeSearchPopup()" style="padding:6px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:88px;width:100%">'
       +'<img src="'+imgUrl+'" style="width:52px;height:52px;border-radius:6px;object-fit:cover;border:2px solid '+(isActive?rc:'var(--border2)')+';" onerror="this.style.opacity=.3"/>'
       +'<span style="font-size:9px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center;max-width:78px">'+c.n+'</span>'
       +'<span style="font-size:8px;color:'+rc+';font-weight:600">'+c.r+'</span>'
