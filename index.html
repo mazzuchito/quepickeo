@@ -486,11 +486,11 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 .rtab{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s;letter-spacing:.2px}
 .rtab:hover{color:var(--text);border-color:var(--border2);background:var(--bg4)}
 .rtab.on{background:rgba(31,111,235,.18);border-color:var(--blue2);color:var(--blue2);box-shadow:0 0 8px rgba(56,139,253,.2)}
-.rtab[onclick*="Top"].on{background:rgba(212,175,55,.15);border-color:var(--gold);color:var(--gold);box-shadow:0 0 8px rgba(212,175,55,.2)}
-.rtab[onclick*="Jungle"].on{background:rgba(63,185,80,.15);border-color:var(--green);color:var(--green);box-shadow:0 0 8px rgba(63,185,80,.2)}
-.rtab[onclick*="Mid"].on{background:rgba(56,139,253,.15);border-color:var(--blue2);color:var(--blue2);box-shadow:0 0 8px rgba(56,139,253,.2)}
-.rtab[onclick*="ADC"].on{background:rgba(248,81,73,.15);border-color:var(--red);color:var(--red);box-shadow:0 0 8px rgba(248,81,73,.2)}
-.rtab[onclick*="Support"].on{background:rgba(240,208,96,.15);border-color:var(--gold2);color:var(--gold2);box-shadow:0 0 8px rgba(240,208,96,.2)}
+.rtab.role-btn-Top{border-bottom:2px solid rgba(212,175,55,.35)}.rtab.role-btn-Top.on{background:rgba(212,175,55,.15);border-color:var(--gold);color:var(--gold);box-shadow:0 0 8px rgba(212,175,55,.2)}
+.rtab.role-btn-Jungle{border-bottom:2px solid rgba(63,185,80,.35)}.rtab.role-btn-Jungle.on{background:rgba(63,185,80,.15);border-color:var(--green);color:var(--green);box-shadow:0 0 8px rgba(63,185,80,.2)}
+.rtab.role-btn-Mid{border-bottom:2px solid rgba(56,139,253,.35)}.rtab.role-btn-Mid.on{background:rgba(56,139,253,.15);border-color:var(--blue2);color:var(--blue2);box-shadow:0 0 8px rgba(56,139,253,.2)}
+.rtab.role-btn-ADC{border-bottom:2px solid rgba(248,81,73,.35)}.rtab.role-btn-ADC.on{background:rgba(248,81,73,.15);border-color:var(--red);color:var(--red);box-shadow:0 0 8px rgba(248,81,73,.2)}
+.rtab.role-btn-Support{border-bottom:2px solid rgba(240,208,96,.35)}.rtab.role-btn-Support.on{background:rgba(240,208,96,.15);border-color:var(--gold2);color:var(--gold2);box-shadow:0 0 8px rgba(240,208,96,.2)}
 
 /* ── SECTION HEADERS — more character ── */
 .sec-hd{display:flex;align-items:center;justify-content:space-between;padding:.65rem 1rem;background:linear-gradient(90deg,var(--bg4) 0%,var(--bg3) 100%);border-bottom:1px solid var(--border2)}
@@ -1678,8 +1678,8 @@ function searchSummoner(){
 var ROLES=["Todos","Top","Jungle","Mid","ADC","Support"];
 var activeRole="Todos";
 var selChamp=null;
-document.getElementById('roleTabs').innerHTML=ROLES.map(function(r){return '<button class="rtab'+(r==='Todos'?' on':'')+'" onclick="setRole(\''+r+'\')">'+r+'</button>';}).join('');
-function setRole(r){activeRole=r;document.querySelectorAll('.rtab').forEach(function(b){b.classList.toggle('on',b.textContent===r);});filterGrid();}
+document.getElementById('roleTabs').innerHTML=ROLES.map(function(r){return '<button class="rtab role-btn-'+r+(r==='Todos'?' on':'')+'" onclick="setRole(\''+r+'\')">'+r+'</button>';}).join('');
+function setRole(r){activeRole=r;document.querySelectorAll('#roleTabs .rtab').forEach(function(b){b.classList.toggle('on',b.textContent===r);});filterGrid();}
 function filterGrid(){var q=document.getElementById('si').value.toLowerCase().trim();var filtered=ALL.filter(function(c){return(!q||c.n.toLowerCase().indexOf(q)>=0)&&(activeRole==='Todos'||c.r===activeRole);});if(activeRole==='Todos'){var seen={};filtered=filtered.filter(function(c){if(seen[c.n])return false;seen[c.n]=true;return true;});}document.getElementById('ccount').textContent=filtered.length+' campeones';document.getElementById('cgrid').innerHTML=filtered.map(function(c){var active=selChamp&&selChamp.n===c.n;var isFav=favs.indexOf(c.n)>=0;var inCompare=compareChamps.find(function(x){return x&&x.n===c.n;});return '<div style="position:relative">'+'<button class="cbtn role-'+c.r+(active?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')">'+ portrait(c.n,c.r,48)+'<span class="cname">'+c.n+'</span><span class="crole">'+c.r+'</span></button>'+'<button class="fav-btn'+(isFav?' active':'')+'" onclick="toggleFav(\''+c.n.replace(/'/g,"\\'")+'\',event)" title="'+(isFav?'Quitar favorito':'Agregar a favoritos')+'">'+(isFav?'⭐':'☆')+'</button>'+'</div>';}).join('');}
 function pickChamp(name,role){selChamp=ALL.find(function(c){return c.n===name&&(role?c.r===role:true);});if(!selChamp)selChamp=ALL.find(function(c){return c.n===name;});filterGrid();renderSide(selChamp);renderMain(selChamp);updatePageBg(selChamp);addToHist(selChamp);renderHeroSynergies(selChamp);if(window.innerWidth<800)window.scrollTo({top:0,behavior:'smooth'});}
 
@@ -2497,10 +2497,7 @@ var TFT_AUGMENTS = [
 var tftActiveTab = 'comps';
 
 function openTFT(){
-  tftActiveTab = 'comps';
-  document.getElementById('tft-modal').classList.add('visible');
-  document.body.style.overflow = 'hidden';
-  renderTFT();
+  window.open('https://www.metatft.com/comps', '_blank');
 }
 function closeTFT(){
   document.getElementById('tft-modal').classList.remove('visible');
