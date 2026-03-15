@@ -1062,7 +1062,7 @@ input, select, textarea {
 /* ════════════════════════════════════
    IMAGE HELPERS
 ════════════════════════════════════ */
-const VER = '14.24.1';
+const VER = '16.5.1';
 const DDR = 'https://ddragon.leagueoflegends.com/cdn/' + VER + '/img/champion/';
 const IURL = 'https://ddragon.leagueoflegends.com/cdn/' + VER + '/img/item/';
 
@@ -1074,7 +1074,7 @@ const CKEYS = {
   "Miss Fortune":"MissFortune","Nunu & Willump":"Nunu","Rek'Sai":"RekSai",
   "Renata Glasc":"Renata","Tahm Kench":"TahmKench","Twisted Fate":"TwistedFate",
   "Vel'Koz":"Velkoz","Xin Zhao":"XinZhao","Wukong":"MonkeyKing",
-  "Fiddlesticks":"Fiddlesticks","Yunara":"Yunara","Mel":"Mel"
+  "Fiddlesticks":"Fiddlesticks","Yunara":"Yunara","Mel":"Mel","Ambessa":"Ambessa"
 };
 function ckey(n){ return CKEYS[n] || n.replace(/[^a-zA-Z]/g,''); }
 function cimgUrl(n){ return DDR + ckey(n) + '.png'; }
@@ -1672,7 +1672,7 @@ function thrEl(t){ if(t==='h')return '<span class="thr thr-h">Difícil</span>'; 
 /* ════════════════════════════════════
    SPELL IMAGES
 ════════════════════════════════════ */
-var SURL='https://ddragon.leagueoflegends.com/cdn/14.24.1/img/spell/';
+var SURL='https://ddragon.leagueoflegends.com/cdn/16.5.1/img/spell/';
 var SPELL_IMGS={'Flash':SURL+'SummonerFlash.png','Ignite':SURL+'SummonerDot.png','Teleport':SURL+'SummonerTeleport.png','Smite':SURL+'SummonerSmite.png','Ghost':SURL+'SummonerHaste.png','Exhaust':SURL+'SummonerExhaust.png','Barrier':SURL+'SummonerBarrier.png','Heal':SURL+'SummonerHeal.png','Cleanse':SURL+'SummonerBoost.png'};
 var SPELL_ROLE={Top:['Flash','Teleport'],Jungle:['Flash','Smite'],Mid:['Flash','Ignite'],ADC:['Flash','Heal'],Support:['Flash','Ignite']};
 var SPELL_DATA={"Darius":['Flash','Ghost'],"Garen":['Ghost','Teleport'],"Singed":['Ghost','Teleport'],"Tryndamere":['Flash','Ignite'],"Nasus":['Flash','Teleport'],"Malphite":['Flash','Teleport'],"Sion":['Flash','Teleport'],"Urgot":['Flash','Teleport'],"Mordekaiser":['Flash','Ignite'],"Cho'Gath":['Flash','Teleport'],"Dr. Mundo":['Flash','Teleport'],"K'Sante":['Flash','Teleport'],"Ornn":['Flash','Teleport'],"Tahm Kench":['Flash','Teleport'],"Shen":['Flash','Teleport'],"Poppy":['Flash','Teleport'],"Gragas":['Flash','Ignite'],"Gangplank":['Flash','Teleport'],"Jayce":['Flash','Teleport'],"Riven":['Flash','Ignite'],"Fiora":['Flash','Ignite'],"Camille":['Flash','Teleport'],"Irelia":['Flash','Teleport'],"Jax":['Flash','Teleport'],"Gwen":['Flash','Ignite'],"Renekton":['Flash','Ignite'],"Kennen":['Flash','Teleport'],"Rumble":['Flash','Teleport'],"Gnar":['Flash','Teleport'],"Quinn":['Flash','Teleport'],"Pantheon":['Flash','Teleport'],"Ambessa":['Flash','Ignite'],"Aurora":['Flash','Teleport'],"Kled":['Flash','Ignite'],"Aatrox":['Flash','Teleport'],"Vladimir":['Flash','Teleport'],"Kayle":['Flash','Teleport'],"Teemo":['Flash','Ignite'],"Yorick":['Flash','Teleport'],"Trundle":['Flash','Ignite'],"Wukong":['Flash','Ignite'],"Olaf":['Flash','Ghost'],"Volibear":['Flash','Teleport'],"Warwick":['Flash','Ignite'],"Shyvana":['Flash','Teleport'],"Lee Sin":['Flash','Smite'],"Vi":['Flash','Smite'],"Hecarim":['Flash','Smite'],"Graves":['Flash','Smite'],"Kha'Zix":['Flash','Smite'],"Elise":['Flash','Smite'],"Kindred":['Flash','Smite'],"Nidalee":['Flash','Smite'],"Diana":['Flash','Smite'],"Ekko":['Flash','Smite'],"Evelynn":['Flash','Smite'],"Fiddlesticks":['Flash','Smite'],"Kayn":['Flash','Smite'],"Rengar":['Flash','Smite'],"Shaco":['Flash','Smite'],"Nocturne":['Flash','Smite'],"Rammus":['Flash','Smite'],"Amumu":['Flash','Smite'],"Sejuani":['Flash','Smite'],"Nunu & Willump":['Flash','Smite'],"Zac":['Flash','Smite'],"Jarvan IV":['Flash','Smite'],"Master Yi":['Flash','Smite'],"Xin Zhao":['Flash','Smite'],"Udyr":['Flash','Smite'],"Briar":['Flash','Smite'],"Viego":['Flash','Smite'],"Ivern":['Flash','Smite'],"Taliyah":['Flash','Smite'],"Lillia":['Flash','Smite'],"Skarner":['Flash','Smite'],"Bel'Veth":['Flash','Smite'],"Rek'Sai":['Flash','Smite'],"Qiyana":['Flash','Smite'],"Talon":['Flash','Smite'],"Sylas":['Flash','Smite'],"Katarina":['Flash','Smite'],"Ahri":['Flash','Ignite'],"Zed":['Flash','Ignite'],"Yasuo":['Flash','Ignite'],"Yone":['Flash','Ignite'],"Cassiopeia":['Ghost','Ignite'],"Twisted Fate":['Flash','Ghost'],"Lissandra":['Flash','Ignite'],"Malzahar":['Flash','Ignite'],"Ryze":['Flash','Ghost'],"Kassadin":['Flash','Ignite'],"Annie":['Flash','Ignite'],"Anivia":['Flash','Ignite'],"Galio":['Flash','Teleport'],"Karthus":['Flash','Teleport'],"Vayne":['Flash','Ignite'],"Jinx":['Flash','Heal'],"Caitlyn":['Flash','Heal'],"Draven":['Flash','Heal'],"Ezreal":['Flash','Heal'],"Jhin":['Flash','Heal'],"Ashe":['Flash','Heal'],"Kai'Sa":['Flash','Heal'],"Samira":['Flash','Ignite'],"Lucian":['Flash','Ignite'],"Tristana":['Flash','Heal'],"Varus":['Flash','Heal'],"Xayah":['Flash','Heal'],"Miss Fortune":['Flash','Heal'],"Kog'Maw":['Flash','Heal'],"Sivir":['Flash','Heal'],"Twitch":['Flash','Heal'],"Kalista":['Flash','Heal'],"Aphelios":['Flash','Heal'],"Zeri":['Flash','Heal'],"Smolder":['Flash','Heal'],"Nilah":['Flash','Ignite'],"Yunara":['Flash','Heal'],"Senna":['Flash','Heal'],"Thresh":['Flash','Ignite'],"Blitzcrank":['Flash','Ignite'],"Nautilus":['Flash','Ignite'],"Leona":['Flash','Ignite'],"Lulu":['Flash','Exhaust'],"Janna":['Flash','Exhaust'],"Soraka":['Flash','Exhaust'],"Nami":['Flash','Ignite'],"Yuumi":['Exhaust','Ignite'],"Bard":['Flash','Ignite'],"Milio":['Flash','Exhaust'],"Pyke":['Flash','Ignite'],"Sona":['Flash','Exhaust'],"Rakan":['Flash','Ignite'],"Rell":['Flash','Ignite'],"Alistar":['Flash','Ignite'],"Braum":['Flash','Ignite'],"Taric":['Flash','Ignite'],"Renata Glasc":['Flash','Ignite'],"Maokai":['Flash','Ignite'],"Brand":['Flash','Ignite'],"Zyra":['Flash','Ignite'],"Xerath":['Flash','Ignite'],"Vel'Koz":['Flash','Ignite'],"Swain":['Flash','Ignite'],"Seraphine":['Flash','Ignite'],"Karma":['Flash','Ignite'],"Morgana":['Flash','Ignite'],"Lux":['Flash','Ignite'],"Veigar":['Flash','Ignite'],"Neeko":['Flash','Ignite']};
@@ -2204,7 +2204,7 @@ function filterPickerGrid(){
   });
   document.getElementById('compare-picker-grid').innerHTML = filtered.map(function(c){
     var isSel = compareChamps[pickerSlot] && compareChamps[pickerSlot].n===c.n;
-    var imgUrl = 'https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/'+ckey(c.n)+'.png';
+    var imgUrl = 'https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/'+ckey(c.n)+'.png';
     var roleColor = {Top:'var(--gold)',Jungle:'var(--green)',Mid:'var(--blue2)',ADC:'var(--red)',Support:'var(--gold2)'}[c.r]||'var(--text3)';
     return '<button class="cbtn role-'+c.r+(isSel?' active':'')+'" onclick="selectPickerChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')" style="width:100%;padding:6px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:80px">'
       +'<img src="'+imgUrl+'" style="width:52px;height:52px;border-radius:6px;object-fit:cover;border:2px solid '+(isSel?roleColor:'var(--border2)')+';" onerror="this.style.opacity=.3"/>'
@@ -2467,7 +2467,7 @@ function openCompareModal(){
       +d.items.slice(0,3).map(function(it){
         var id=IIDS[it.n];
         return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">'
-          +(id?'<img src="https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/'+id+'.png" style="width:28px;height:28px;border-radius:4px;flex-shrink:0" onerror="this.style.opacity=.3"/>':'')
+          +(id?'<img src="https://ddragon.leagueoflegends.com/cdn/16.5.1/img/item/'+id+'.png" style="width:28px;height:28px;border-radius:4px;flex-shrink:0" onerror="this.style.opacity=.3"/>':'')
           +'<div><div style="font-size:11px;font-weight:600;color:var(--text)">'+it.n+'</div>'
           +'<div style="font-size:10px;color:var(--text3)">'+it.r+'</div></div></div>';
       }).join('');
@@ -2866,14 +2866,14 @@ var TFT_COMPS = [
     name:"Forma Libre Dominante",tier:"S",
     traits:["Forma Libre x6","Bruiser x4","Guardián x2"],
     units:[
-      {n:"Jayce",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Jayce.png"},
-      {n:"Vi",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Vi.png"},
-      {n:"Warwick",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Warwick.png"},
-      {n:"Camille",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Camille.png"},
-      {n:"Jinx",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Jinx.png"},
-      {n:"Ekko",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Ekko.png"},
-      {n:"Urgot",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Urgot.png"},
-      {n:"Singed",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Singed.png"},
+      {n:"Jayce",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Jayce.png"},
+      {n:"Vi",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Vi.png"},
+      {n:"Warwick",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Warwick.png"},
+      {n:"Camille",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Camille.png"},
+      {n:"Jinx",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Jinx.png"},
+      {n:"Ekko",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Ekko.png"},
+      {n:"Urgot",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Urgot.png"},
+      {n:"Singed",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Singed.png"},
     ],
     tip:"Priorizá llegar a nivel 8 con economía estable. Urgot 3★ es el carry principal. Itemizá con Rabadon + Bastón Infinito + Guardabrazo de Archangel."
   },
@@ -2881,14 +2881,14 @@ var TFT_COMPS = [
     name:"Artillería Piltover",tier:"S",
     traits:["Piltover x6","Artillería x4","Cibernetico x2"],
     units:[
-      {n:"Caitlyn",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Caitlyn.png"},
-      {n:"Jayce",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Jayce.png"},
-      {n:"Vi",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Vi.png"},
-      {n:"Ezreal",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Ezreal.png"},
-      {n:"Heimerdinger",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Heimerdinger.png"},
-      {n:"Camille",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Camille.png"},
-      {n:"Jinx",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Jinx.png"},
-      {n:"Orianna",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Orianna.png"},
+      {n:"Caitlyn",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Caitlyn.png"},
+      {n:"Jayce",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Jayce.png"},
+      {n:"Vi",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Vi.png"},
+      {n:"Ezreal",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Ezreal.png"},
+      {n:"Heimerdinger",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Heimerdinger.png"},
+      {n:"Camille",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Camille.png"},
+      {n:"Jinx",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Jinx.png"},
+      {n:"Orianna",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Orianna.png"},
     ],
     tip:"Caitlyn es el carry principal. Itemizá Ballesta Infinita + Borde de Kraken + Recordatorio del Señor. Intentá llegar a Piltover 6 lo antes posible para el cash out."
   },
@@ -2896,14 +2896,14 @@ var TFT_COMPS = [
     name:"Rebeldes Volibear",tier:"A",
     traits:["Rebelde x6","Bruiser x4","Protector x2"],
     units:[
-      {n:"Volibear",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Volibear.png"},
-      {n:"Jinx",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Jinx.png"},
-      {n:"Ekko",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Ekko.png"},
-      {n:"Vi",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Vi.png"},
-      {n:"Warwick",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Warwick.png"},
-      {n:"Silco",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Silco.png"},
-      {n:"Sevika",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Sevika.png"},
-      {n:"Nunu & Willump",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Nunu.png"},
+      {n:"Volibear",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Volibear.png"},
+      {n:"Jinx",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Jinx.png"},
+      {n:"Ekko",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Ekko.png"},
+      {n:"Vi",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Vi.png"},
+      {n:"Warwick",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Warwick.png"},
+      {n:"Silco",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Silco.png"},
+      {n:"Sevika",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Sevika.png"},
+      {n:"Nunu & Willump",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Nunu.png"},
     ],
     tip:"Volibear 2★ con Corazón de Acero + Garras del Dragón + Placa de Gárgola es casi imposible de matar. Jinx como carry secundario con ítems de daño."
   },
@@ -2911,14 +2911,14 @@ var TFT_COMPS = [
     name:"Asesinos Sombra",tier:"A",
     traits:["Asesino x6","Sombra x4"],
     units:[
-      {n:"Akali",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Akali.png"},
-      {n:"Zed",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Zed.png"},
-      {n:"Katarina",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Katarina.png"},
-      {n:"Talon",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Talon.png"},
-      {n:"Evelynn",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Evelynn.png"},
-      {n:"Kayn",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Kayn.png"},
-      {n:"Shaco",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Shaco.png"},
-      {n:"Qiyana",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Qiyana.png"},
+      {n:"Akali",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Akali.png"},
+      {n:"Zed",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Zed.png"},
+      {n:"Katarina",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Katarina.png"},
+      {n:"Talon",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Talon.png"},
+      {n:"Evelynn",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Evelynn.png"},
+      {n:"Kayn",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Kayn.png"},
+      {n:"Shaco",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Shaco.png"},
+      {n:"Qiyana",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Qiyana.png"},
     ],
     tip:"Kayn 2★ con Espada del Rey Arruinado + Eclipse + Danza de la Muerte es el combo ideal. Posicioná tus asesinos en las esquinas para máxima efectividad."
   },
@@ -2926,13 +2926,13 @@ var TFT_COMPS = [
     name:"Enfermeras Curación",tier:"B",
     traits:["Enfermera x4","Guardián x3","Futurista x2"],
     units:[
-      {n:"Soraka",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Soraka.png"},
-      {n:"Nami",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Nami.png"},
-      {n:"Sona",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Sona.png"},
-      {n:"Seraphine",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Seraphine.png"},
-      {n:"Nautilus",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Nautilus.png"},
-      {n:"Leona",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Leona.png"},
-      {n:"Orianna",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Orianna.png"},
+      {n:"Soraka",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Soraka.png"},
+      {n:"Nami",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Nami.png"},
+      {n:"Sona",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Sona.png"},
+      {n:"Seraphine",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Seraphine.png"},
+      {n:"Nautilus",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Nautilus.png"},
+      {n:"Leona",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Leona.png"},
+      {n:"Orianna",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/Orianna.png"},
     ],
     tip:"Comp de sustain masivo. Seraphine 2★ con Corazón de Hierro + Placa de Gárgola + Bastón del Vacío es el MVP. Idealmente jugada cuando agarrás Augment de Curación."
   },
@@ -3184,7 +3184,7 @@ function filterSearchPopup(){
 
   var roleColor = {Top:'var(--gold)',Jungle:'var(--green)',Mid:'var(--blue2)',ADC:'var(--red)',Support:'var(--gold2)'};
   grid.innerHTML = filtered.map(function(c){
-    var imgUrl = 'https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/'+ckey(c.n)+'.png';
+    var imgUrl = 'https://ddragon.leagueoflegends.com/cdn/16.5.1/img/champion/'+ckey(c.n)+'.png';
     var d = getData(c);
     var rc = roleColor[c.r]||'var(--text3)';
     var isActive = selChamp && selChamp.n===c.n;
