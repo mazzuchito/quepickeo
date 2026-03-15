@@ -1522,7 +1522,7 @@ function renderHist(){
   grid.innerHTML = hist.map(function(name){
     var c = ALL.find(function(x){ return x.n===name; });
     if(!c) return '';
-    return '<div class="hist-item" onclick="pickChamp(''+c.n.replace(/'/g,"\'")+'',''+c.r+'')" title="'+c.n+'">'
+    return '<div class="hist-item" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')" title="'+c.n+'">'
       +'<img src="'+cimgUrl(c.n)+'" onerror="this.style.opacity=.3"/>'
       +'<span class="hist-item-name">'+c.n+'</span>'
       +'</div>';
