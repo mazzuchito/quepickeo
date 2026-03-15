@@ -1498,47 +1498,6 @@ function closeCompareModal(){
   document.body.style.overflow='';
 }
 
-/* INIT */
-filterGrid();
-renderFavs();
-renderHist();
-loadChampFromUrl();
-(function(){
-  var btn=document.getElementById('theme-btn');
-  if(btn) btn.textContent=isDark?'🌙 Oscuro':'☀️ Claro';
-})();
-
-/* ── SPLASH SCREEN ── */
-(function(){
-  var splashChamps=['Yasuo','Ahri','Jinx','Thresh','Zed','Lux','Darius','Lee Sin','Katarina','Vi','Caitlyn','Akali','Yone','Syndra','Jinx','Lux'];
-  var picked = splashChamps[Math.floor(Math.random()*splashChamps.length)];
-  var bg = document.getElementById('splash-bg');
-  var logo = document.getElementById('splash-logo');
-  var sub = document.getElementById('splash-sub');
-  var barWrap = document.getElementById('splash-bar-wrap');
-  var bar = document.getElementById('splash-bar');
-  var champEl = document.getElementById('splash-champ');
-
-  // Set random champ splash
-  bg.style.backgroundImage = 'url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(picked)+'_0.jpg)';
-  setTimeout(function(){ bg.style.opacity='1'; }, 50);
-
-  // Animate elements in
-  setTimeout(function(){ logo.classList.add('show'); }, 100);
-  setTimeout(function(){ sub.classList.add('show'); }, 200);
-  setTimeout(function(){
-    barWrap.classList.add('show');
-    champEl.classList.add('show');
-    champEl.textContent = picked;
-    setTimeout(function(){ bar.style.width='100%'; }, 50);
-  }, 400);
-
-  // Hide splash
-  setTimeout(function(){
-    document.getElementById('splash').classList.add('hide');
-  }, 2400);
-})();
-
 /* ════════════════════════════════════
    HISTORIAL
 ════════════════════════════════════ */
@@ -1688,6 +1647,47 @@ function setTlRole(r){
   if(nums){
     nums.innerHTML = '<img src="https://counter9.optistats.ovh/private/freecounterstat.php?c=8m8l8u6y8n5w3p1u7z6u4b8r9q2j1l5y" style="height:24px;filter:invert(1) brightness(2);vertical-align:middle" alt="visitas"/>';
   }
+})();
+
+/* INIT */
+filterGrid();
+renderFavs();
+renderHist();
+loadChampFromUrl();
+(function(){
+  var btn=document.getElementById('theme-btn');
+  if(btn) btn.textContent=isDark?'🌙 Oscuro':'☀️ Claro';
+})();
+
+/* ── SPLASH SCREEN ── */
+(function(){
+  var splashChamps=['Yasuo','Ahri','Jinx','Thresh','Zed','Lux','Darius','Lee Sin','Katarina','Vi','Caitlyn','Akali','Yone','Syndra','Jinx','Lux'];
+  var picked = splashChamps[Math.floor(Math.random()*splashChamps.length)];
+  var bg = document.getElementById('splash-bg');
+  var logo = document.getElementById('splash-logo');
+  var sub = document.getElementById('splash-sub');
+  var barWrap = document.getElementById('splash-bar-wrap');
+  var bar = document.getElementById('splash-bar');
+  var champEl = document.getElementById('splash-champ');
+
+  // Set random champ splash
+  bg.style.backgroundImage = 'url(https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(picked)+'_0.jpg)';
+  setTimeout(function(){ bg.style.opacity='1'; }, 50);
+
+  // Animate elements in
+  setTimeout(function(){ logo.classList.add('show'); }, 100);
+  setTimeout(function(){ sub.classList.add('show'); }, 200);
+  setTimeout(function(){
+    barWrap.classList.add('show');
+    champEl.classList.add('show');
+    champEl.textContent = picked;
+    setTimeout(function(){ bar.style.width='100%'; }, 50);
+  }, 400);
+
+  // Hide splash
+  setTimeout(function(){
+    document.getElementById('splash').classList.add('hide');
+  }, 2400);
 })();
 
 </script>
