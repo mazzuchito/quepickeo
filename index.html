@@ -88,9 +88,7 @@ nav{background:rgba(22,27,34,.65);border-bottom:1px solid var(--border);padding:
 .search-wrap input::placeholder{color:var(--text3)}
 .sico{position:absolute;left:12px;top:50%;transform:translateY(-50%);opacity:.4;pointer-events:none;font-size:15px}
 .roles{display:flex;gap:5px;flex-wrap:wrap}
-.rtab{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 12px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s}
-.rtab:hover{color:var(--text);border-color:var(--border2)}
-.rtab.on{background:rgba(31,111,235,.15);border-color:var(--blue);color:var(--blue2)}
+/* role tabs moved to visual CSS */
 
 /* ── LAYOUT ── */
 .main{max-width:1100px;margin:1.25rem auto;padding:0 1.5rem;display:grid;grid-template-columns:250px 1fr;gap:1.25rem}
@@ -283,6 +281,18 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 .tier-champ img{width:40px;height:40px;border-radius:6px;object-fit:cover;border:1px solid var(--border2);transition:border-color .15s}
 .tier-champ-name{font-size:8px;color:var(--text2);white-space:nowrap;max-width:48px;overflow:hidden;text-overflow:ellipsis;text-align:center}
 
+
+/* ── HERO SYNERGIES STRIP ── */
+#hero-synergies{animation:fadeInUp .3s ease}
+.hero-syn-wrap{background:rgba(22,27,34,.75);border:1px solid var(--border2);border-radius:10px;padding:.65rem 1rem;backdrop-filter:blur(4px);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hero-syn-label{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;flex-shrink:0}
+.hero-syn-champs{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+.hero-syn-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.hero-syn-item:hover .hero-syn-img{border-color:var(--gold);transform:scale(1.08)}
+.hero-syn-img{width:38px;height:38px;border-radius:6px;object-fit:cover;border:1.5px solid var(--border2);background:var(--bg4);transition:border-color .15s,transform .15s}
+.hero-syn-name{font-size:8px;color:var(--text2);white-space:nowrap;max-width:44px;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.hero-syn-reason{font-size:8px;color:var(--text3);white-space:nowrap;max-width:44px;overflow:hidden;text-overflow:ellipsis;text-align:center}
+
 /* ── VISIT COUNTER CUSTOM ── */
 
 /* ── SYNERGIES ── */
@@ -471,6 +481,152 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
   div[style*="justify-content:space-between"] > div:last-child input{width:100%!important}
   #summoner-input{width:120px!important}
 }
+
+/* ── ROLE TABS — colored per role ── */
+.rtab{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s;letter-spacing:.2px}
+.rtab:hover{color:var(--text);border-color:var(--border2);background:var(--bg4)}
+.rtab.on{background:rgba(31,111,235,.18);border-color:var(--blue2);color:var(--blue2);box-shadow:0 0 8px rgba(56,139,253,.2)}
+.rtab[onclick*="Top"].on{background:rgba(212,175,55,.15);border-color:var(--gold);color:var(--gold);box-shadow:0 0 8px rgba(212,175,55,.2)}
+.rtab[onclick*="Jungle"].on{background:rgba(63,185,80,.15);border-color:var(--green);color:var(--green);box-shadow:0 0 8px rgba(63,185,80,.2)}
+.rtab[onclick*="Mid"].on{background:rgba(56,139,253,.15);border-color:var(--blue2);color:var(--blue2);box-shadow:0 0 8px rgba(56,139,253,.2)}
+.rtab[onclick*="ADC"].on{background:rgba(248,81,73,.15);border-color:var(--red);color:var(--red);box-shadow:0 0 8px rgba(248,81,73,.2)}
+.rtab[onclick*="Support"].on{background:rgba(240,208,96,.15);border-color:var(--gold2);color:var(--gold2);box-shadow:0 0 8px rgba(240,208,96,.2)}
+
+/* ── SECTION HEADERS — more character ── */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;padding:.65rem 1rem;background:linear-gradient(90deg,var(--bg4) 0%,var(--bg3) 100%);border-bottom:1px solid var(--border2)}
+.sec-title{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.8px;text-transform:uppercase}
+.sec-count{font-size:11px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:10px;padding:1px 8px}
+
+/* ── CHAMP GRID BUTTONS — more vivid role colors ── */
+.cbtn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:5px 3px 6px;cursor:pointer;text-align:center;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;overflow:hidden}
+.cbtn::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;opacity:0;transition:opacity .18s}
+.cbtn:hover{border-color:var(--gold);background:var(--bg4);transform:translateY(-1px)}
+.cbtn:hover::before{opacity:1}
+.cbtn.active{transform:translateY(-1px)}
+.cbtn.role-Top::before{background:var(--gold)}
+.cbtn.role-Jungle::before{background:var(--green)}
+.cbtn.role-Mid::before{background:var(--blue2)}
+.cbtn.role-ADC::before{background:var(--red)}
+.cbtn.role-Support::before{background:var(--gold2)}
+.cbtn.role-Top{border-bottom:2px solid rgba(212,175,55,.5)}
+.cbtn.role-Jungle{border-bottom:2px solid rgba(63,185,80,.5)}
+.cbtn.role-Mid{border-bottom:2px solid rgba(56,139,253,.5)}
+.cbtn.role-ADC{border-bottom:2px solid rgba(248,81,73,.5)}
+.cbtn.role-Support{border-bottom:2px solid rgba(240,208,96,.5)}
+.cbtn.active.role-Top{border-color:var(--gold);background:rgba(212,175,55,.1);box-shadow:0 0 10px rgba(212,175,55,.15)}
+.cbtn.active.role-Jungle{border-color:var(--green);background:rgba(63,185,80,.1);box-shadow:0 0 10px rgba(63,185,80,.15)}
+.cbtn.active.role-Mid{border-color:var(--blue2);background:rgba(56,139,253,.1);box-shadow:0 0 10px rgba(56,139,253,.15)}
+.cbtn.active.role-ADC{border-color:var(--red);background:rgba(248,81,73,.1);box-shadow:0 0 10px rgba(248,81,73,.15)}
+.cbtn.active.role-Support{border-color:var(--gold2);background:rgba(240,208,96,.1);box-shadow:0 0 10px rgba(240,208,96,.15)}
+.cbtn.active::before{opacity:1}
+
+/* ── CARD HEADERS — gradient accent ── */
+.card-hd{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.6px;text-transform:uppercase;padding:.65rem 1rem;border-bottom:1px solid var(--border2);background:linear-gradient(90deg,var(--bg4) 0%,var(--bg3) 100%);display:flex;align-items:center;gap:6px}
+.card-hd::before{content:'';display:inline-block;width:3px;height:12px;border-radius:2px;background:var(--gold);flex-shrink:0}
+
+/* ── COUNTER TABLE ROWS — better contrast ── */
+.trow{display:grid;align-items:center;padding:.65rem 1rem;border-bottom:1px solid var(--border);transition:background .12s}
+.trow:last-child{border-bottom:none}
+.trow.gc:hover{background:rgba(248,81,73,.04)}
+.trow.gg:hover{background:rgba(63,185,80,.04)}
+
+/* ── TABLE HEADERS — colored accent ── */
+.thd{display:grid;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;padding:.5rem 1rem;border-bottom:1px solid var(--border2);background:var(--bg3)}
+.thd.gc{border-left:3px solid rgba(248,81,73,.4)}
+.thd.gg{border-left:3px solid rgba(63,185,80,.4)}
+
+/* ── CHAMP SECTION WRAPPER ── */
+.champ-section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+
+/* ── CARD WRAPPER ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+
+/* ── RUNE CARD ── */
+.rune-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.rcard-hd{font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.6px;text-transform:uppercase;padding:.65rem 1rem;border-bottom:1px solid var(--border2);background:linear-gradient(90deg,var(--bg4),var(--bg3));display:flex;align-items:center;gap:6px}
+.rcard-hd::before{content:'';display:inline-block;width:3px;height:12px;border-radius:2px;background:var(--blue2);flex-shrink:0}
+
+/* ── SPELLS CARD ── */
+.spells-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+
+/* ── CHAMP CARD ── */
+.champ-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+
+/* ── SYNERGY CARD ── */
+.syn-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.syn-row:hover{background:rgba(212,175,55,.05)}
+.syn-score{font-size:11px;font-weight:700;color:var(--green);background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.2);border-radius:4px;padding:1px 6px}
+
+/* ── ITEMS GRID ── */
+.item-card{display:flex;align-items:flex-start;gap:9px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:.7rem;transition:border-color .15s,background .15s}
+.item-card:hover{border-color:var(--gold);background:var(--bg4)}
+
+/* ── DRAFT BANNER in hero ── */
+.draft-hero-banner{background:linear-gradient(135deg,rgba(26,45,90,.9) 0%,rgba(12,24,41,.95) 100%);border:1px solid rgba(68,136,255,.35);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;margin-bottom:.75rem}
+.draft-hero-banner:hover{border-color:rgba(68,136,255,.6);background:linear-gradient(135deg,rgba(26,45,90,.95) 0%,rgba(12,24,41,1) 100%);transform:translateY(-1px)}
+.draft-hero-banner-icon{font-size:28px;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(68,136,255,.5))}
+.draft-hero-banner-text{flex:1}
+.draft-hero-banner-title{font-size:14px;font-weight:700;color:#88bbff;margin-bottom:2px}
+.draft-hero-banner-sub{font-size:11px;color:#5577aa}
+.draft-hero-banner-slots{display:flex;gap:4px;align-items:center}
+.draft-hero-slot{width:26px;height:26px;border-radius:5px;border:1px dashed rgba(68,136,255,.4);background:rgba(68,136,255,.06);display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(68,136,255,.5)}
+.draft-hero-vs{font-size:10px;font-weight:700;color:#334466;margin:0 2px}
+.draft-hero-banner-btn{background:#4488ff;color:#fff;border:none;border-radius:7px;padding:8px 16px;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .15s;flex-shrink:0}
+.draft-hero-banner-btn:hover{background:#5599ff}
+
+
+/* ── TFT MODAL ── */
+#tft-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);overflow-y:auto}
+#tft-modal.visible{display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem}
+.tft-box{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:960px;overflow:hidden;animation:fadeInUp .3s ease}
+.tft-hd{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#1a0e2d,#0c1829);border-bottom:1px solid var(--border2)}
+.tft-title{font-size:15px;font-weight:700;color:#c084fc;display:flex;align-items:center;gap:8px}
+.tft-patch{font-size:11px;color:#7c3aed;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);border-radius:4px;padding:2px 8px}
+.tft-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer}
+.tft-close:hover{color:var(--text)}
+.tft-tabs{display:flex;border-bottom:1px solid var(--border2);background:var(--bg3)}
+.tft-tab{padding:.65rem 1.25rem;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.2px}
+.tft-tab:hover{color:var(--text)}
+.tft-tab.on{color:#c084fc;border-bottom-color:#c084fc;background:rgba(192,132,252,.05)}
+.tft-body{padding:1rem 1.25rem}
+.tft-section-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.75rem;margin-top:1rem;display:flex;align-items:center;gap:6px}
+.tft-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* comps */
+.tft-comp{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:.85rem 1rem;margin-bottom:.75rem;transition:border-color .15s}
+.tft-comp:hover{border-color:rgba(192,132,252,.4)}
+.tft-comp-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem}
+.tft-comp-name{font-size:14px;font-weight:700;color:var(--text)}
+.tft-comp-tier{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px}
+.tft-tier-S{background:rgba(212,175,55,.15);color:var(--gold2);border:1px solid rgba(212,175,55,.3)}
+.tft-tier-A{background:rgba(56,139,253,.12);color:var(--blue2);border:1px solid rgba(56,139,253,.25)}
+.tft-tier-B{background:rgba(63,185,80,.1);color:var(--green);border:1px solid rgba(63,185,80,.2)}
+.tft-comp-traits{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.65rem}
+.tft-trait{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
+.tft-units{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.5rem}
+.tft-unit{display:flex;flex-direction:column;align-items:center;gap:2px}
+.tft-unit-port{width:38px;height:38px;border-radius:6px;background:var(--bg4);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text2);overflow:hidden;position:relative}
+.tft-unit-port img{width:100%;height:100%;object-fit:cover}
+.tft-unit-name{font-size:8px;color:var(--text3);white-space:nowrap;max-width:42px;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.tft-unit-cost1{border-color:#888}
+.tft-unit-cost2{border-color:#3fb950}
+.tft-unit-cost3{border-color:#388bfd}
+.tft-unit-cost4{border-color:#a371f7}
+.tft-unit-cost5{border-color:#f0d060}
+.tft-comp-tip{font-size:11px;color:var(--text2);line-height:1.5;padding-top:.5rem;border-top:1px solid var(--border)}
+
+/* augments */
+.tft-aug{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:.85rem 1rem;margin-bottom:.6rem;display:flex;align-items:flex-start;gap:12px;transition:border-color .15s}
+.tft-aug:hover{border-color:rgba(192,132,252,.4)}
+.tft-aug-icon{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,#1a0e2d,#2d1a4a);border:1px solid rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.tft-aug-body{flex:1}
+.tft-aug-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.tft-aug-desc{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:4px}
+.tft-aug-tier{display:inline-flex;font-size:10px;font-weight:600;padding:2px 7px;border-radius:3px}
+.tft-aug-prismatic{background:rgba(240,208,96,.15);color:var(--gold2);border:1px solid rgba(240,208,96,.3)}
+.tft-aug-gold{background:rgba(212,175,55,.12);color:var(--gold);border:1px solid rgba(212,175,55,.25)}
+.tft-aug-silver{background:rgba(139,148,158,.1);color:var(--text2);border:1px solid var(--border)}
+
 </style>
 </head>
 <body>
@@ -490,6 +646,7 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
   <div class="logo">⚔ Que Pickeo ?</div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="nav-champ" style="font-size:12px;color:var(--gold);font-weight:600;opacity:0;transition:opacity .4s"></span>
+    <button class="theme-toggle" onclick="openTFT()" style="color:#c084fc;border-color:rgba(192,132,252,.3)">🎮 TFT</button>
     <button class="theme-toggle" onclick="openDraft()" style="color:#4488ff;border-color:rgba(68,136,255,.3)">⚔ Modo Draft</button>
     <button class="theme-toggle" onclick="openTierList()" style="color:var(--gold2);border-color:rgba(212,175,55,.3)">📊 Tier List</button>
     <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Cambiar modo">🌙 Oscuro</button>
@@ -539,7 +696,26 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
         </div>
       </div>
     </div>
+    <!-- DRAFT BANNER -->
+    <div class="draft-hero-banner" onclick="openDraft()">
+      <div class="draft-hero-banner-icon">⚔</div>
+      <div class="draft-hero-banner-text">
+        <div class="draft-hero-banner-title">Modo Draft — Simulá el Pick/Ban</div>
+        <div class="draft-hero-banner-sub">Elegí tus campeones, tus bans y obtené sugerencias en tiempo real según el draft enemigo</div>
+      </div>
+      <div class="draft-hero-banner-slots">
+        <div class="draft-hero-slot">+</div>
+        <div class="draft-hero-slot">+</div>
+        <div class="draft-hero-slot">+</div>
+        <div class="draft-hero-vs">VS</div>
+        <div class="draft-hero-slot" style="border-color:rgba(255,68,68,.4);background:rgba(255,68,68,.06);color:rgba(255,68,68,.5)">+</div>
+        <div class="draft-hero-slot" style="border-color:rgba(255,68,68,.4);background:rgba(255,68,68,.06);color:rgba(255,68,68,.5)">+</div>
+        <div class="draft-hero-slot" style="border-color:rgba(255,68,68,.4);background:rgba(255,68,68,.06);color:rgba(255,68,68,.5)">+</div>
+      </div>
+      <button class="draft-hero-banner-btn">Abrir Draft →</button>
+    </div>
     <div id="summoner-result" style="display:none;margin-bottom:.75rem"></div>
+    <div id="hero-synergies" style="display:none;margin-bottom:.75rem"></div>
     <div class="roles" id="roleTabs"></div>
   </div>
 </div>
@@ -587,6 +763,21 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
       </div>
     </div>
     <div class="tierlist-body" id="tl-body"></div>
+  </div>
+</div>
+
+<!-- TFT MODAL -->
+<div id="tft-modal" onclick="if(event.target===this)closeTFT()">
+  <div class="tft-box">
+    <div class="tft-hd">
+      <div class="tft-title">🎮 TFT — Set 14 <span class="tft-patch">Patch 14.8</span></div>
+      <button class="tft-close" onclick="closeTFT()">✕</button>
+    </div>
+    <div class="tft-tabs">
+      <div class="tft-tab on" onclick="setTFTTab('comps',this)">🏆 Comps del Parche</div>
+      <div class="tft-tab" onclick="setTFTTab('augments',this)">💎 Augments Fuertes</div>
+    </div>
+    <div class="tft-body" id="tft-body"></div>
   </div>
 </div>
 
@@ -1490,7 +1681,7 @@ var selChamp=null;
 document.getElementById('roleTabs').innerHTML=ROLES.map(function(r){return '<button class="rtab'+(r==='Todos'?' on':'')+'" onclick="setRole(\''+r+'\')">'+r+'</button>';}).join('');
 function setRole(r){activeRole=r;document.querySelectorAll('.rtab').forEach(function(b){b.classList.toggle('on',b.textContent===r);});filterGrid();}
 function filterGrid(){var q=document.getElementById('si').value.toLowerCase().trim();var filtered=ALL.filter(function(c){return(!q||c.n.toLowerCase().indexOf(q)>=0)&&(activeRole==='Todos'||c.r===activeRole);});if(activeRole==='Todos'){var seen={};filtered=filtered.filter(function(c){if(seen[c.n])return false;seen[c.n]=true;return true;});}document.getElementById('ccount').textContent=filtered.length+' campeones';document.getElementById('cgrid').innerHTML=filtered.map(function(c){var active=selChamp&&selChamp.n===c.n;var isFav=favs.indexOf(c.n)>=0;var inCompare=compareChamps.find(function(x){return x&&x.n===c.n;});return '<div style="position:relative">'+'<button class="cbtn role-'+c.r+(active?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')">'+ portrait(c.n,c.r,48)+'<span class="cname">'+c.n+'</span><span class="crole">'+c.r+'</span></button>'+'<button class="fav-btn'+(isFav?' active':'')+'" onclick="toggleFav(\''+c.n.replace(/'/g,"\\'")+'\',event)" title="'+(isFav?'Quitar favorito':'Agregar a favoritos')+'">'+(isFav?'⭐':'☆')+'</button>'+'</div>';}).join('');}
-function pickChamp(name,role){selChamp=ALL.find(function(c){return c.n===name&&(role?c.r===role:true);});if(!selChamp)selChamp=ALL.find(function(c){return c.n===name;});filterGrid();renderSide(selChamp);renderMain(selChamp);updatePageBg(selChamp);addToHist(selChamp);if(window.innerWidth<800)window.scrollTo({top:0,behavior:'smooth'});}
+function pickChamp(name,role){selChamp=ALL.find(function(c){return c.n===name&&(role?c.r===role:true);});if(!selChamp)selChamp=ALL.find(function(c){return c.n===name;});filterGrid();renderSide(selChamp);renderMain(selChamp);updatePageBg(selChamp);addToHist(selChamp);renderHeroSynergies(selChamp);if(window.innerWidth<800)window.scrollTo({top:0,behavior:'smooth'});}
 
 /* ════════════════════════════════════
    RENDER SIDEBAR
@@ -1501,18 +1692,7 @@ function renderSide(c){var d=getData(c);var st=d.stats;var splashUrl='https://dd
    RENDER MAIN
 ════════════════════════════════════ */
 function renderMain(c){var d=getData(c);var ctrs=d.ctr.map(function(row,i){var nm=row[0],wr=row[1],gms=row[2],thr=row[3],rsn=row[4];return '<div class="trow gc anim-row" style="animation-delay:'+(i*0.05)+'s"><div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div><div class="wr wb">'+parseFloat(wr).toFixed(1)+'%</div><div class="gms">'+Number(gms).toLocaleString()+'</div><div><div class="bar-bg"><div class="bar-f bar-red" style="width:'+barPct(wr)+'%"></div></div><div class="bar-note">'+rsn+'</div></div><div>'+thrEl(thr)+'</div></div>';}).join('');var good=d.good.map(function(row,i){var nm=row[0],wr=row[1],gms=row[2],rsn=row[3];return '<div class="trow gg anim-row" style="animation-delay:'+(i*0.05)+'s"><div class="ccell">'+portrait(nm,findRole(nm),36)+'<div><div class="ccell-name">'+nm+'</div><div class="ccell-role">'+findRole(nm)+'</div></div></div><div class="wr wg">'+parseFloat(wr).toFixed(1)+'%</div><div class="gms">'+Number(gms).toLocaleString()+'</div><div><div class="bar-bg"><div class="bar-f bar-green" style="width:'+barPctGood(wr)+'%"></div></div><div class="bar-note">'+rsn+'</div></div></div>';}).join('');var items=d.items.map(function(it,i){return '<div class="item-card anim-row" style="animation-delay:'+(i*0.06)+'s">'+itemPort(it.n,40)+'<div><div class="iorder">#'+it.o+'</div><div class="iname">'+it.n+'</div><div class="ireason">'+it.r+'</div><div class="icost">'+it.c+' de oro</div></div><div class="item-tooltip"><div class="itt-name">'+it.n+'</div><div class="itt-cost">'+it.c+' de oro</div><div class="itt-reason">'+it.r+'</div></div></div>';}).join('');// Build synergies HTML
-var syns=getSynergies(c);
-var synHtml=syns.map(function(s){
-  var found=ALL.find(function(x){return x.n===s[0]&&x.r===s[1];})||ALL.find(function(x){return x.n===s[0];});
-  var onclick=found?'onclick="pickChamp(\''+found.n.replace(/'/g,"\\'")+'\'\,\''+found.r+'\')"':'';
-  return '<div class="syn-row" '+onclick+'>'
-    +portrait(s[0],s[1],32)
-    +'<div><div class="syn-name">'+s[0]+'</div><div class="syn-role">'+s[1]+'</div></div>'
-    +'<div class="syn-reason">'+s[2]+'</div>'
-    +'<div class="syn-score">+'+s[3]+'</div>'
-    +'</div>';
-}).join('');
-document.getElementById('mainInfo').innerHTML='<div class="syn-card"><div class="card-hd">Sinergias con '+c.n+' — mejores compañeros</div>'+synHtml+'</div>'+'<div class="card"><div class="card-hd">Counters de '+c.n+' — campeones que le ganan</div><div class="thd gc"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div><div>Dificultad</div></div>'+ctrs+'</div><div class="card"><div class="card-hd">'+c.n+' le gana a estos campeones</div><div class="thd gg"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div></div>'+good+'</div><div class="card"><div class="card-hd">Build Recomendada — '+c.n+'</div><div class="items-grid">'+items+'</div></div>';}
+document.getElementById('mainInfo').innerHTML='<div class="card"><div class="card-hd">Counters de '+c.n+' — campeones que le ganan</div><div class="thd gc"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div><div>Dificultad</div></div>'+ctrs+'</div><div class="card"><div class="card-hd">'+c.n+' le gana a estos campeones</div><div class="thd gg"><div>Campeón</div><div>Win Rate</div><div>Partidas</div><div>Ventaja</div></div>'+good+'</div><div class="card"><div class="card-hd">Build Recomendada — '+c.n+'</div><div class="items-grid">'+items+'</div></div>';}
 
 /* ════════════════════════════════════
    PAGE BACKGROUND
@@ -2199,6 +2379,202 @@ function applyDraftSuggestion(name, role, idx){
   draftState.blue.picks[idx]=c;
   renderDraft();
   getDraftSuggestions();
+}
+
+function renderHeroSynergies(c){
+  var el = document.getElementById('hero-synergies');
+  if(!el) return;
+  var syns = getSynergies(c);
+  if(!syns.length){ el.style.display='none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = '<div class="hero-syn-wrap">'
+    +'<span class="hero-syn-label">🤝 Sinergia con '+c.n+'</span>'
+    +'<div class="hero-syn-champs">'
+    +syns.map(function(s){
+      var found = ALL.find(function(x){return x.n===s[0]&&x.r===s[1];})||ALL.find(function(x){return x.n===s[0];});
+      var oc = found?'onclick="pickChamp(\''+found.n.replace(/'/g,"\\'")+'\'\,\''+found.r+'\')"':'';
+      return '<div class="hero-syn-item" '+oc+' title="'+s[2]+'">'
+        +'<img class="hero-syn-img" src="'+cimgUrl(s[0])+'" onerror="this.style.opacity=.3"/>'
+        +'<span class="hero-syn-name">'+s[0]+'</span>'
+        +'<span class="hero-syn-reason">'+s[2].split(' ').slice(0,3).join(' ')+'</span>'
+        +'</div>';
+    }).join('')
+    +'</div></div>';
+}
+
+/* ════════════════════════════════════
+   TFT DATA & FUNCTIONS
+════════════════════════════════════ */
+var TFT_COMPS = [
+  {
+    name:"Forma Libre Dominante",tier:"S",
+    traits:["Forma Libre x6","Bruiser x4","Guardián x2"],
+    units:[
+      {n:"Jayce",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Jayce.png"},
+      {n:"Vi",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Vi.png"},
+      {n:"Warwick",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Warwick.png"},
+      {n:"Camille",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Camille.png"},
+      {n:"Jinx",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Jinx.png"},
+      {n:"Ekko",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Ekko.png"},
+      {n:"Urgot",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Urgot.png"},
+      {n:"Singed",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Singed.png"},
+    ],
+    tip:"Priorizá llegar a nivel 8 con economía estable. Urgot 3★ es el carry principal. Itemizá con Rabadon + Bastón Infinito + Guardabrazo de Archangel."
+  },
+  {
+    name:"Artillería Piltover",tier:"S",
+    traits:["Piltover x6","Artillería x4","Cibernetico x2"],
+    units:[
+      {n:"Caitlyn",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Caitlyn.png"},
+      {n:"Jayce",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Jayce.png"},
+      {n:"Vi",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Vi.png"},
+      {n:"Ezreal",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Ezreal.png"},
+      {n:"Heimerdinger",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Heimerdinger.png"},
+      {n:"Camille",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Camille.png"},
+      {n:"Jinx",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Jinx.png"},
+      {n:"Orianna",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Orianna.png"},
+    ],
+    tip:"Caitlyn es el carry principal. Itemizá Ballesta Infinita + Borde de Kraken + Recordatorio del Señor. Intentá llegar a Piltover 6 lo antes posible para el cash out."
+  },
+  {
+    name:"Rebeldes Volibear",tier:"A",
+    traits:["Rebelde x6","Bruiser x4","Protector x2"],
+    units:[
+      {n:"Volibear",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Volibear.png"},
+      {n:"Jinx",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Jinx.png"},
+      {n:"Ekko",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Ekko.png"},
+      {n:"Vi",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Vi.png"},
+      {n:"Warwick",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Warwick.png"},
+      {n:"Silco",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Silco.png"},
+      {n:"Sevika",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Sevika.png"},
+      {n:"Nunu & Willump",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Nunu.png"},
+    ],
+    tip:"Volibear 2★ con Corazón de Acero + Garras del Dragón + Placa de Gárgola es casi imposible de matar. Jinx como carry secundario con ítems de daño."
+  },
+  {
+    name:"Asesinos Sombra",tier:"A",
+    traits:["Asesino x6","Sombra x4"],
+    units:[
+      {n:"Akali",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Akali.png"},
+      {n:"Zed",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Zed.png"},
+      {n:"Katarina",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Katarina.png"},
+      {n:"Talon",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Talon.png"},
+      {n:"Evelynn",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Evelynn.png"},
+      {n:"Kayn",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Kayn.png"},
+      {n:"Shaco",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Shaco.png"},
+      {n:"Qiyana",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Qiyana.png"},
+    ],
+    tip:"Kayn 2★ con Espada del Rey Arruinado + Eclipse + Danza de la Muerte es el combo ideal. Posicioná tus asesinos en las esquinas para máxima efectividad."
+  },
+  {
+    name:"Enfermeras Curación",tier:"B",
+    traits:["Enfermera x4","Guardián x3","Futurista x2"],
+    units:[
+      {n:"Soraka",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Soraka.png"},
+      {n:"Nami",cost:3,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Nami.png"},
+      {n:"Sona",cost:4,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Sona.png"},
+      {n:"Seraphine",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Seraphine.png"},
+      {n:"Nautilus",cost:2,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Nautilus.png"},
+      {n:"Leona",cost:1,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Leona.png"},
+      {n:"Orianna",cost:5,img:"https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/Orianna.png"},
+    ],
+    tip:"Comp de sustain masivo. Seraphine 2★ con Corazón de Hierro + Placa de Gárgola + Bastón del Vacío es el MVP. Idealmente jugada cuando agarrás Augment de Curación."
+  },
+];
+
+var TFT_AUGMENTS = [
+  {icon:"💎",name:"Formación de Combate",tier:"prismatic",desc:"Tus unidades ganan +20% de daño al inicio del combate durante 8 segundos. Si tu equipo sobrevive 10 segundos, se activa nuevamente.",why:"El bonus de daño temprano cierra peleas antes de que el enemigo pueda responder. Funciona en cualquier comp de burst."},
+  {icon:"⚡",name:"Velocidad Overclock",tier:"prismatic",desc:"Tus unidades Cibernéticas y Piltover ganan +50% de velocidad de ataque. Pasivo: +1 ranura de objeto en tu Hextech.",why:"Obligatorio en comps Piltover. La ranura extra de objeto puede ser game-winning en el late game."},
+  {icon:"🔮",name:"Multiplicador Mágico",tier:"gold",desc:"Cada vez que una unidad tuya lanza una habilidad, gana +8% de Poder de Habilidad hasta el final del combate (máx 5 stacks).",why:"Escala infinitamente en peleas largas. Perfecto para comps con muchos carries mágicos como Sona o Orianna."},
+  {icon:"🛡",name:"Frontline Indestructible",tier:"gold",desc:"Tus tanques ganan +300 HP y +20 de Armadura/MR. Cuando muere una unidad aliada, el tanque más cercano gana 15% de HP perdido.",why:"Hace que tus bruisers y tanks aguanten eternamente. Ideal en Rebeldes o Forma Libre con frontline pesada."},
+  {icon:"💰",name:"Inversión Acelerada",tier:"gold",desc:"Gana 3 de oro al final de cada combate si tu economía supera 50 de oro. +1 de interés máximo.",why:"El mejor augment de economía del set. Te permite llegar a nivel 9 mucho antes que los rivales."},
+  {icon:"🗡",name:"Filo del Asesino",tier:"gold",desc:"Tus Asesinos ganan +30% de Daño Crítico y su primer golpe en cada combate inflige daño verdadero.",why:"Convierte a tus asesinos en deleters. Combinado con Kayn o Akali es prácticamente imbateable."},
+  {icon:"⚗️",name:"Alquimia Avanzada",tier:"silver",desc:"Tus unidades Químico y Enfermera generan 1 componente aleatorio al inicio de cada ronda de PvE.",why:"La generación de ítems te da enorme flexibilidad en la build. Excelente en comps de Enfermeras o Químico."},
+  {icon:"🎯",name:"Puntería Perfecta",tier:"silver",desc:"Tus unidades de Artillería ganan +2 de hexágonos de rango y sus proyectiles perforan al primer objetivo.",why:"Transforma a Caitlyn y Jayce en francotiradores que atacan desde el fondo sin riesgo. Muy bueno en Piltover."},
+  {icon:"💪",name:"Economía de Guerra",tier:"silver",desc:"Gana 1 de oro adicional por cada victoria de combate. Si pierdes 3 seguidas, gana 5 de oro bonus.",why:"Recompensa tanto las rachas de victoria como evitar demasiadas derrotas. Muy estable en cualquier estrategia."},
+];
+
+var tftActiveTab = 'comps';
+
+function openTFT(){
+  tftActiveTab = 'comps';
+  document.getElementById('tft-modal').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+  renderTFT();
+}
+function closeTFT(){
+  document.getElementById('tft-modal').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+function setTFTTab(tab, el){
+  tftActiveTab = tab;
+  document.querySelectorAll('.tft-tab').forEach(function(t){ t.classList.remove('on'); });
+  el.classList.add('on');
+  renderTFT();
+}
+
+function renderTFT(){
+  var body = document.getElementById('tft-body');
+  if(!body) return;
+
+  if(tftActiveTab === 'comps'){
+    var tiers = ['S','A','B'];
+    var html = '';
+    tiers.forEach(function(tier){
+      var comps = TFT_COMPS.filter(function(c){ return c.tier===tier; });
+      if(!comps.length) return;
+      html += '<div class="tft-section-title">Tier '+tier+'</div>';
+      comps.forEach(function(comp){
+        var unitsHtml = comp.units.map(function(u){
+          var costClass = 'tft-unit-cost'+(u.cost||1);
+          return '<div class="tft-unit">'
+            +'<div class="tft-unit-port '+costClass+'">'
+            +'<img src="'+u.img+'" onerror="this.style.display=\'none\'"/>'
+            +'<span style="position:absolute;bottom:0;right:2px;font-size:8px;font-weight:700;color:var(--gold);z-index:1">'+u.cost+'</span>'
+            +'</div>'
+            +'<span class="tft-unit-name">'+u.n+'</span>'
+            +'</div>';
+        }).join('');
+        var traitsHtml = comp.traits.map(function(t){
+          return '<span class="tft-trait">'+t+'</span>';
+        }).join('');
+        html += '<div class="tft-comp">'
+          +'<div class="tft-comp-hd">'
+            +'<span class="tft-comp-name">'+comp.name+'</span>'
+            +'<span class="tft-comp-tier tft-tier-'+comp.tier+'">Tier '+comp.tier+'</span>'
+          +'</div>'
+          +'<div class="tft-comp-traits">'+traitsHtml+'</div>'
+          +'<div class="tft-units">'+unitsHtml+'</div>'
+          +'<div class="tft-comp-tip">💡 '+comp.tip+'</div>'
+          +'</div>';
+      });
+    });
+    body.innerHTML = html;
+
+  } else {
+    var tiers2 = [
+      {key:'prismatic', label:'Prismatic', icon:'💎'},
+      {key:'gold', label:'Gold', icon:'🥇'},
+      {key:'silver', label:'Silver', icon:'🥈'},
+    ];
+    var html2 = '';
+    tiers2.forEach(function(tier){
+      var augs = TFT_AUGMENTS.filter(function(a){ return a.tier===tier.key; });
+      if(!augs.length) return;
+      html2 += '<div class="tft-section-title">'+tier.icon+' '+tier.label+'</div>';
+      augs.forEach(function(aug){
+        html2 += '<div class="tft-aug">'
+          +'<div class="tft-aug-icon">'+aug.icon+'</div>'
+          +'<div class="tft-aug-body">'
+            +'<div class="tft-aug-name">'+aug.name+' <span class="tft-aug-tier tft-aug-'+aug.tier+'">'+aug.tier.charAt(0).toUpperCase()+aug.tier.slice(1)+'</span></div>'
+            +'<div class="tft-aug-desc">'+aug.desc+'</div>'
+            +'<div style="font-size:11px;color:var(--green)">▸ '+aug.why+'</div>'
+          +'</div>'
+          +'</div>';
+      });
+    });
+    body.innerHTML = html2;
+  }
 }
 
 /* INIT */
