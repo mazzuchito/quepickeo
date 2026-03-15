@@ -736,12 +736,10 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 
 
 /* ── SEARCH POPUP ── */
-#search-popup{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:150;pointer-events:none}
-#search-popup.visible{pointer-events:all}
-#search-popup-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);opacity:0;transition:opacity .2s;cursor:pointer}
-#search-popup.visible #search-popup-backdrop{opacity:1}
-#search-popup-box{position:absolute;top:50%;left:50%;transform:translate(-50%,-48%) scale(.97);background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:min(560px,94vw);max-height:75vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);opacity:0;transition:all .22s cubic-bezier(.34,1.56,.64,1)}
-#search-popup.visible #search-popup-box{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#search-popup{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:500}
+#search-popup.visible{display:flex;align-items:center;justify-content:center}
+#search-popup-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);cursor:pointer}
+#search-popup-box{position:relative;z-index:1;background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:min(580px,94vw);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:fadeInUp .2s ease}
 #search-popup-hd{padding:.85rem 1rem;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--bg3);flex-shrink:0}
 #search-popup-hd .sico{position:static;transform:none;opacity:.5;font-size:16px}
 #search-popup-input{flex:1;background:transparent;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:15px;outline:none}
