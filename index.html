@@ -350,6 +350,21 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
         </div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0;flex-direction:column">
+        <span style="font-size:11px;font-weight:600;color:var(--blue2);text-transform:uppercase;letter-spacing:.5px">⚖ Comparador</span>
+        <div style="display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;height:42px">
+          <div id="hero-slot-1" style="display:flex;align-items:center;gap:6px;cursor:pointer;min-width:90px" title="Seleccioná un campeón para comparar">
+            <div style="width:28px;height:28px;border-radius:5px;border:1px dashed var(--border2);background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);flex-shrink:0" id="hero-slot-1-img">+</div>
+            <span style="font-size:11px;color:var(--text3)" id="hero-slot-1-name">Campeón 1</span>
+          </div>
+          <span style="color:var(--text3);font-size:12px;font-weight:600;flex-shrink:0">vs</span>
+          <div id="hero-slot-2" style="display:flex;align-items:center;gap:6px;cursor:pointer;min-width:90px" title="Seleccioná un campeón para comparar">
+            <div style="width:28px;height:28px;border-radius:5px;border:1px dashed var(--border2);background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);flex-shrink:0" id="hero-slot-2-img">+</div>
+            <span style="font-size:11px;color:var(--text3)" id="hero-slot-2-name">Campeón 2</span>
+          </div>
+          <button id="hero-compare-go" onclick="openCompareModal()" disabled style="background:var(--blue);border:none;color:#fff;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:0 10px;height:28px;border-radius:5px;cursor:pointer;transition:background .15s;white-space:nowrap;opacity:.4" onmouseover="if(!this.disabled)this.style.background='var(--blue2)'" onmouseout="this.style.background='var(--blue)'">Comparar</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0;flex-direction:column">
         <span style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px">Tus estadísticas</span>
         <div style="display:flex;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;overflow:hidden">
           <select id="summoner-region" style="background:var(--bg4);border:none;border-right:1px solid var(--border2);color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;padding:0 10px;cursor:pointer;outline:none;height:42px">
@@ -1115,14 +1130,35 @@ function clearCompare(){
 function renderCompareBar(){
   var bar=document.getElementById('compare-bar');
   var go=document.getElementById('compare-go');
+  var heroGo=document.getElementById('hero-compare-go');
   var filled=compareChamps.filter(Boolean).length;
-  if(filled===0){ bar.classList.remove('visible'); return; }
-  bar.classList.add('visible');
-  go.disabled = filled<2;
 
+  // Update bottom bar
+  if(filled===0){ bar.classList.remove('visible'); }
+  else { bar.classList.add('visible'); }
+  if(go) go.disabled=filled<2;
+
+  // Update hero slots
   [0,1].forEach(function(i){
-    var slot=document.getElementById('compare-slot-'+(i+1));
     var c=compareChamps[i];
+    var imgEl=document.getElementById('hero-slot-'+(i+1)+'-img');
+    var nameEl=document.getElementById('hero-slot-'+(i+1)+'-name');
+    if(imgEl&&nameEl){
+      if(c){
+        imgEl.innerHTML='<img src="'+cimgUrl(c.n)+'" style="width:28px;height:28px;border-radius:5px;object-fit:cover" onerror="this.style.opacity=.3"/>';
+        imgEl.style.border='1px solid var(--blue2)';
+        nameEl.textContent=c.n;
+        nameEl.style.color='var(--text)';
+      } else {
+        imgEl.innerHTML='+';
+        imgEl.style.border='1px dashed var(--border2)';
+        nameEl.textContent='Campeón '+(i+1);
+        nameEl.style.color='var(--text3)';
+      }
+    }
+    // Bottom bar slot
+    var slot=document.getElementById('compare-slot-'+(i+1));
+    if(!slot) return;
     if(!c){
       slot.className='compare-slot compare-slot-empty';
       slot.innerHTML='+ Campeón '+(i+1);
@@ -1133,6 +1169,13 @@ function renderCompareBar(){
         +'<button class="compare-slot-remove" onclick="removeFromCompare('+i+')">✕</button>';
     }
   });
+
+  // Hero compare button
+  if(heroGo){
+    heroGo.disabled=filled<2;
+    heroGo.style.opacity=filled<2?'.4':'1';
+    heroGo.style.cursor=filled<2?'not-allowed':'pointer';
+  }
 }
 
 function openCompareModal(){
