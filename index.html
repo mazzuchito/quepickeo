@@ -734,6 +734,42 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 .reverse-result-wr{font-size:12px;font-weight:700;color:var(--green);min-width:44px;text-align:right}
 .reverse-section-lbl{padding:.4rem 1rem;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;background:var(--bg3);border-bottom:1px solid var(--border)}
 
+
+/* ── SEARCH POPUP ── */
+#search-popup{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:150;pointer-events:none}
+#search-popup.visible{pointer-events:all}
+#search-popup-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);opacity:0;transition:opacity .2s}
+#search-popup.visible #search-popup-backdrop{opacity:1}
+#search-popup-box{position:absolute;top:50%;left:50%;transform:translate(-50%,-48%) scale(.97);background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:min(560px,94vw);max-height:75vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);opacity:0;transition:all .22s cubic-bezier(.34,1.56,.64,1)}
+#search-popup.visible #search-popup-box{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#search-popup-hd{padding:.85rem 1rem;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);background:var(--bg3);flex-shrink:0}
+#search-popup-hd .sico{position:static;transform:none;opacity:.5;font-size:16px}
+#search-popup-input{flex:1;background:transparent;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:15px;outline:none}
+#search-popup-input::placeholder{color:var(--text3)}
+#search-popup-close{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px;line-height:1}
+#search-popup-close:hover{color:var(--text)}
+#search-popup-roles{display:flex;gap:4px;padding:.5rem .75rem;border-bottom:1px solid var(--border);flex-wrap:wrap;flex-shrink:0;background:var(--bg2)}
+#search-popup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(82px,1fr));gap:6px;padding:.75rem;overflow-y:auto;flex:1}
+#search-popup-empty{padding:2rem;text-align:center;color:var(--text3);font-size:13px}
+
+
+/* ── COUNTER ROW ANIMATIONS ── */
+@keyframes slideInRight{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+.anim-row{animation:slideInRight .3s cubic-bezier(.34,1.2,.64,1) both}
+.trow.gg.anim-row{animation-name:slideInLeft}
+/* Portrait hover lift */
+.ccell .cport{transition:transform .15s,box-shadow .15s}
+.trow:hover .ccell .cport{transform:translateY(-2px) scale(1.05)}
+/* WR number pulse on load */
+@keyframes wrPop{0%{transform:scale(.8);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.wr{animation:wrPop .4s cubic-bezier(.34,1.4,.64,1) both}
+/* Bar fill animation */
+@keyframes barGrow{from{width:0!important}to{}}
+.bar-f{animation:barGrow .6s cubic-bezier(.4,0,.2,1) both}
+/* Difficulty badge pop */
+.thr{animation:wrPop .35s cubic-bezier(.34,1.4,.64,1) both}
+
 </style>
 </head>
 <body>
@@ -770,7 +806,7 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
         <span style="font-size:11px;font-weight:600;color:transparent;text-transform:uppercase;letter-spacing:.5px;user-select:none">Buscar</span>
         <div style="position:relative">
           <span class="sico">🔍</span>
-          <input id="si" type="text" placeholder="Buscar campeón..." oninput="filterGrid()" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px 10px 40px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border .2s,box-shadow .2s"/>
+          <input id="si" type="text" placeholder="Buscar campeón..." onclick="openSearchPopup()" readonly style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px 10px 40px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);outline:none;cursor:pointer;transition:border .2s,box-shadow .2s" onmouseover="this.style.borderColor='var(--blue2)'" onmouseout="this.style.borderColor='var(--border2)'"/>
         </div>
       </div>
       <div style="display:flex;gap:6px;flex-shrink:0;flex-direction:column">
@@ -924,6 +960,20 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
       </div>
       <button class="draft-reset" onclick="resetDraft()">↺ Resetear</button>
     </div>
+  </div>
+</div>
+
+<!-- SEARCH POPUP -->
+<div id="search-popup" onclick="if(event.target===document.getElementById('search-popup-backdrop'))closeSearchPopup()">
+  <div id="search-popup-backdrop"></div>
+  <div id="search-popup-box">
+    <div id="search-popup-hd">
+      <span class="sico">🔍</span>
+      <input id="search-popup-input" type="text" placeholder="Buscar campeón..." oninput="filterSearchPopup()" autocomplete="off"/>
+      <button id="search-popup-close" onclick="closeSearchPopup()">✕</button>
+    </div>
+    <div id="search-popup-roles"></div>
+    <div id="search-popup-grid"></div>
   </div>
 </div>
 
@@ -1503,6 +1553,8 @@ var SPECIFIC = {
 };
 
 function getData(c){
+  // Inject patch 16.5 tier data
+  var patchStats = PATCH_TIERS[c.n];
   var s=SPECIFIC[c.n];
   var r=ROLE_DATA[c.r]||ROLE_DATA.Mid;
   if(!s) return r;
@@ -1520,7 +1572,7 @@ function getData(c){
     items: s.items || r.items,
     runes: s.runes || r.runes,
     spells:s.spells|| r.spells,
-    stats: s.stats || r.stats
+    stats: patchStats || s.stats || r.stats
   };
 }
 function findRole(n){ var x=ALL.find(function(c){return c.n.toLowerCase()===n.toLowerCase();}); return x?x.r:'Mid'; }
@@ -1745,14 +1797,199 @@ var SYNERGY_STYLE = {
   marksman:"hyper", support:"peel", artillery:"poke", diver:"dive"
 };
 
+
+/* ════════════════════════════════════
+   SPECIFIC SYNERGIES PER CHAMPION
+════════════════════════════════════ */
+var SYNERGY_SPECIFIC = {
+  // ── TOP ──
+  "Aatrox":     [["Orianna","Mid","Ball en tu zona de engage",92],["Jarvan IV","Jungle","Crea zona para tus combos",88],["Jinx","ADC","Explota tus teamfights",85],["Leona","Support","CC encadenado masivo",82],["Amumu","Jungle","Doble engage devastador",80]],
+  "Ambessa":    [["Lee Sin","Jungle","Kick setea tus dashes",90],["Orianna","Mid","Ball donde dashás",88],["Jinx","ADC","Explota tus picks",85],["Nautilus","Support","CC extra en engage",82],["Viego","Jungle","Ambos entran al backline",80]],
+  "Aurora":     [["Jarvan IV","Jungle","Zona para tus burst",88],["Jinx","ADC","Explota tu CC",85],["Lulu","Support","Amplifica tu engage",82],["Viego","Jungle","Ambos de daño mágico",80],["Thresh","Support","Peel + engage combo",78]],
+  "Camille":    [["Lee Sin","Jungle","Kick hacia tu E",92],["Jinx","ADC","Explota tus picks",88],["Orianna","Mid","Ball en tu zona",85],["Thresh","Support","Engage combo mortal",82],["Graves","Jungle","Ambos de daño AD",80]],
+  "Cho'Gath":   [["Jinx","ADC","Explota tus teamfights",88],["Orianna","Mid","Silence para su R",85],["Amumu","Jungle","Doble engage CC",82],["Miss Fortune","ADC","R en tu zona de silencio",80],["Janna","Support","Peel para sobrevivir",78]],
+  "Darius":     [["Leona","Support","CC encadenado level 2",92],["Lee Sin","Jungle","Kick al engage",88],["Caitlyn","ADC","Headshot en tu bleed",85],["Nautilus","Support","Doble CC en engage",82],["Jarvan IV","Jungle","Zona para tus trades",80]],
+  "Dr. Mundo":  [["Jinx","ADC","Explota tu frontline",88],["Orianna","Mid","Ball en tu zona",85],["Lulu","Support","R amplifica tu R",92],["Sejuani","Jungle","Doble frontline indestructible",80],["Amumu","Jungle","Doble CC frontline",78]],
+  "Fiora":      [["Twisted Fate","Mid","TF cubre tus splits",92],["Jhin","ADC","W en colateral",85],["Shen","Top","R salva cuando spliteas",88],["Kog'Maw","ADC","Tu engage protege su rango",80],["Karma","Support","Shield + acelera tu split",78]],
+  "Gangplank":  [["Jarvan IV","Jungle","Zona para tus barrels",90],["Miss Fortune","ADC","R + barrels teamwipe",94],["Orianna","Mid","Ball + barrel combo",88],["Amumu","Jungle","Engage para tus barrels",85],["Jinx","ADC","Rockets en tus zonas",82]],
+  "Garen":      [["Leona","Support","All-in level 2 brutal",92],["Jinx","ADC","Explota tu silence",85],["Nami","Support","Wave clear + engage",82],["Jarvan IV","Jungle","Zona para tus combos",80],["Blitzcrank","Support","Pull + tu silence",88]],
+  "Gnar":       [["Orianna","Mid","Ball + GNAR R devastador",92],["Amumu","Jungle","Doble mega engage",88],["Jinx","ADC","Explota tus teamfights",85],["Lulu","Support","Amplifica en GNAR mode",82],["Miss Fortune","ADC","R en tu GNAR engage",90]],
+  "Gwen":       [["Jarvan IV","Jungle","Zona para tu W safe",88],["Orianna","Mid","Ball donde tu W",85],["Lulu","Support","R amplifica tu tankiness",82],["Amumu","Jungle","CC para que entres segura",80],["Jinx","ADC","Explota tu sustain",78]],
+  "Heimerdinger":[["Jarvan IV","Jungle","Zona donde ponés torretas",88],["Caitlyn","ADC","Headshot en tu CC",85],["Leona","Support","CC larga para tus torretas",82],["Orianna","Mid","Ball + torretas zona",80],["Lux","Support","Stun para tus E",78]],
+  "Illaoi":     [["Orianna","Mid","Ball en tu zona de tentáculos",88],["Miss Fortune","ADC","R en tu zona de rituales",92],["Jarvan IV","Jungle","Zona donde tus tentáculos",85],["Amumu","Jungle","Engage para que entres",82],["Jinx","ADC","Explota tus teamfights",80]],
+  "Irelia":     [["Lee Sin","Jungle","Kick setea tu E",90],["Orianna","Mid","Ball donde dashes",88],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage combo mortal",82],["Jarvan IV","Jungle","Zona para tus combos",80]],
+  "Jax":        [["Lee Sin","Jungle","Kick para pelear",88],["Orianna","Mid","Ball en tu zona",85],["Lulu","Support","R amplifica tu duelo",82],["Thresh","Support","Engage para entrar",80],["Jinx","ADC","Explota tus peleas",78]],
+  "Jayce":      [["Jarvan IV","Jungle","Zona para tu poke",88],["Jinx","ADC","Poke + late carry",85],["Orianna","Mid","Ambos de poke + burst",82],["Lux","Support","Ambos de rango largo",80],["Caitlyn","ADC","Poke maximal",78]],
+  "K'Sante":    [["Orianna","Mid","Ball en tu engage",88],["Jinx","ADC","Explota tu frontline",85],["Jarvan IV","Jungle","Doble engage",82],["Lulu","Support","R amplifica tu R",80],["Amumu","Jungle","Doble CC engage",78]],
+  "Kayle":      [["Amumu","Jungle","Engage mientras kayleas",90],["Miss Fortune","ADC","R + tu R = GG",92],["Orianna","Mid","Ball + tu late game",85],["Lulu","Support","R te protege mientras escalas",94],["Jarvan IV","Jungle","Cubre early mientras escalás",82]],
+  "Kennen":     [["Orianna","Mid","Ambos de AoE engage",92],["Amumu","Jungle","Doble AoE stun",88],["Miss Fortune","ADC","R en tus stuns",90],["Jinx","ADC","Explota tus stuns",85],["Jarvan IV","Jungle","Zona para tu engage",82]],
+  "Kled":       [["Lee Sin","Jungle","Kick hacia tu Q",88],["Jinx","ADC","Explota tu engage",85],["Orianna","Mid","Ball en tu zona",82],["Thresh","Support","Peel cuando desmontás",80],["Jarvan IV","Jungle","Doble engage",78]],
+  "Malphite":   [["Orianna","Mid","La combo más icónica del juego",98],["Miss Fortune","ADC","R en tu R = teamwipe",94],["Jinx","ADC","Explota tu R masivo",90],["Yasuo","Mid","Doble knockup infinito",96],["Amumu","Jungle","Doble engage inescapable",88]],
+  "Mordekaiser":[["Orianna","Mid","Ball donde entras",88],["Jinx","ADC","Explota tus teamfights",85],["Amumu","Jungle","Doble engage",82],["Jarvan IV","Jungle","Zona para tu R",80],["Lulu","Support","Amplifica tu duelo",78]],
+  "Nasus":      [["Jarvan IV","Jungle","Peel para que stackees",88],["Lulu","Support","R te hace gigante para entrar",90],["Jinx","ADC","Explota tus teamfights",85],["Amumu","Jungle","Engage mientras stackeas",80],["Janna","Support","Peel para farmear seguro",82]],
+  "Olaf":       [["Lee Sin","Jungle","Kick para pelear",88],["Jinx","ADC","Explota tus peleas sin CC",85],["Orianna","Mid","Ball en tu zona",82],["Jarvan IV","Jungle","Zona para tus trades",80],["Thresh","Support","Engage para entrar",78]],
+  "Ornn":       [["Jinx","ADC","Explota tus teamfights enormes",92],["Orianna","Mid","Ball en tu zona",88],["Amumu","Jungle","Doble frontline",85],["Miss Fortune","ADC","R en tu zona de CC",90],["Syndra","Mid","Burst detrás de tu frontline",82]],
+  "Pantheon":   [["Lee Sin","Jungle","Kick para tu combo",90],["Jinx","ADC","Explota tus picks",88],["Caitlyn","ADC","Headshot en tu stun",85],["Orianna","Mid","Ball en tu zona",82],["Leona","Support","Doble all-in brutal",92]],
+  "Poppy":      [["Orianna","Mid","Ball donde tirás enemigos",88],["Jinx","ADC","Explota tus peleas",85],["Amumu","Jungle","Doble CC engage",82],["Miss Fortune","ADC","R detrás de tu W wall",90],["Jarvan IV","Jungle","Zona para tus combos",80]],
+  "Quinn":      [["Twisted Fate","Mid","Ambos de movilidad global",88],["Jinx","ADC","Explota tus picks",85],["Orianna","Mid","Poke + ball combo",82],["Caitlyn","ADC","Poke + headshot",80],["Jarvan IV","Jungle","Zona para tus combos",78]],
+  "Renekton":   [["Lee Sin","Jungle","Kick para pelear early",92],["Leona","Support","Doble CC devastador",88],["Jinx","ADC","Explota tus early kills",85],["Jarvan IV","Jungle","Zona para tu engage",82],["Caitlyn","ADC","Headshot en tu stun",80]],
+  "Riven":      [["Lee Sin","Jungle","Kick + tu burst",92],["Orianna","Mid","Ball donde dashás",88],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage combo mortal",82],["Jarvan IV","Jungle","Zona para tus combos",80]],
+  "Rumble":     [["Orianna","Mid","Ambos de AoE",90],["Miss Fortune","ADC","Doble ultimate AoE",94],["Amumu","Jungle","Engage para tu R",88],["Jarvan IV","Jungle","Zona para tu R",85],["Jinx","ADC","Explota tus teamfights",82]],
+  "Sett":       [["Orianna","Mid","Ball en tu zona de suplexes",88],["Amumu","Jungle","Doble engage frontline",85],["Jinx","ADC","Explota tus teamfights",82],["Miss Fortune","ADC","R en tu zona",80],["Leona","Support","CC encadenado",78]],
+  "Shen":       [["Twisted Fate","Mid","TF + R global = pick infinito",94],["Jinx","ADC","R la salva en teamfight",92],["Caitlyn","ADC","R la protege al snipear",88],["Jhin","ADC","R cuando usa W",85],["Jarvan IV","Jungle","R para reforzar ganks",82]],
+  "Sion":       [["Orianna","Mid","Ball en tu zona de R",88],["Miss Fortune","ADC","R en tus teamfights",90],["Amumu","Jungle","Doble engage CC",85],["Jinx","ADC","Explota tus peleas",82],["Jarvan IV","Jungle","Zona para tu R",80]],
+  "Singed":     [["Orianna","Mid","Ball donde corres",88],["Amumu","Jungle","Engage + tu chase",85],["Jinx","ADC","Explota tu proxy",80],["Janna","Support","Peel mientras corrés",82],["Twisted Fate","Mid","TF cubre tus rotaciones",78]],
+  "Tahm Kench": [["Jinx","ADC","Tragate para salvarla",92],["Caitlyn","ADC","Traga para reposicionarla",88],["Orianna","Mid","Ball en tu zona",82],["Amumu","Jungle","Engage + tu peel",80],["Jarvan IV","Jungle","Zona para tus combos",78]],
+  "Teemo":      [["Caitlyn","ADC","Headshot + shrooms",88],["Twisted Fate","Mid","Ambos de poke + shrooms",85],["Jarvan IV","Jungle","Zona para tus shrooms",80],["Jhin","ADC","W en tus zonas envenenadas",82],["Lux","Support","Poke + tus shrooms",78]],
+  "Trundle":    [["Amumu","Jungle","Doble CC engage",88],["Jinx","ADC","Explota tus teamfights",85],["Orianna","Mid","Ball en tu zona",82],["Miss Fortune","ADC","R en tu zona",80],["Jarvan IV","Jungle","Zona para tus peleas",78]],
+  "Tryndamere": [["Twisted Fate","Mid","TF cubre tus splits",92],["Jhin","ADC","W mientras spliteas",85],["Shen","Top","R cuando spliteas",88],["Kog'Maw","ADC","Tu split protege su range",80],["Karma","Support","Acelerarte en split",78]],
+  "Urgot":      [["Amumu","Jungle","Engage para tus teamfights",88],["Orianna","Mid","Ball en tu zona",85],["Miss Fortune","ADC","R + tu R = teamwipe",90],["Jinx","ADC","Explota tus peleas",82],["Jarvan IV","Jungle","Zona para tus combos",80]],
+  "Vladimir":   [["Orianna","Mid","Ball en tus teamfights",88],["Amumu","Jungle","Engage para tu pool late",85],["Lulu","Support","R amplifica tu escale",90],["Jarvan IV","Jungle","Zona para tu R",82],["Jinx","ADC","Explota tu late game",80]],
+  "Volibear":   [["Orianna","Mid","Ball en tu engage",88],["Amumu","Jungle","Doble engage",85],["Miss Fortune","ADC","R en tu zona",90],["Jinx","ADC","Explota tus teamfights",82],["Jarvan IV","Jungle","Doble engage CC",80]],
+  "Warwick":    [["Lee Sin","Jungle","Ambos de dive",88],["Jinx","ADC","Explota tus picks",85],["Orianna","Mid","Ball en tu zona",82],["Thresh","Support","Engage para entrar",80],["Jarvan IV","Jungle","Doble engage",78]],
+  "Wukong":     [["Orianna","Mid","Ball en tu R knockup",92],["Miss Fortune","ADC","R + tu R = teamwipe",90],["Amumu","Jungle","Doble AoE engage",88],["Jinx","ADC","Explota tus teamfights",85],["Jarvan IV","Jungle","Zona para tus combos",82]],
+  "Yorick":     [["Twisted Fate","Mid","TF cubre tus splits",92],["Jhin","ADC","Pressure global",85],["Shen","Top","R mientras tus ghouls",88],["Kog'Maw","ADC","Tu split protege su range",80],["Karma","Support","Acelerarte",78]],
+
+  // ── JUNGLE ──
+  "Amumu":      [["Orianna","Mid","Ball posicionado = combo perfecto",98],["Miss Fortune","ADC","R en tu R = teamwipe",94],["Jinx","ADC","Explota tu CC masivo",90],["Syndra","Mid","Burst detrás de tu engage",88],["Seraphine","Mid","R + tu R encadenado",92]],
+  "Bel'Veth":   [["Orianna","Mid","Ball en tu zona de void",88],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage para entrar",82],["Jarvan IV","Top","Zona para tus combos",80],["Lux","Mid","Poke + tu burst",78]],
+  "Briar":      [["Orianna","Mid","Ball en tu R",88],["Jinx","ADC","Explota tus teamfights",85],["Leona","Support","CC encadenado",82],["Miss Fortune","ADC","R en tu zona",80],["Jarvan IV","Top","Zona para tus combos",78]],
+  "Diana":      [["Orianna","Mid","Ball donde entras",88],["Miss Fortune","ADC","R en tu engage",90],["Amumu","Top","Doble engage",85],["Jinx","ADC","Explota tus picks",82],["Jarvan IV","Top","Zona para tus combos",80]],
+  "Ekko":       [["Orianna","Mid","Ball en tu zona",88],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage combo",82],["Leona","Support","CC para tu burst",80],["Lux","Mid","Ambos de burst mágico",78]],
+  "Elise":      [["Caitlyn","ADC","Headshot en tu stun",90],["Orianna","Mid","Ball en tu zona",85],["Jinx","ADC","Explota tus early kills",82],["Lee Sin","Top","Doble CC early",88],["Leona","Support","Doble CC en gank",85]],
+  "Evelynn":    [["Orianna","Mid","Ball en tu ganks",85],["Jinx","ADC","Explota tus picks",82],["Thresh","Support","Engage combo",80],["Caitlyn","ADC","Headshot en tu charm",88],["Lux","Mid","Burst detrás de tu gank",78]],
+  "Fiddlesticks":[["Orianna","Mid","Ball en tu R sorpresa",90],["Miss Fortune","ADC","Doble R AoE",94],["Amumu","Top","Doble engage masivo",88],["Jinx","ADC","Explota tus fears",85],["Syndra","Mid","Burst en tu R",82]],
+  "Graves":     [["Orianna","Mid","Ball en tu zona",85],["Jinx","ADC","Explota tus peleas",82],["Lee Sin","Top","Ambos de burst AD",80],["Thresh","Support","Engage para entrar",78],["Caitlyn","ADC","Poke + headshot",76]],
+  "Hecarim":    [["Orianna","Mid","Ball en tu R carga",92],["Miss Fortune","ADC","R en tu engage",90],["Amumu","Top","Doble engage frontline",85],["Jinx","ADC","Explota tus teamfights",82],["Syndra","Mid","Burst detrás de tu engage",80]],
+  "Ivern":      [["Jinx","ADC","Daisy + Jinx = carry segura",92],["Kog'Maw","ADC","Peel para su rango",90],["Azir","Mid","Daisy + soldados",88],["Vayne","ADC","Peel para su 1v1",85],["Lulu","Support","Doble peel para carry",88]],
+  "Jarvan IV":  [["Orianna","Mid","Ball en tu zona = combo perfecto",94],["Miss Fortune","ADC","R en tu cataclismo",92],["Jinx","ADC","Explota tu engage",88],["Syndra","Mid","Burst en tu zona",85],["Twisted Fate","Mid","TF + cataclismo = catch",90]],
+  "Kayn":       [["Orianna","Mid","Ball en tu zona",85],["Jinx","ADC","Explota tus picks",82],["Thresh","Support","Engage combo",80],["Caitlyn","ADC","Headshot después de tu burst",85],["Lee Sin","Top","Ambos de dive",78]],
+  "Kha'Zix":    [["Twisted Fate","Mid","TF setea tus picks",90],["Orianna","Mid","Ball + tu burst",85],["Thresh","Support","Pull para tus isolate kills",88],["Caitlyn","ADC","Headshot en isolate",85],["Jinx","ADC","Explota tus picks",82]],
+  "Kindred":    [["Orianna","Mid","Ball en tu zona",85],["Jinx","ADC","Explota tus peleas",82],["Thresh","Support","Engage combo",80],["Lulu","Support","Amplifica tu R",88],["Jarvan IV","Top","Zona para tus combos",78]],
+  "Lee Sin":    [["Orianna","Mid","Ball en tu kick = combo perfecto",98],["Caitlyn","ADC","Headshot en el kickeado",92],["Jarvan IV","Top","Zona donde kickeas",88],["Thresh","Support","Pull después del kick",90],["Jinx","ADC","Explota tus picks",85]],
+  "Lillia":     [["Orianna","Mid","Ball en tu R sleepy",90],["Miss Fortune","ADC","R en tus dormidos",94],["Amumu","Top","Doble AoE engage",88],["Jinx","ADC","Explota tus teamfights",85],["Seraphine","Mid","R encadenado con tu R",92]],
+  "Master Yi":  [["Lulu","Support","R + Yi = imparable",96],["Soraka","Support","Heals mientras mata",90],["Taric","Support","Invulnerabilidad en teamfight",94],["Jinx","ADC","Ambos de late carry",85],["Orianna","Mid","Ball en tu zona",82]],
+  "Nidalee":    [["Orianna","Mid","Ball en tus spears",85],["Jinx","ADC","Explota tus gankss",82],["Caitlyn","ADC","Headshot después de tu spear",88],["Thresh","Support","Engage combo",80],["Syndra","Mid","Burst en tus combos",78]],
+  "Nocturne":   [["Orianna","Mid","Ball en tu R dive",88],["Caitlyn","ADC","Headshot en tu dive",85],["Thresh","Support","Engage combo",82],["Jinx","ADC","Explota tus picks",80],["Leona","Support","CC para tu dive",78]],
+  "Nunu & Willump":[["Orianna","Mid","Ball en tu R zona",88],["Miss Fortune","ADC","R en tu snowball zona",90],["Amumu","Top","Doble frontline",85],["Jinx","ADC","Explota tus teamfights",82],["Jarvan IV","Top","Zona para tus combos",80]],
+  "Qiyana":     [["Orianna","Mid","Ball en tu R",90],["Jinx","ADC","Explota tus picks",85],["Lee Sin","Top","Kick para tu combo",88],["Thresh","Support","Engage combo",82],["Caitlyn","ADC","Headshot en tu stun",80]],
+  "Rammus":     [["Caitlyn","ADC","Headshot en tu taunt",92],["Orianna","Mid","Ball en tu engage",88],["Amumu","Top","Doble engage CC",85],["Jinx","ADC","Explota tus taunt kills",82],["Leona","Support","Doble CC engage",80]],
+  "Rek'Sai":    [["Orianna","Mid","Ball en tu knock-up",88],["Caitlyn","ADC","Headshot en tu knock-up",90],["Jinx","ADC","Explota tus gankss",85],["Thresh","Support","Engage combo",82],["Lee Sin","Top","Ambos de early dive",80]],
+  "Rengar":     [["Twisted Fate","Mid","TF setea tus picks",90],["Orianna","Mid","Ball en tu R dive",85],["Thresh","Support","Pull para tus dives",88],["Caitlyn","ADC","Headshot después de tu burst",82],["Jinx","ADC","Explota tus picks",80]],
+  "Sejuani":    [["Orianna","Mid","Ball en tu R",92],["Miss Fortune","ADC","R en tu R zona",90],["Jinx","ADC","Explota tu CC masivo",88],["Syndra","Mid","Burst detrás de tu engage",85],["Amumu","Top","Doble frontline",82]],
+  "Shaco":      [["Twisted Fate","Mid","TF + shaco picks",88],["Caitlyn","ADC","Headshot en tus boxes",85],["Orianna","Mid","Ball en tu zona",82],["Jinx","ADC","Explota tus picks",80],["Lux","Mid","Poke + tus boxes",78]],
+  "Shyvana":    [["Orianna","Mid","Ball en tu R",88],["Miss Fortune","ADC","R en tus teamfights",85],["Amumu","Top","Doble frontline",82],["Jinx","ADC","Explota tus peleas",80],["Jarvan IV","Top","Zona para tus combos",78]],
+  "Skarner":    [["Caitlyn","ADC","Headshot en tu R",92],["Orianna","Mid","Ball en tu zona",88],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage combo",82],["Leona","Support","CC para tu impale",80]],
+  "Sylas":      [["Orianna","Mid","Roba su R",98],["Miss Fortune","ADC","Roba su R para teamwipe",94],["Malphite","Top","Roba su R para engage",96],["Amumu","Top","Roba su R",90],["Jinx","ADC","Explota tus picks",82]],
+  "Taliyah":    [["Orianna","Mid","Ball en tu R zona",88],["Miss Fortune","ADC","R en tu R zona",92],["Jinx","ADC","Explota tus teamfights",85],["Amumu","Top","Engage + tus rocks",82],["Jarvan IV","Top","Zona para tus rocks",80]],
+  "Udyr":       [["Orianna","Mid","Ball en tu zona",85],["Jinx","ADC","Explota tus teamfights",82],["Amumu","Top","Doble frontline",80],["Lulu","Support","Amplifica tu R",88],["Thresh","Support","Engage combo",78]],
+  "Vi":         [["Orianna","Mid","Ball en tu R",92],["Caitlyn","ADC","Headshot en tu R",94],["Jinx","ADC","Explota tus picks",88],["Thresh","Support","Engage combo",85],["Jarvan IV","Top","Zona para tus combos",82]],
+  "Viego":      [["Orianna","Mid","Ball en tu zona",88],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage combo",82],["Caitlyn","ADC","Headshot después de tu burst",80],["Lee Sin","Top","Ambos de dive",78]],
+  "Xin Zhao":   [["Orianna","Mid","Ball en tu zona",88],["Caitlyn","ADC","Headshot en tu knock-up",90],["Jinx","ADC","Explota tus peleas",85],["Leona","Support","Doble CC engage",82],["Jarvan IV","Top","Zona para tus combos",80]],
+  "Zac":        [["Orianna","Mid","Ball en tu R",92],["Miss Fortune","ADC","R en tu R zona",90],["Jinx","ADC","Explota tu CC",88],["Syndra","Mid","Burst detrás de tu engage",85],["Amumu","Top","Doble engage CC",82]],
+
+  // ── MID ──
+  "Ahri":       [["Lee Sin","Jungle","Kick para tu charm",92],["Jinx","ADC","Explota tus picks",88],["Thresh","Support","Engage para tus burst",85],["Jarvan IV","Jungle","Zona para tu charm",82],["Caitlyn","ADC","Headshot en tu charm",90]],
+  "Akali":      [["Lee Sin","Jungle","Kick para tu dive",90],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage combo",82],["Jarvan IV","Jungle","Zona para tus combos",80],["Vi","Jungle","Doble dive al backline",88]],
+  "Anivia":     [["Amumu","Jungle","Engage para tus teamfights",88],["Miss Fortune","ADC","R en tu zona de pared",92],["Jarvan IV","Jungle","Zona para tus combos",85],["Jinx","ADC","Explota tus teamfights",82],["Orianna","Top","Ambos de AoE control",80]],
+  "Annie":      [["Amumu","Jungle","Doble stun masivo",90],["Tibbers + Jarvan IV","Jungle","Zona para tus bears",88],["Miss Fortune","ADC","R en tus stuns",92],["Jinx","ADC","Explota tus teamfights",85],["Leona","Support","CC encadenado",82]],
+  "Aurelion Sol":[["Amumu","Jungle","Engage para tu R",88],["Jinx","ADC","Explota tus teamfights",85],["Orianna","Top","Ambos de AoE",80],["Miss Fortune","ADC","R en tu zona",90],["Jarvan IV","Jungle","Zona para tus combos",82]],
+  "Azir":       [["Orianna","Top","Ambos de AoE zona",88],["Jinx","ADC","Explota tus teamfights",85],["Amumu","Jungle","Engage para tu zona",82],["Miss Fortune","ADC","R en tu zona",90],["Lulu","Support","Amplifica tu carry mid",80]],
+  "Cassiopeia": [["Amumu","Jungle","Engage para tu veneno",88],["Miss Fortune","ADC","R en tu zona de veneno",92],["Malphite","Top","R + tu veneno = GG",90],["Jinx","ADC","Explota tus teamfights",85],["Orianna","Top","Ambos de AoE",82]],
+  "Corki":      [["Jarvan IV","Jungle","Zona para tu poke",85],["Caitlyn","ADC","Ambos de poke",82],["Orianna","Top","Ball + tus rockets",80],["Jinx","ADC","Explota tus peleas",78],["Lux","Support","Poke + tus rockets",76]],
+  "Ekko":       [["Orianna","Top","Ball donde retrocedes",88],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage combo",82],["Leona","Support","CC para tu burst",80],["Lux","Support","Burst detrás de tus combos",78]],
+  "Fizz":       [["Lee Sin","Jungle","Kick para tu R",90],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage combo",82],["Caitlyn","ADC","Headshot en tu R shark",88],["Leona","Support","CC para tu dive",80]],
+  "Galio":      [["Jinx","ADC","R para salvarte o ganks",92],["Caitlyn","ADC","R en su posición",88],["Twisted Fate","Mid","TF + R global",90],["Jarvan IV","Jungle","Zona para tu R",85],["Miss Fortune","ADC","R detrás de tu engage",90]],
+  "Hwei":       [["Amumu","Jungle","Engage para tus teamfights",88],["Miss Fortune","ADC","R en tu zona",90],["Jinx","ADC","Explota tus combos",85],["Jarvan IV","Jungle","Zona para tus spells",82],["Orianna","Top","Ambos de AoE",80]],
+  "Kassadin":   [["Amumu","Jungle","Engage mientras escalás",85],["Jinx","ADC","Explota tus picks late",82],["Lulu","Support","Amplifica tu late game",88],["Thresh","Support","Peel para escalar",80],["Orianna","Top","Ball en tus teamfights",78]],
+  "Katarina":   [["Amumu","Jungle","R + tu R sin interrupciones",92],["Leona","Support","CC para que hagas R libre",88],["Jinx","ADC","Explota tus multi-kills",85],["Malphite","Top","R + tu R sin CC",90],["Miss Fortune","ADC","Ambos de teamfight AoE",88]],
+  "Karthus":    [["Amumu","Jungle","Engage para tu R global",88],["Zac","Jungle","Doble engage CC",85],["Jinx","ADC","Explota tus teamfights",82],["Miss Fortune","ADC","Ambos de R AoE",90],["Orianna","Top","Ball + tu R",85]],
+  "LeBlanc":    [["Lee Sin","Jungle","Kick para tus picks",90],["Caitlyn","ADC","Headshot en tu chain",88],["Thresh","Support","Engage combo",85],["Jinx","ADC","Explota tus picks",82],["Twisted Fate","Mid","Ambos de picks globales",88]],
+  "Lissandra":  [["Amumu","Jungle","Doble CC engage",88],["Jarvan IV","Jungle","Zona para tus combos",85],["Miss Fortune","ADC","R en tu R zona",90],["Jinx","ADC","Explota tus teamfights",82],["Orianna","Top","Ambos de AoE CC",80]],
+  "Lux":        [["Blitzcrank","Support","Pull + tu Q",92],["Leona","Support","Stun para tus snipes",88],["Caitlyn","ADC","Headshot en tu Q",90],["Thresh","Support","Engage combo",85],["Jinx","ADC","Explota tus burst",82]],
+  "Malzahar":   [["Jarvan IV","Jungle","Zona donde suprimes",88],["Caitlyn","ADC","Headshot durante tu R",92],["Amumu","Jungle","Engage + tu supression",85],["Jinx","ADC","Explota tus picks",82],["Leona","Support","CC para que uses R seguro",80]],
+  "Naafiri":    [["Lee Sin","Jungle","Kick para tu dive",88],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage combo",82],["Caitlyn","ADC","Headshot en tu engage",80],["Jarvan IV","Jungle","Zona para tus combos",78]],
+  "Neeko":      [["Amumu","Jungle","Engage para tu R",88],["Miss Fortune","ADC","R en tu R zona",92],["Jinx","ADC","Explota tus teamfights",85],["Jarvan IV","Jungle","Zona para tu R",82],["Orianna","Top","Ambos de AoE",80]],
+  "Orianna":    [["Malphite","Top","La combo más icónica",98],["Amumu","Jungle","Ball + R perfecto",94],["Jarvan IV","Jungle","Cataclismo + Ball",90],["Wukong","Top","R knockup + Ball",92],["Zac","Jungle","Doble AoE engage",88]],
+  "Ryze":       [["Amumu","Jungle","Engage para tu late game",88],["Jinx","ADC","Explota tus teamfights",85],["Lulu","Support","Amplifica tu escale",90],["Orianna","Top","Ball en tus teamfights",82],["Jarvan IV","Jungle","Zona para tus combos",80]],
+  "Syndra":     [["Jarvan IV","Jungle","Zona para tu burst",88],["Leona","Support","Stun para tus combos",85],["Caitlyn","ADC","Headshot después de tu stun",82],["Jinx","ADC","Explota tus picks",80],["Amumu","Jungle","Engage para tu burst",78]],
+  "Talon":      [["Lee Sin","Jungle","Ambos de picks",88],["Twisted Fate","Mid","Ambos de picks globales",90],["Jinx","ADC","Explota tus picks",85],["Thresh","Support","Engage combo",82],["Caitlyn","ADC","Headshot en tus dives",80]],
+  "Twisted Fate":[["Nidalee","Jungle","Ambos de picks globales",90],["Lee Sin","Jungle","Kick para tus picks",88],["Jinx","ADC","Explota tus picks globales",85],["Caitlyn","ADC","Headshot en tu gold card",92],["Thresh","Support","Hook para tus picks",82]],
+  "Veigar":     [["Blitzcrank","Support","Pull + tu cage",92],["Leona","Support","Stun en tu cage",88],["Caitlyn","ADC","Headshot en tu cage",90],["Thresh","Support","Engage + tu cage",85],["Amumu","Jungle","Engage para tu late game",82]],
+  "Vel'Koz":    [["Leona","Support","Stun para tu poke",88],["Blitzcrank","Support","Pull + tu poke",85],["Caitlyn","ADC","Headshot en tu CC",82],["Jinx","ADC","Explota tus teamfights",80],["Amumu","Jungle","Engage para tu late",78]],
+  "Viktor":     [["Amumu","Jungle","Engage para tu zona",88],["Miss Fortune","ADC","R en tu gravity field",92],["Jarvan IV","Jungle","Zona para tus combos",85],["Jinx","ADC","Explota tus teamfights",82],["Orianna","Top","Ambos de AoE control",80]],
+  "Xerath":     [["Leona","Support","Stun para tus snipes",88],["Blitzcrank","Support","Pull + tus projectiles",85],["Caitlyn","ADC","Headshot en tu CC",82],["Jinx","ADC","Explota tus picks",80],["Jarvan IV","Jungle","Zona para tus spells",78]],
+  "Yasuo":      [["Malphite","Top","R + Yasuo R = devastador",98],["Jarvan IV","Jungle","Cataclismo + tu R",92],["Amumu","Jungle","R + tu R",90],["Wukong","Top","Doble knockup",88],["Lee Sin","Jungle","Kick knockup + tu R",94]],
+  "Yone":       [["Malphite","Top","R + Yone R = devastador",94],["Jarvan IV","Jungle","Cataclismo + tu R",90],["Amumu","Jungle","R + tu R",88],["Lulu","Support","Amplifica tu carry",85],["Orianna","Top","Ball en tu R",82]],
+  "Zed":        [["Lee Sin","Jungle","Kick para tus picks",90],["Twisted Fate","Mid","Ambos de picks globales",88],["Caitlyn","ADC","Headshot después de tu burst",85],["Thresh","Support","Engage combo",82],["Jinx","ADC","Explota tus picks",80]],
+  "Ziggs":      [["Jarvan IV","Jungle","Zona para tus bombas",85],["Caitlyn","ADC","Headshot en tus slow",82],["Miss Fortune","ADC","R en tus zonas",88],["Jinx","ADC","Explota tus teamfights",80],["Orianna","Top","Ambos de zona control",78]],
+
+  // ── ADC ──
+  "Aphelios":   [["Lulu","Support","R amplifica todos tus weapons",94],["Thresh","Support","Engage para tus combos",90],["Leona","Support","CC para tus autos",88],["Amumu","Jungle","Engage para tus armas",85],["Orianna","Mid","Ball en tus zonas",82]],
+  "Ashe":       [["Jarvan IV","Jungle","Tu R setea su engage",90],["Amumu","Jungle","Doble engage",88],["Malphite","Top","R + tu R zona",85],["Jinx","ADC","Doble hypercarry late",80],["Lulu","Support","Shield + speed para kite",88]],
+  "Caitlyn":    [["Blitzcrank","Support","Pull + headshot",94],["Thresh","Support","Hook + headshot",90],["Leona","Support","CC para headshots",88],["Nautilus","Support","R + headshot",85],["Vi","Jungle","R + headshot",92]],
+  "Draven":     [["Leona","Support","Doble all-in brutal level 2",94],["Blitzcrank","Support","Pull + tu daño",90],["Nautilus","Support","CC para tus axes",88],["Lee Sin","Jungle","Kick para tus combos",85],["Alistar","Support","Doble CC engage",82]],
+  "Ezreal":     [["Lulu","Support","Shield + speed para kite",90],["Nami","Support","Speed + heals",88],["Karma","Support","Shield + poke",85],["Thresh","Support","Engage + peel",82],["Orianna","Mid","Ball en tus teamfights",80]],
+  "Jhin":       [["Blitzcrank","Support","Pull + W root",94],["Leona","Support","Stun en tu W",92],["Thresh","Support","Hook + tu W",90],["Morgana","Support","Root + tu W",88],["Nami","Support","Bubble + tu W",85]],
+  "Jinx":       [["Amumu","Jungle","Engage para tu late game",90],["Malphite","Top","R + tu late hypercarry",88],["Lulu","Support","R amplifica tu late game",94],["Leona","Support","CC para tus autos",85],["Orianna","Mid","Ball en tus teamfights",82]],
+  "Kai'Sa":     [["Leona","Support","E aplica tu passive",92],["Nautilus","Support","R aplica tu passive",90],["Thresh","Support","Hook aplica tu passive",88],["Blitzcrank","Support","Pull aplica tu passive",85],["Jarvan IV","Jungle","Zona para tu dive",82]],
+  "Kalista":    [["Thresh","Support","Toss combo legendary",98],["Blitzcrank","Support","Pull + tu ataques",88],["Leona","Support","CC para tus stacks",85],["Nautilus","Support","CC para tus stacks",82],["Jarvan IV","Jungle","Zona para tus combos",80]],
+  "Kog'Maw":    [["Lulu","Support","R = Kog'Maw gigante imparable",96],["Thresh","Support","Peel para tu rango",90],["Janna","Support","Disengage para kite",88],["Ivern","Jungle","Daisy + tu rango",90],["Soraka","Support","Heals mientras haces daño",85]],
+  "Lucian":     [["Nami","Support","Bubble + tu passive",92],["Thresh","Support","Hook + tu passive",88],["Senna","Support","Ambos de range + poke",90],["Leona","Support","CC para tu burst",85],["Blitzcrank","Support","Pull + tu passive",82]],
+  "Miss Fortune":[["Amumu","Jungle","R + tu R = teamwipe",98],["Leona","Support","CC durante tu R",94],["Jarvan IV","Jungle","Cataclismo durante tu R",92],["Malphite","Top","R + tu R = GG",90],["Fiddlesticks","Jungle","Doble R AoE",88]],
+  "Nilah":      [["Thresh","Support","Engage para tu burst",88],["Leona","Support","CC para tus autos",85],["Blitzcrank","Support","Pull + tu burst",82],["Jarvan IV","Jungle","Zona para tus combos",80],["Lee Sin","Jungle","Kick para tus combos",78]],
+  "Samira":     [["Leona","Support","Doble all-in brutal",94],["Nautilus","Support","R + tu R = combo",90],["Blitzcrank","Support","Pull + tu burst",88],["Alistar","Support","Doble CC para tu R",85],["Lee Sin","Jungle","Kick + tu R combo",88]],
+  "Senna":      [["Lucian","ADC","Combo legendario",98],["Thresh","Support","Ambos de global utility",88],["Jinx","ADC","Heals para tu hypercarry",85],["Kog'Maw","ADC","Heals para tu rango",82],["Jarvan IV","Jungle","Zona para tus picks",80]],
+  "Sivir":      [["Amumu","Jungle","R + tu R speed boost",90],["Malphite","Top","R + tu speed boost",88],["Orianna","Mid","Ball + tu R speed boost",85],["Jinx","ADC","Doble hypercarry late",80],["Lulu","Support","Shield + speed",82]],
+  "Smolder":    [["Lulu","Support","Amplifica tu escale",90],["Thresh","Support","Engage combo",85],["Orianna","Mid","Ball en tus teamfights",82],["Amumu","Jungle","Engage para tu late",80],["Jarvan IV","Jungle","Zona para tus combos",78]],
+  "Tristana":   [["Leona","Support","All-in desde level 2",92],["Blitzcrank","Support","Pull + tu burst",88],["Lee Sin","Jungle","Kick para tus dives",85],["Nautilus","Support","R + tu W knock",82],["Caitlyn","ADC","Doble poke + burst",80]],
+  "Twitch":     [["Lulu","Support","R amplifica tu late game",94],["Orianna","Mid","Ball en tu R zone",88],["Amumu","Jungle","Engage para tu late",85],["Nami","Support","Speed para kite",82],["Jinx","ADC","Doble hypercarry",80]],
+  "Varus":      [["Blitzcrank","Support","Pull + tu W stacks",90],["Leona","Support","CC durante tu R root",88],["Thresh","Support","Engage combo",85],["Jarvan IV","Jungle","Zona para tu poke",82],["Caitlyn","ADC","Headshot + tu poke",80]],
+  "Vayne":      [["Lulu","Support","R = Vayne gigante imparable",96],["Thresh","Support","Peel + engage combo",90],["Janna","Support","Disengage para kite",88],["Orianna","Mid","Ball en tus teamfights",82],["Ivern","Jungle","Daisy + tu 1v1",88]],
+  "Xayah":      [["Rakan","Support","Combo legendario",98],["Thresh","Support","Engage + peel",88],["Leona","Support","CC para tus feathers",85],["Jarvan IV","Jungle","Zona para tus combos",82],["Lee Sin","Jungle","Kick para tus combos",80]],
+  "Yunara":     [["Lulu","Support","Amplifica tu late game",90],["Thresh","Support","Engage combo",85],["Leona","Support","CC para tus autos",82],["Amumu","Jungle","Engage para tus teamfights",80],["Jinx","ADC","Doble hypercarry",78]],
+  "Zeri":       [["Lulu","Support","R amplifica tu movilidad",94],["Nami","Support","Speed para kite infinito",90],["Orianna","Mid","Ball donde dashes",88],["Jarvan IV","Jungle","Zona para tus combos",82],["Thresh","Support","Engage + peel",80]],
+
+  // ── SUPPORT ──
+  "Alistar":    [["Draven","ADC","Doble all-in brutal",94],["Jinx","ADC","Engage para tu hypercarry",88],["Miss Fortune","ADC","CC para tu R",90],["Samira","ADC","CC para tu R",92],["Caitlyn","ADC","Headshot en tus combos",85]],
+  "Bard":       [["Ezreal","ADC","Ambos de global utility",88],["Caitlyn","ADC","Poke + tu poke",82],["Jinx","ADC","Explota tus teamfights",80],["Jhin","ADC","Ambos de picks globales",85],["Twisted Fate","Mid","Ambos de picks globales",82]],
+  "Blitzcrank": [["Caitlyn","ADC","Headshot en el pullado",98],["Draven","ADC","Pull + tu burst",94],["Varus","ADC","Pull + tus stacks",88],["Jhin","ADC","Pull + tu W",90],["Miss Fortune","ADC","Pull + tu burst",85]],
+  "Brand":      [["Leona","Support","Ambos de CC + daño",85],["Jinx","ADC","Explota tus teamfights",82],["Amumu","Jungle","Engage para tu R pasivo",88],["Miss Fortune","ADC","R en tus stuns",90],["Jarvan IV","Jungle","Zona para tus combos",80]],
+  "Braum":      [["Jinx","ADC","Passive stacks + hypercarry",90],["Caitlyn","ADC","Headshot en tus stacks",88],["Varus","ADC","Stacks + tu R",85],["Draven","ADC","Peel para tu burst",82],["Lucian","ADC","Passive stacks + burst",80]],
+  "Janna":      [["Kog'Maw","ADC","Peel máximo para tu rango",94],["Vayne","ADC","Disengage para tu 1v1",92],["Jinx","ADC","Peel para tu hypercarry",90],["Twitch","ADC","Speed en tu R",88],["Miss Fortune","ADC","Disengage si algo sale mal",82]],
+  "Karma":      [["Ezreal","ADC","Shield + poke doble",92],["Caitlyn","ADC","Shield + poke",88],["Jinx","ADC","Shield + speed para late",85],["Varus","ADC","Poke doble sostenido",82],["Jhin","ADC","Ambos de poke",80]],
+  "Leona":      [["Draven","ADC","Doble all-in level 2",98],["Caitlyn","ADC","Stun + headshot",96],["Jinx","ADC","CC para tu hypercarry",90],["Jhin","ADC","Stun + W root",92],["Samira","ADC","CC para su R",94]],
+  "Lulu":       [["Kog'Maw","ADC","Combo más OP del juego",98],["Jinx","ADC","R amplifica tu hypercarry",94],["Vayne","ADC","R amplifica tu 1v1",92],["Twitch","ADC","R amplifica tu late",90],["Master Yi","Jungle","R amplifica tu Yi",96]],
+  "Milio":      [["Kai'Sa","ADC","Purifica para que hagas R",92],["Samira","ADC","Purifica para tu R",90],["Jinx","ADC","Shield + heals",88],["Kog'Maw","ADC","Peel + heals para tu rango",85],["Ezreal","ADC","Shield + poke",82]],
+  "Morgana":    [["Caitlyn","ADC","Root + headshot",94],["Jinx","ADC","Shield antiCC + heals",90],["Blitzcrank","Support","Ambos de CC",85],["Varus","ADC","Root + tus stacks",88],["Jhin","ADC","Root + tu W",90]],
+  "Nami":       [["Lucian","ADC","Passive + tu burst",94],["Jinx","ADC","Heals + speed para late",90],["Ezreal","ADC","Speed + heals para kite",88],["Caitlyn","ADC","Bubble + headshot",85],["Zeri","ADC","Speed para kite infinito",92]],
+  "Nautilus":   [["Caitlyn","ADC","R + headshot",96],["Jinx","ADC","CC para tu hypercarry",90],["Miss Fortune","ADC","R + tu R",88],["Kai'Sa","ADC","R aplica passive",90],["Samira","ADC","R combo brutal",92]],
+  "Pyke":       [["Draven","ADC","Kills + tu passive gold",94],["Jinx","ADC","Picks + tu passive",90],["Caitlyn","ADC","Hook + headshot",88],["Samira","ADC","R combo + tu R gold",92],["Lucian","ADC","Kill pressure máxima",85]],
+  "Rakan":      [["Xayah","ADC","Combo legendario",98],["Jinx","ADC","Engage para tu hypercarry",90],["Samira","ADC","CC para tu R",92],["Miss Fortune","ADC","CC para tu R",88],["Kai'Sa","ADC","Engage + tu dive",85]],
+  "Rell":       [["Samira","ADC","CC para tu R",94],["Miss Fortune","ADC","R + tu R",92],["Jinx","ADC","CC para tu hypercarry",88],["Caitlyn","ADC","Headshot en tus stuns",85],["Draven","ADC","Doble all-in brutal",90]],
+  "Renata Glasc":[["Jinx","ADC","R + tu chemtech combo",92],["Jinx","ADC","Passive en tus allies",88],["Kog'Maw","ADC","Chemtech + tu rango",85],["Samira","ADC","R combo mortal",82],["Miss Fortune","ADC","R en tus zonas",80]],
+  "Seraphine":  [["Miss Fortune","ADC","Doble R AoE encadenado",94],["Amumu","Jungle","Engage para tus AoE",90],["Jinx","ADC","Heals + poke para tu late",88],["Orianna","Mid","Ambos de AoE control",85],["Lillia","Jungle","Doble R encadenado",92]],
+  "Sona":       [["Miss Fortune","ADC","R + tu R = teamwipe",94],["Jinx","ADC","Heals + speed para late",90],["Kog'Maw","ADC","Peel + heals para rango",88],["Ezreal","ADC","Speed + heals",85],["Jinx","ADC","Heals + tu hypercarry",88]],
+  "Soraka":     [["Kog'Maw","ADC","Heals infinitas para tu rango",94],["Jinx","ADC","Heals para tu hypercarry",90],["Vayne","ADC","Heals para tu 1v1",88],["Twitch","ADC","Heals + tu late",85],["Caitlyn","ADC","Heals para poke seguro",82]],
+  "Taric":      [["Master Yi","Jungle","Invulnerabilidad = GG",98],["Jinx","ADC","Invulnerabilidad en teamfight",92],["Miss Fortune","ADC","R durante invulnerabilidad",90],["Kog'Maw","ADC","Invulnerabilidad + heals",88],["Vayne","ADC","Invulnerabilidad en 1v1",85]],
+  "Thresh":     [["Caitlyn","ADC","Hook + headshot legendario",96],["Jinx","ADC","Engage + peel perfecto",90],["Xayah","ADC","Combo legendario con Rakan",88],["Draven","ADC","Hook + tu burst",92],["Ezreal","ADC","Engage + peel",85]],
+  "Yuumi":      [["Jinx","ADC","Heals mientras haces daño",92],["Kog'Maw","ADC","Heals para tu rango",90],["Vayne","ADC","Heals en tu 1v1",88],["Twitch","ADC","Heals + speed late",85],["Miss Fortune","ADC","Heals + tu R",82]],
+  "Zilean":     [["Jinx","ADC","R resucita en teamfight",94],["Kog'Maw","ADC","Speed + R para tu rango",90],["Miss Fortune","ADC","R + tu R combo",88],["Twitch","ADC","Speed para kite",85],["Vayne","ADC","R resucita tu 1v1",88]],
+  "Zyra":       [["Amumu","Jungle","Engage para tus plantas",88],["Miss Fortune","ADC","R en tu zona de plantas",92],["Jinx","ADC","Explota tus teamfights",85],["Blitzcrank","Support","Pull + tus raíces",82],["Leona","Support","CC encadenado",80]],
+};
+
+// Override getSynergies to use specific data
 function getSynergies(c) {
+  var specific = SYNERGY_SPECIFIC[c.n];
+  if(specific && specific.length) return specific.slice(0,5);
+  // Fallback to archetype
   var roleData = SYNERGY[c.r] || SYNERGY.Mid;
   var style = SYNERGY_STYLE[ARCHETYPE[c.n] || 'bruiser'];
   var picks = roleData[style] || roleData.default || [];
-  // Fill up to 5 with defaults if needed
   if(picks.length < 3) picks = (roleData.default || []).concat(picks).slice(0,5);
   return picks.slice(0,5);
 }
+
 
 /* ════════════════════════════════════
    SUMMONER SEARCH
@@ -2804,6 +3041,79 @@ document.addEventListener('click', function(e){
   if(wrap && !wrap.contains(e.target)){
     var r = document.getElementById('reverse-results');
     if(r) r.style.display = 'none';
+  }
+});
+
+/* ════════════════════════════════════
+   SEARCH POPUP
+════════════════════════════════════ */
+var popupRole = 'Todos';
+
+function openSearchPopup(){
+  popupRole = 'Todos';
+  document.getElementById('search-popup').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+  // Build role tabs
+  var roles = ['Todos','Top','Jungle','Mid','ADC','Support'];
+  document.getElementById('search-popup-roles').innerHTML = roles.map(function(r){
+    return '<button class="rtab role-btn-'+r+(r==='Todos'?' on':'')+'" onclick="setPopupRole(\''+r+'\')" style="font-size:11px;padding:3px 10px">'+r+'</button>';
+  }).join('');
+  document.getElementById('search-popup-input').value = '';
+  filterSearchPopup();
+  setTimeout(function(){ document.getElementById('search-popup-input').focus(); }, 100);
+}
+
+function closeSearchPopup(){
+  document.getElementById('search-popup').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+function setPopupRole(r){
+  popupRole = r;
+  document.querySelectorAll('#search-popup-roles .rtab').forEach(function(b){
+    b.classList.toggle('on', b.textContent===r);
+  });
+  filterSearchPopup();
+}
+
+function filterSearchPopup(){
+  var q = document.getElementById('search-popup-input').value.toLowerCase().trim();
+  var filtered = ALL.filter(function(c){
+    return (!q || c.n.toLowerCase().indexOf(q)>=0) && (popupRole==='Todos' || c.r===popupRole);
+  });
+  // Deduplicate
+  var seen = {};
+  filtered = filtered.filter(function(c){
+    if(seen[c.n]) return false;
+    seen[c.n] = true;
+    return true;
+  });
+
+  var grid = document.getElementById('search-popup-grid');
+  if(!filtered.length){
+    grid.innerHTML = '<div id="search-popup-empty">No se encontró "'+q+'"</div>';
+    return;
+  }
+
+  var roleColor = {Top:'var(--gold)',Jungle:'var(--green)',Mid:'var(--blue2)',ADC:'var(--red)',Support:'var(--gold2)'};
+  grid.innerHTML = filtered.map(function(c){
+    var imgUrl = 'https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/'+ckey(c.n)+'.png';
+    var d = getData(c);
+    var rc = roleColor[c.r]||'var(--text3)';
+    var isActive = selChamp && selChamp.n===c.n;
+    return '<button class="cbtn role-'+c.r+(isActive?' active':'')+' onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\');closeSearchPopup()" style="padding:6px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:88px;width:100%">'
+      +'<img src="'+imgUrl+'" style="width:52px;height:52px;border-radius:6px;object-fit:cover;border:2px solid '+(isActive?rc:'var(--border2)')+';" onerror="this.style.opacity=.3"/>'
+      +'<span style="font-size:9px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center;max-width:78px">'+c.n+'</span>'
+      +'<span style="font-size:8px;color:'+rc+';font-weight:600">'+c.r+'</span>'
+      +(d.stats&&d.stats.tier?'<span style="font-size:8px;color:var(--text3)">T'+d.stats.tier+'</span>':'')
+      +'</button>';
+  }).join('');
+}
+
+// Close on Escape key
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape'){
+    if(document.getElementById('search-popup').classList.contains('visible')) closeSearchPopup();
   }
 });
 
