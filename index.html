@@ -1590,7 +1590,7 @@ function closeTierList(){
 function renderTierList(){
   var roles = ['Todos','Top','Jungle','Mid','ADC','Support'];
   document.getElementById('tl-roles').innerHTML = roles.map(function(r){
-    return '<button class="rtab'+(r===tlRole?' on':'')+'" onclick="setTlRole(''+r+'')" style="font-size:11px;padding:3px 10px">'+r+'</button>';
+    return '<button class="rtab'+(r===tlRole?' on':'')+'" onclick="setTlRole(\''+r+'\')" style="font-size:11px;padding:3px 10px">'+r+'</button>';
   }).join('');
 
   var tiers = ['S','A','B','C'];
@@ -1616,7 +1616,7 @@ function renderTierList(){
       +'<div class="tier-label tier-label-'+tier+'">'+tier+'</div>'
       +'<div class="tier-champs">'
       +champs.map(function(c){
-        return '<div class="tier-champ" onclick="closeTierList();pickChamp(''+c.n.replace(/'/g,"\'")+'',''+c.r+'')" title="'+c.n+'">'
+        return '<div class="tier-champ" onclick="closeTierList();pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')" title="'+c.n+'">';
           +'<img src="'+cimgUrl(c.n)+'" onerror="this.style.opacity=.3"/>'
           +'<span class="tier-champ-name">'+c.n+'</span>'
           +'</div>';
