@@ -1107,9 +1107,17 @@ function getData(c){
   var s=SPECIFIC[c.n];
   var r=ROLE_DATA[c.r]||ROLE_DATA.Mid;
   if(!s) return r;
+
+  // Check if this champ's primary role in SPECIFIC matches the selected role
+  // If selected role differs (e.g. Jax picked as Jungle but SPECIFIC has Top data),
+  // use ROLE_DATA for counters/good since the matchups change completely by role
+  var primaryEntry = ALL.find(function(x){ return x.n===c.n && x.r===c.r; });
+  var firstEntry   = ALL.find(function(x){ return x.n===c.n; });
+  var isPrimaryRole = firstEntry && firstEntry.r === c.r;
+
   return {
-    ctr:   s.ctr   || r.ctr,
-    good:  s.good  || r.good,
+    ctr:   (!isPrimaryRole ? r.ctr   : null) || s.ctr   || r.ctr,
+    good:  (!isPrimaryRole ? r.good  : null) || s.good  || r.good,
     items: s.items || r.items,
     runes: s.runes || r.runes,
     spells:s.spells|| r.spells,
@@ -1132,6 +1140,166 @@ var SPELL_ROLE={Top:['Flash','Teleport'],Jungle:['Flash','Smite'],Mid:['Flash','
 var SPELL_DATA={"Darius":['Flash','Ghost'],"Garen":['Ghost','Teleport'],"Singed":['Ghost','Teleport'],"Tryndamere":['Flash','Ignite'],"Nasus":['Flash','Teleport'],"Malphite":['Flash','Teleport'],"Sion":['Flash','Teleport'],"Urgot":['Flash','Teleport'],"Mordekaiser":['Flash','Ignite'],"Cho'Gath":['Flash','Teleport'],"Dr. Mundo":['Flash','Teleport'],"K'Sante":['Flash','Teleport'],"Ornn":['Flash','Teleport'],"Tahm Kench":['Flash','Teleport'],"Shen":['Flash','Teleport'],"Poppy":['Flash','Teleport'],"Gragas":['Flash','Ignite'],"Gangplank":['Flash','Teleport'],"Jayce":['Flash','Teleport'],"Riven":['Flash','Ignite'],"Fiora":['Flash','Ignite'],"Camille":['Flash','Teleport'],"Irelia":['Flash','Teleport'],"Jax":['Flash','Teleport'],"Gwen":['Flash','Ignite'],"Renekton":['Flash','Ignite'],"Kennen":['Flash','Teleport'],"Rumble":['Flash','Teleport'],"Gnar":['Flash','Teleport'],"Quinn":['Flash','Teleport'],"Pantheon":['Flash','Teleport'],"Ambessa":['Flash','Ignite'],"Aurora":['Flash','Teleport'],"Kled":['Flash','Ignite'],"Aatrox":['Flash','Teleport'],"Vladimir":['Flash','Teleport'],"Kayle":['Flash','Teleport'],"Teemo":['Flash','Ignite'],"Yorick":['Flash','Teleport'],"Trundle":['Flash','Ignite'],"Wukong":['Flash','Ignite'],"Olaf":['Flash','Ghost'],"Volibear":['Flash','Teleport'],"Warwick":['Flash','Ignite'],"Shyvana":['Flash','Teleport'],"Lee Sin":['Flash','Smite'],"Vi":['Flash','Smite'],"Hecarim":['Flash','Smite'],"Graves":['Flash','Smite'],"Kha'Zix":['Flash','Smite'],"Elise":['Flash','Smite'],"Kindred":['Flash','Smite'],"Nidalee":['Flash','Smite'],"Diana":['Flash','Smite'],"Ekko":['Flash','Smite'],"Evelynn":['Flash','Smite'],"Fiddlesticks":['Flash','Smite'],"Kayn":['Flash','Smite'],"Rengar":['Flash','Smite'],"Shaco":['Flash','Smite'],"Nocturne":['Flash','Smite'],"Rammus":['Flash','Smite'],"Amumu":['Flash','Smite'],"Sejuani":['Flash','Smite'],"Nunu & Willump":['Flash','Smite'],"Zac":['Flash','Smite'],"Jarvan IV":['Flash','Smite'],"Master Yi":['Flash','Smite'],"Xin Zhao":['Flash','Smite'],"Udyr":['Flash','Smite'],"Briar":['Flash','Smite'],"Viego":['Flash','Smite'],"Ivern":['Flash','Smite'],"Taliyah":['Flash','Smite'],"Lillia":['Flash','Smite'],"Skarner":['Flash','Smite'],"Bel'Veth":['Flash','Smite'],"Rek'Sai":['Flash','Smite'],"Qiyana":['Flash','Smite'],"Talon":['Flash','Smite'],"Sylas":['Flash','Smite'],"Katarina":['Flash','Smite'],"Ahri":['Flash','Ignite'],"Zed":['Flash','Ignite'],"Yasuo":['Flash','Ignite'],"Yone":['Flash','Ignite'],"Cassiopeia":['Ghost','Ignite'],"Twisted Fate":['Flash','Ghost'],"Lissandra":['Flash','Ignite'],"Malzahar":['Flash','Ignite'],"Ryze":['Flash','Ghost'],"Kassadin":['Flash','Ignite'],"Annie":['Flash','Ignite'],"Anivia":['Flash','Ignite'],"Galio":['Flash','Teleport'],"Karthus":['Flash','Teleport'],"Vayne":['Flash','Ignite'],"Jinx":['Flash','Heal'],"Caitlyn":['Flash','Heal'],"Draven":['Flash','Heal'],"Ezreal":['Flash','Heal'],"Jhin":['Flash','Heal'],"Ashe":['Flash','Heal'],"Kai'Sa":['Flash','Heal'],"Samira":['Flash','Ignite'],"Lucian":['Flash','Ignite'],"Tristana":['Flash','Heal'],"Varus":['Flash','Heal'],"Xayah":['Flash','Heal'],"Miss Fortune":['Flash','Heal'],"Kog'Maw":['Flash','Heal'],"Sivir":['Flash','Heal'],"Twitch":['Flash','Heal'],"Kalista":['Flash','Heal'],"Aphelios":['Flash','Heal'],"Zeri":['Flash','Heal'],"Smolder":['Flash','Heal'],"Nilah":['Flash','Ignite'],"Yunara":['Flash','Heal'],"Senna":['Flash','Heal'],"Thresh":['Flash','Ignite'],"Blitzcrank":['Flash','Ignite'],"Nautilus":['Flash','Ignite'],"Leona":['Flash','Ignite'],"Lulu":['Flash','Exhaust'],"Janna":['Flash','Exhaust'],"Soraka":['Flash','Exhaust'],"Nami":['Flash','Ignite'],"Yuumi":['Exhaust','Ignite'],"Bard":['Flash','Ignite'],"Milio":['Flash','Exhaust'],"Pyke":['Flash','Ignite'],"Sona":['Flash','Exhaust'],"Rakan":['Flash','Ignite'],"Rell":['Flash','Ignite'],"Alistar":['Flash','Ignite'],"Braum":['Flash','Ignite'],"Taric":['Flash','Ignite'],"Renata Glasc":['Flash','Ignite'],"Maokai":['Flash','Ignite'],"Brand":['Flash','Ignite'],"Zyra":['Flash','Ignite'],"Xerath":['Flash','Ignite'],"Vel'Koz":['Flash','Ignite'],"Swain":['Flash','Ignite'],"Seraphine":['Flash','Ignite'],"Karma":['Flash','Ignite'],"Morgana":['Flash','Ignite'],"Lux":['Flash','Ignite'],"Veigar":['Flash','Ignite'],"Neeko":['Flash','Ignite']};
 function getSpells(c){if(c.r==='Jungle')return['Flash','Smite'];var custom=SPELL_DATA[c.n];if(custom)return custom;return SPELL_ROLE[c.r]||['Flash','Ignite'];}
 function spellImg(name,sz){var src=SPELL_IMGS[name];var s=sz||32;var h='<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:'+s+'px;height:'+s+'px;border-radius:5px;overflow:hidden;border:1px solid var(--border2);background:var(--bg4);flex-shrink:0">';if(src)h+='<img src="'+src+'" width="'+s+'" height="'+s+'" style="display:block;object-fit:cover" onerror="this.style.display=\'none\'">';h+='</div><span style="font-size:9px;color:var(--text3);white-space:nowrap">'+name+'</span></div>';return h;}
+
+
+/* ════════════════════════════════════
+   ARCHETYPE MATCHUP TIPS
+════════════════════════════════════ */
+var ARCHETYPE = {
+  // TANKS
+  "Malphite":"tank","Ornn":"tank","Sion":"tank","Cho'Gath":"tank","Maokai":"tank",
+  "Nautilus":"tank","Leona":"tank","Braum":"tank","Alistar":"tank","Amumu":"tank",
+  "Sejuani":"tank","Zac":"tank","Rammus":"tank","Nunu & Willump":"tank","Poppy":"tank",
+  "Rell":"tank","Tahm Kench":"tank","Volibear":"tank","Galio":"tank","K'Sante":"tank",
+  "Shen":"tank","Jarvan IV":"tank","Nasus":"tank","Trundle":"tank",
+
+  // BRUISERS / FIGHTERS
+  "Darius":"bruiser","Garen":"bruiser","Renekton":"bruiser","Jax":"bruiser",
+  "Irelia":"bruiser","Fiora":"bruiser","Camille":"bruiser","Riven":"bruiser",
+  "Aatrox":"bruiser","Gwen":"bruiser","Mordekaiser":"bruiser","Sett":"bruiser",
+  "Urgot":"bruiser","Illaoi":"bruiser","Wukong":"bruiser","Kled":"bruiser",
+  "Tryndamere":"bruiser","Olaf":"bruiser","Warwick":"bruiser","Vi":"bruiser",
+  "Hecarim":"bruiser","Ambessa":"bruiser","Rengar":"bruiser","Nocturne":"bruiser",
+  "Xin Zhao":"bruiser","Pantheon":"bruiser","Gnar":"bruiser","Kennen":"bruiser",
+
+  // ASSASSINS
+  "Zed":"assassin","Talon":"assassin","Katarina":"assassin","Akali":"assassin",
+  "Qiyana":"assassin","Evelynn":"assassin","Shaco":"assassin","Kha'Zix":"assassin",
+  "Ekko":"assassin","Fizz":"assassin","LeBlanc":"assassin","Naafiri":"assassin",
+  "Pyke":"assassin","Nidalee":"assassin","Elise":"assassin","Kayn":"assassin",
+
+  // MAGES
+  "Lux":"mage","Syndra":"mage","Orianna":"mage","Twisted Fate":"mage","Annie":"mage",
+  "Veigar":"mage","Malzahar":"mage","Cassiopeia":"mage","Ryze":"mage","Azir":"mage",
+  "Vel'Koz":"mage","Xerath":"mage","Anivia":"mage","Lissandra":"mage","Galio":"mage",
+  "Viktor":"mage","Aurelion Sol":"mage","Karma":"mage","Neeko":"mage","Seraphine":"mage",
+  "Brand":"mage","Zyra":"mage","Ziggs":"mage","Hwei":"mage","Ahri":"mage",
+  "Morgana":"mage","Swain":"mage","Karthus":"mage","Taliyah":"mage","Kassadin":"mage",
+
+  // MARKSMEN / ADC
+  "Caitlyn":"marksman","Jinx":"marksman","Ashe":"marksman","Miss Fortune":"marksman",
+  "Jhin":"marksman","Ezreal":"marksman","Varus":"marksman","Sivir":"marksman",
+  "Xayah":"marksman","Draven":"marksman","Tristana":"marksman","Lucian":"marksman",
+  "Kai'Sa":"marksman","Samira":"marksman","Aphelios":"marksman","Zeri":"marksman",
+  "Kog'Maw":"marksman","Twitch":"marksman","Kalista":"marksman","Smolder":"marksman",
+  "Yunara":"marksman","Senna":"marksman","Nilah":"marksman",
+
+  // SUPPORTS
+  "Thresh":"support","Blitzcrank":"support","Nami":"support","Lulu":"support",
+  "Janna":"support","Soraka":"support","Yuumi":"support","Bard":"support",
+  "Milio":"support","Rakan":"support","Sona":"support","Taric":"support",
+  "Renata Glasc":"support","Heimerdinger":"support","Zilean":"support",
+
+  // DIVERS
+  "Diana":"diver","Sylas":"diver","Lee Sin":"diver","Jarvan IV":"diver",
+  "Kindred":"diver","Graves":"diver","Aurora":"diver","Viego":"diver",
+
+  // ARTILLERY / POKE
+  "Jayce":"artillery","Gangplank":"artillery","Corki":"artillery","Ezreal":"artillery",
+  "Akshan":"artillery","Quinn":"artillery","Teemo":"artillery","Singed":"artillery",
+};
+
+// Matchup tips: [myArchetype][enemyArchetype] = { tips, avoid }
+var MATCHUP_TIPS = {
+  bruiser: {
+    tank:       { tips:["Jugá para el daño sostenido — los tanks se desgastan de a poco","Usá tus habilidades de CC para interrumpir sus engages","Separalo del equipo antes de forzar peleas"],                                    avoid:["No pelees dentro de su CC encadenado","Evitá pelear cuando el enemy tank tenga R disponible"] },
+    bruiser:    { tips:["El matchup se decide en el nivel 2-3 — conocé tu spike","Si perdés el early tradea solo cuando tenés ventaja de HP","Pedí jungle para hacer snowball si liderás"],                                        avoid:["No tradees con habilidades on CD contra otro bruiser","Evitá pelear sin minions — perdés el trade largo"] },
+    assassin:   { tips:["Comprá early armor/MR según el tipo de daño","Jugá pegado a minions para limitar su movilidad","Forzá peleas largas — los assassins pierden el DPS sostenido"],                                           avoid:["No te quedes con poca HP en lane — te puede one-shot","Evitá alejarte de tu tower sin vision de jungla"] },
+    mage:       { tips:["Engageá cuando sus habilidades principales estén en CD","Tu sustain supera su burst si llegás al mid-game","Buildá algo de MR después del primer ítem de daño"],                                          avoid:["No te quedes en su rango de habilidades largas","Evitá pelear en nivel 1-2 — el mage tiene más daño temprano"] },
+    marksman:   { tips:["Engageá apenas tengas la oportunidad — los ADC odian el gap-close","Tu kit de melee es superior una vez que llegás a ellos","Ignorá el poke y llegá — cada engage tuyo es una amenaza"],                  avoid:["No des pelea a distancia — perdés el intercambio siempre","Evitá caminar en línea recta hacia él"] },
+    support:    { tips:["Presioná al support para que gaste habilidades en vos","Si el support no tiene CC, el ADC es vulnerable","Coordina dives con tu jungla aprovechando tu engage"] ,                                        avoid:["No ignores el CC del support en teamfights","Evitá engagear cuando el support tiene R disponible"] },
+    artillery:  { tips:["Engageá cuando estén fuera de posición","Tu duelo corto supera el poke si llegás","Buildá algo de sustain para aguantar el harassment"],                                                                   avoid:["No te quedes en rango de poke sostenido","Evitá walkear hacia él en línea recta sin dash"] },
+    diver:      { tips:["Conocé tu breakeven point — a veces es mejor esperar","Tu sustain compensa su burst inicial si tradeas bien","Buildá armor si el diver es AD"] ,                                                         avoid:["No pelees cuando tiene todas las habilidades — tiene burst alto","Evitá pelear sin minions como escudo"] },
+  },
+  tank: {
+    bruiser:    { tips:["Tu trabajo es absorber daño y habilitar a tus carries","Buildá según el tipo de daño del bruiser (armor vs MR)","Usá tu CC para interrumpir sus combos más peligrosos"],                                  avoid:["No intentes hacer daño 1v1 — un bruiser bien buildeado te supera","Evitá engagear sin tus carries detrás"] },
+    tank:       { tips:["El matchup se decide por quién tiene más CC útil en teamfights","Priorizá objetivos — ninguno de los dos va a matarse en lane","Buildá ítems de utilidad — más impacto que daño puro"],                   avoid:["No desperdicies tu R en trade de lane — guardalo para teamfights","Evitá comprometer sin tu equipo"] },
+    assassin:   { tips:["Tu CC duro es la respuesta al assassin — timing es todo","Buildá HP y algo de armor/MR según el tipo","Si lo CC antes de que comience su combo, lo neutralizás"],                                        avoid:["No pelees sin tu CC disponible","Evitá splitear del equipo — sos el objetivo favorito de un assassin"] },
+    mage:       { tips:["Buildá MR temprano para aguantar su poke","Tu CC interrumpe sus channeled abilities (Malzahar, Karthus)","Engageá cuando sus habilidades principales estén en CD"],                                      avoid:["No walkees directo a sus habilidades en zona","Evitá fighteear dentro de su área de control"] },
+    marksman:   { tips:["Engageá sobre el ADC — es tu trabajo eliminarlo o zonificarlo","Tu CC largo permite a tus carries hacer daño free","Buildá armor después del primer ítem de tank"],                                       avoid:["No te quedes quieto en teamfight — sos el dive target","Evitá usar todo tu CC en el frontline del enemigo"] },
+    support:    { tips:["Coordina engage con el support enemy — si falla uno, falla todo","Tu bulk supera el healer support en lane larga","Buildá según si el support es healer o CC"] ,                                         avoid:["No engagees cuando el support enemy tiene escudo/heal disponible","Evitá fights 2v2 contra Leona/Thresh — tienen más kill pressure"] },
+    artillery:  { tips:["Busca shortcut — tienen menos movilidad para escapar tu engage","Tu frontline aguanta el poke mejor que cualquier otro role","Usá el poke del enemy para forzar engages cuando esté bajo HP"] ,         avoid:["No seas el único que absorbe el poke","Evitá pelear lejos de tu equipo contra poke comp"] },
+    diver:      { tips:["Tu CC interrumpe el dive antes de que entre al backline","Posicionarte adelante avisa a tus carries que viene el dive","Buildá HP para que su burst no te two-shot"],                                     avoid:["No dejes al diver flanquear libre","Evitá dejar al backline solo sin tu presencia"] },
+  },
+  assassin: {
+    tank:       { tips:["Ignorá al tank — enfocá al backline vulnerable","Tus picks individuales valen más que un trade contra el tank","Buildá lethality/penetración para cortar su resistencias"],                             avoid:["No uses tu kit completo en el tank — te quedás sin herramientas para el ADC","Evitá 1v1 prolongado contra un tank — te outlastea"] },
+    bruiser:    { tips:["Esperá que use sus habilidades de gap-close o CC antes de entrar","Tu burst es mayor si entras con todo el combo limpio","Jugá para one-shot y salir — no te quedés en duelo prolongado"],                avoid:["No entres sin tener full combo disponible","Evitá pelear con baja HP — el bruiser te sobrevive fácil"] },
+    assassin:   { tips:["El matchup lo gana quien comete menos errores mecánicos","Buildá armor vs AD o MR vs AP según el assassin enemy","Intentá que el enemy use su movilidad primero, luego respondé"],                       avoid:["No seas predecible con tu ruta de engage","Evitá pelear sin visión — otro assassin te puede flanquear también"] },
+    mage:       { tips:["Engageá cuando el mage usó su CC principal","Buildá algo de MR para aguantar su burst inicial","Tu gap-close supera el range del mage si entrás bien"],                                                   avoid:["No te quedes en su rango cuando tiene full HP y habilidades disponibles","Evitá engagear a través de su área de control"] },
+    marksman:   { tips:["Sos el peor nightmare del ADC — engageá apenas tengas chance","Flanqueá por detrás en teamfights para llegar al ADC","Usá vision control para acercar sin ser visto"],                                   avoid:["No entres en teamfight sin poder llegar al ADC","Evitá usar todo tu dash en el engage si el ADC tiene escudo o Stopwatch"] },
+    support:    { tips:["El support es tu mayor amenaza — priorizá o jugá alrededor de su CC","Si ignorás el support te va a hacer muy difícil el engage","Engageá cuando el support usó su habilidad de CC principal"],          avoid:["No entres al CC del support","Evitá engagear sobre el ADC cuando Thresh/Leona tiene full kit"] },
+    artillery:  { tips:["Cerrá distancia rápido — son frágiles una vez que llegás","Tu movilidad supera el poke si tenés buen timing","Jugá alrededor de los bushes para acortar distancia"],                                    avoid:["No walkees en rango de poke sostenido antes de engagear","Evitá usar tu dash de escape para engagear y quedarte sin salida"] },
+    diver:      { tips:["Matchup espejo — quien entra primero tiene ventaja","Tu burst supera el del diver si tenés más items de daño","Posicionarte mejor en teamfight define quién llega al backline"] ,                       avoid:["No peleen en la misma área — uno va a perder el target race","Evitá usar movilidad sin tener el combo completo"] },
+  },
+  mage: {
+    tank:       { tips:["Buildá magic pen (Void Staff) para atravesar su MR","Tu CC larga distancia es útil para peel y engage","Enfocá carries en teamfights — el tank puede ignorarse si el equipo hace daño"],                avoid:["No uses todo tu kit en el tank — reservá CC para carries peligrosos","Evitá estar en el frontline como mage"] },
+    bruiser:    { tips:["Pokéalo a distancia antes de que llegue a vos","Buildá algo de armor/Zhonya según el matchup","Tu CC interrumpe su engage si lo timing bien"],                                                             avoid:["No peleen a melee range sin Zhonya disponible","Evitá quedarte con poca HP con un bruiser en lane"] },
+    assassin:   { tips:["Buildá Zhonya/Banshee según el tipo de assassin","Posicionarte detrás de tus frontlines en teamfight","Tu CC duro puede negar el combo completo del assassin si timingás bien"],                         avoid:["No te separés del equipo — sos el target favorito","Evitá usar todo tu kit antes de que el assassin engagee"] },
+    mage:       { tips:["El que pokea más sin comprometer gana el lane","Buildá según las habilidades del enemy mage (burst vs sustained)","Controlá la wave para forzar que se acerque a vos"],                                  avoid:["No uses tu CD principal y quedes vulnerable al counter","Evitá pelear en su zona de control de habilidades"] },
+    marksman:   { tips:["Tu burst supera el DPS del ADC en peleas cortas","Posicionarte bien para que tu CC llegue al ADC","Buildá según si necesitás más burst o utilidad para el teamfight"],                                   avoid:["No te expongas al ADC sin CC disponible","Evitá largas teamfights donde el ADC te supera en DPS"] },
+    support:    { tips:["Coordiná bien con tu propio support para maximizar combo","Tu damage output necesita peel — comunicá eso al equipo","Buildá utilidad si el support enemy es muy agresivo"],                               avoid:["No te adelantés al engage sin protección","Evitá estar en posición de recibir CC del support enemy"] },
+    artillery:  { tips:["Pokea constantemente — tu daño a distancia define el lane","Buildá para maximizar el daño del poke (pen items)","Forzá al enemy a gastar gold en pots/sustain extra"],                                  avoid:["No te quedés sin mana — el poke sostenido necesita recursos","Evitá comprometer en poke war sin advantage"] },
+    diver:      { tips:["Buildá Zhonya para la primera oleada de dive","Tu CC puede negar el dive completo si timingás el engage del diver","Posicionarte atrás del frontline limita su path hacia vos"],                         avoid:["No te separés del equipo — el diver llega a vos antes que a otros","Evitá usar CC antes de que el diver entre"] },
+  },
+  marksman: {
+    tank:       { tips:["Buildá Kraken Slayer o Lord Dominik para cortar su HP","Tu DPS sostenido supera a cualquier tank en peleas largas","Posicionarte bien para hacer daño free mientras el frontline lo contiene"],          avoid:["No uses Stopwatch/shield en el tank — guardalo para su carry","Evitá pelear sin tu frontline absorbiendo el engage"] },
+    bruiser:    { tips:["Mantené distancia — cada step back cuenta","Buildá Frozen Heart/Phantom Dancer para reducir su impacto","Tu DPS gana si podés kitearlo sin recibir daño"],                                               avoid:["No te quedes cerca cuando el bruiser cierra distancia","Evitá pelear en espacios cerrados donde no podés kite"] },
+    assassin:   { tips:["Buildá Immortal Shieldbow como primer ítem defensivo","Posicionarte atrás del equipo para que el assassin no llegue limpio","Stopwatch puede negar un combo completo en el momento justo"],              avoid:["No te separés del equipo en ningún momento","Evitá estar en zona donde el assassin puede flanquear"] },
+    mage:       { tips:["Buildá algo de MR — Maw o Wit's End según el matchup","Tu DPS supera el burst del mage en peleas largas","Engageá cuando el mage usó su habilidad de CC principal"],                                    avoid:["No camines dentro del CC del mage sin estar full HP","Evitá teamfights cortas donde el burst del mage te supera"] },
+    marksman:   { tips:["El matchup lo define el posicionamiento y el kite","Buildá según el enemy ADC: sustain vs burst","Conocé el spike de daño tuyo y del enemy — dominá ese punto"],                                         avoid:["No pelees en su rango óptimo — encontrá el tuyo","Evitá usar Heal cuando está en CD — timing del Ignite] importa"] },
+    support:    { tips:["Coordiná con tu support para maximizar el engage/disengage","El support enemy define cómo jugás el laning phase","Buildá según si necesitás sobrevivir o hacer daño"],                                   avoid:["No pelees 2v2 si el support enemy tiene más kill pressure","Evitá ignorar al support en teamfight — puede hacer mucho peel/CC"] },
+    artillery:  { tips:["Outrangeas a la mayoría — usá eso a tu favor","Tu daño a distancia hace el poke sin riesgo","Buildá para maximizar el daño crítico o burst según el champ"],                                            avoid:["No te acerques sin necesidad — perdés tu ventaja de range","Evitá comprometer cuando el enemy tiene engage herramientas"] },
+    diver:      { tips:["Buildá Immortal Shieldbow para sobrevivir el primer dive","Posicionarte detrás del frontline dificulta el path del diver","Kite hacia atrás mientras haces daño — eso gana el 1v1"],                    avoid:["No seas el primero en recibir el engage del diver","Evitá estar fuera de posición cuando el diver tiene R disponible"] },
+  },
+  support: {
+    tank:       { tips:["Coordiná con tu ADC para maximizar el engage del tank","Tu peel protege al ADC del CC del tank enemy","Usá ward control para limitar el path de su engage"],                                             avoid:["No engagees sin tu ADC en posición","Evitá usar tu kit principal sin que el tank haya comprometido primero"] },
+    bruiser:    { tips:["Tu CC interrumpe el engage del bruiser si timingás bien","Peel a tu ADC — el bruiser va a ir sobre él","Buildá según si necesitás más CC o heal"],                                                       avoid:["No te quedés sin habilidades de peel cuando el bruiser engagea","Evitá pelear 2v2 si el bruiser tiene más kill pressure que tu ADC"] },
+    assassin:   { tips:["Tu CC puede negar el combo del assassin completamente","Posicionarte adelante del ADC para absorber el engage","Usá ward para detectar flanks antes de que ocurran"],                                   avoid:["No te separés del ADC — el assassin espera eso","Evitá usar todo tu kit en engage propio cuando el assassin puede flanquear"] },
+    mage:       { tips:["Tu utilidad supera la del mage support si usás bien el CC","Buildá según el tipo de mage enemy — shield vs MR","Engageá cuando el mage usó su habilidad principal"],                                    avoid:["No peleen en zona donde el mage tiene control total","Evitá trades cortos cuando el mage tiene full habilidades"] },
+    marksman:   { tips:["Tu trabajo es habilitar al ADC — priorizá su seguridad","Cada CC tuyo sobre el ADC enemy es un trade ganado","Buildá utilidad según si el botlane enemy tiene más engage o poke"],                      avoid:["No desperdicies CC en minions o mala posición","Evitá que el support enemy outpose y quite tu CC antes de usarlo"] },
+    support:    { tips:["El matchup support vs support define el botlane pressure","Conocé si tenés más engage o más peel que el enemy support","Buildá según el gap (si ellos tienen kill pressure, buildá sustain)"],           avoid:["No uses tu R/habilidad definitiva en una pelea sin tu ADC","Evitá usar CC en zona donde el support enemy puede bloquearlo"] },
+    artillery:  { tips:["Tu peel protege al ADC del poke sostenido del artillery","Buildá shield/heal para aguantar el harassment","Engageá cuando el artillery esté fuera de posición"],                                        avoid:["No te expongas al poke innecesariamente","Evitá pelear sin los escudos disponibles si sos shield support"] },
+    diver:      { tips:["Tu CC interrumpe el dive — timing del CC es lo más importante","Posicionarte entre el diver y tu ADC alerta al equipo","Buildá algo de HP para aguantar el burst del dive"],                            avoid:["No uses CC en engage propio cuando el diver puede entrar","Evitá que el diver entre libre sin tu CC disponible"] },
+  },
+  artillery: {
+    tank:       { tips:["Pokea constantemente — los tanks no pueden ignorar el poke","Tu rango supera el engage del tank si lo manejás bien","Buildá magic pen o armor pen según tu tipo de daño"],                              avoid:["No te quedes sin recursos de poke cuando el tank engagea","Evitá comprometer el escape para hacer más daño"] },
+    bruiser:    { tips:["Pokea y huí — tu daño a distancia es tu mayor ventaja","Buildá algo de sustain para aguantar si te alcanza","Mantené la distancia y usá tus herramientas de escape"],                                   avoid:["No pelees a melee range sin una forma de escape","Evitá gastar dash de escape para pokear y quedarte sin salida"] },
+    assassin:   { tips:["Buildá Zhonya/Banshee para sobrevivir el one-shot","Tu poke puede bajarle HP antes de que engagee","Jugá detrás del frontline — el assassin tiene que traversar más terreno"],                         avoid:["No seas predecible — el assassin espera tu posición","Evitá usar todo tu poke y quedarte sin CD cuando el assassin engagea"] },
+    mage:       { tips:["El que tiene más range y menos CD en poke gana","Buildá según el tipo de mage (burst vs sustained poke)","Controlá wave para forzar que se acerque en tu rango"],                                       avoid:["No uses CD de poke en minions cuando el mage está en posición","Evitá pelear con todos los CD en recharge"] },
+    marksman:   { tips:["Tu rango a veces supera al ADC — usá eso como ventaja","Buildá para maximizar el daño del poke","Forzá intercambios de larga distancia donde brillás"],                                                 avoid:["No pelees a rango del ADC — pierde el DPS sostenido","Evitá pelear en espacios donde el ADC puede kitearte"] },
+    support:    { tips:["Pokea al support para que gaste sustain en sí mismo","Tu presencia de poke fuerza al support a jugar reactivo","Buildá para mantener el poke sostenido en lane"],                                       avoid:["No pokees al tank si el ADC está libre de presión","Evitá desperdiciar poke en el target equivocado"] },
+    artillery:  { tips:["El matchup se decide por quien tiene mejor rango y CD","Buildá según el enemy — más burst o más poke sostenido","Ganá el poke war y forzá a que compre sustain extra"],                                 avoid:["No uses todo tu kit y quedés vulnerable","Evitá comprometer sin tener ventaja de HP y CD"] },
+    diver:      { tips:["Tu poke baja al diver antes de que engagee","Buildá un ítem de escape o defensivo además del daño","Tu rango hace difícil el dive si te posicionás bien"],                                              avoid:["No te quedes parado pokeando cuando el diver cierra distancia","Evitá estar en zona sin escape cuando el diver tiene R"] },
+  },
+  diver: {
+    tank:       { tips:["Tu burst inicial supera al tank si entrás bien","Buildá penetración para cortar su resistencias","Coordina el dive con tu equipo para que el tank no pueda peelear solo"],                               avoid:["No te quedés en el frontline después del dive","Evitá 1v1 prolongado contra un tank si tu burst no lo termina"] },
+    bruiser:    { tips:["Tus dives son más efectivos si el bruiser está bajo HP","Buildá según si el bruiser es AP o AD","Tu movilidad te permite salir del duelo cuando está mal"],                                              avoid:["No te quedés en un duelo prolongado si el bruiser tiene más sustain","Evitá dives sin una ruta de escape clara"] },
+    assassin:   { tips:["Ambos quieren llegar al backline — el que llega primero gana","Buildá según el tipo de assassin enemy","Tu kit de tankiness te da más margen de error en el dive"],                                      avoid:["No ignores al assassin enemy en teamfight — puede llegar al mismo target","Evitá dives simultáneos sin coordinación"] },
+    mage:       { tips:["Tu movilidad te permite llegar al mage más rápido que cualquiera","El CC del mage es tu mayor amenaza — entrá cuando lo usó","Buildá Maw/Wit's End según el mage"],                                    avoid:["No entres si el mage tiene CC completo disponible","Evitá pararte en su zona de control durante el dive"] },
+    marksman:   { tips:["Sos el peor nightmare del ADC — prioritizá llegar a él","Tu movilidad cierra la distancia antes de que pueda kitearte","Forzá el Stopwatch/escudo early para que el engage siguiente sea limpio"],      avoid:["No uses todo tu dash en el engage y quedés sin escape","Evitá entrar sin que el ADC tenga CD gastados"] },
+    support:    { tips:["El CC del support es tu mayor obstáculo — timing del dive es clave","Divé cuando el support usó su habilidad principal","Buildá HP para aguantar el CC si te cachan"],                                  avoid:["No divés al ADC cuando Leona/Thresh tiene full kit","Evitá dives predecibles — el support te va a CC cada vez"] },
+    artillery:  { tips:["Tu movilidad cierra la distancia rápido — el artillery es frágil","Buildá para llegar al artillery y one-shot","Jugá en flancos para que no te vea venir"],                                             avoid:["No camines directo al poke","Evitá usar dash de approach para pokear y quedarte sin herramientas para el dive real"] },
+    diver:      { tips:["El matchup lo define quién tiene mejor timing de engage","Buildá según el tipo de diver enemy","Coordina dives con el equipo para superar en números"],                                                  avoid:["No dives en el mismo target al mismo tiempo — distribuyan objetivos","Evitá un dive sin escape cuando el diver enemy tiene R"] },
+  },
+};
+
+function getArchetypeTips(myChamp, enemyChamp, iWin, iLose, matchTip, diffLabel) {
+  var myType   = ARCHETYPE[myChamp.n] || 'bruiser';
+  var enemType = ARCHETYPE[enemyChamp.n] || 'bruiser';
+  var base     = (MATCHUP_TIPS[myType] && MATCHUP_TIPS[myType][enemType]) || MATCHUP_TIPS.bruiser.bruiser;
+
+  var tips  = base.tips.slice();
+  var avoid = base.avoid.slice();
+
+  // Inject direct matchup data as first tip if available
+  if(iWin && matchTip){
+    tips[0] = 'Ventaja directa: ' + matchTip;
+  } else if(iLose && matchTip){
+    avoid[0] = 'Cuidado: ' + matchTip;
+  }
+
+  return { tips: tips, avoid: avoid };
+}
 
 /* ════════════════════════════════════
    SUMMONER SEARCH
@@ -1461,27 +1629,12 @@ function openCompareModal(){
     var diff = enemyInMyCtrs ? (enemyInMyCtrs[3]||'') : '';
     var diffLabel = diff==='h'?' · Difícil':diff==='m'?' · Moderado':'';
 
-    // Build practical tips
-    var tips = [], avoid = [];
-    if(iWin){
-      tips.push('Aprovechá tu ventaja: ' + (matchTip||'tenés el upper hand en este matchup'));
-      tips.push('Jugá agresivo en nivel 2-3 antes de que escale o llegue el jungle');
-      tips.push('Controlá la oleada y forzá peleas cortas donde brillás');
-      avoid.push('No dejes que llegue a mid/late sin presionarlo temprano');
-      avoid.push('No subestimes — puede ganar si comete menos errores');
-    } else if(iLose){
-      tips.push('Jugá safe bajo torre y farmá sin tomar trades innecesarios');
-      tips.push('Pedí gank a tu jungla — no podés ganar el 1v1 solo en este matchup');
-      tips.push('Esperá nivel 6 o tu primer ítem para intentar peleas');
-      avoid.push('Evitá tradear directamente: ' + (matchTip||'tiene ventaja clara en duelo'));
-      avoid.push('No overextendas — te puede one-shot si avanza tu lado');
-    } else {
-      tips.push('Matchup parejo — la diferencia la hace la mecánica y las decisiones');
-      tips.push('Priorizá control de oleada y coordination con tu jungla');
-      tips.push('Buscá el 2v2 cuando tengas prioridad de lane');
-      avoid.push('No tomes peleas sin tener wave controlado');
-      avoid.push('Evitá arriesgar sin ventaja de HP o habilidades');
-    }
+    // Build archetype-specific tips
+    var atips = getArchetypeTips(c, enemy, iWin, iLose, matchTip, diffLabel);
+    var tips  = atips.tips;
+    var avoid = atips.avoid;
+
+
 
     // Verdict banner
     var verdictHtml;
