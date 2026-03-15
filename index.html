@@ -44,7 +44,6 @@
 }
 </script>
 
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%230e1015'/><text y='.9em' font-size='72' x='10'>⚔</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2839760013557264" crossorigin="anonymous"></script>
 <style>
@@ -153,8 +152,7 @@ nav{background:rgba(22,27,34,.65);border-bottom:1px solid var(--border);padding:
 .champ-name{font-size:17px;font-weight:700}
 .champ-role-lbl{font-size:12px;color:var(--text2);margin-top:2px;margin-bottom:6px}
 .tier-pill{display:inline-flex;padding:2px 7px;border-radius:3px;font-size:11px;font-weight:700}
-@keyframes pulse-gold{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.5)}60%{box-shadow:0 0 0 5px rgba(212,175,55,0)}}
-.tS{background:rgba(212,175,55,.15);color:var(--gold2);border:1px solid rgba(212,175,55,.5);animation:pulse-gold 2s infinite}
+.tS{background:rgba(212,175,55,.15);color:var(--gold2);border:1px solid rgba(212,175,55,.3)}
 .tA{background:rgba(56,139,253,.12);color:var(--blue2);border:1px solid rgba(56,139,253,.25)}
 .tB{background:rgba(63,185,80,.12);color:var(--green);border:1px solid rgba(63,185,80,.25)}
 .tC{background:rgba(139,148,158,.1);color:var(--text2);border:1px solid var(--border)}
@@ -246,49 +244,6 @@ nav{background:rgba(22,27,34,.65);border-bottom:1px solid var(--border);padding:
 @keyframes spin{to{transform:rotate(360deg)}}
 .sum-spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--blue2);border-radius:50%;animation:spin .7s linear infinite}
 footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border-top:1px solid var(--border);margin-top:1.5rem}
-/* ── HISTORIAL ── */
-.hist-section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1rem;display:none}
-.hist-section.has-hist{display:block}
-.hist-grid{display:flex;gap:6px;flex-wrap:wrap;padding:.65rem}
-.hist-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;position:relative}
-.hist-item img{width:36px;height:36px;border-radius:5px;object-fit:cover;border:1px solid var(--border2);transition:border-color .15s}
-.hist-item:hover img{border-color:var(--gold)}
-.hist-item-name{font-size:8px;color:var(--text3);white-space:nowrap;max-width:40px;overflow:hidden;text-overflow:ellipsis}
-
-/* ── SHARE BUTTON ── */
-.share-btn{background:none;border:1px solid var(--border2);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
-.share-btn:hover{border-color:var(--gold);color:var(--gold)}
-.share-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 16px;font-size:12px;color:var(--text);z-index:500;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
-.share-toast.show{opacity:1}
-
-/* ── TIER LIST ── */
-#tierlist-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);overflow-y:auto}
-#tierlist-modal.visible{display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem}
-.tierlist-box{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:960px;overflow:hidden;animation:fadeInUp .3s ease}
-.tierlist-hd{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:var(--bg3);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
-.tierlist-title{font-size:15px;font-weight:700;color:var(--text)}
-.tierlist-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:0 4px}
-.tierlist-close:hover{color:var(--text)}
-.tierlist-roles{display:flex;gap:5px;flex-wrap:wrap;padding:.65rem 1rem;border-bottom:1px solid var(--border);background:var(--bg3)}
-.tierlist-body{padding:.75rem 1rem}
-.tier-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;border-radius:8px;overflow:hidden}
-.tier-label{width:44px;min-height:52px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;border-radius:8px;flex-shrink:0}
-.tier-label-S{background:rgba(212,175,55,.2);color:var(--gold2)}
-.tier-label-A{background:rgba(56,139,253,.15);color:var(--blue2)}
-.tier-label-B{background:rgba(63,185,80,.12);color:var(--green)}
-.tier-label-C{background:rgba(139,148,158,.1);color:var(--text2)}
-.tier-champs{display:flex;flex-wrap:wrap;gap:5px;flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px}
-.tier-champ{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:3px}
-.tier-champ:hover img{border-color:var(--gold)}
-.tier-champ img{width:40px;height:40px;border-radius:6px;object-fit:cover;border:1px solid var(--border2);transition:border-color .15s}
-.tier-champ-name{font-size:8px;color:var(--text2);white-space:nowrap;max-width:48px;overflow:hidden;text-overflow:ellipsis;text-align:center}
-
-/* ── VISIT COUNTER CUSTOM ── */
-.visit-counter{display:inline-flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 14px;margin-top:12px}
-.visit-counter-label{font-size:11px;color:var(--text3)}
-.visit-counter-nums{display:flex;gap:2px}
-.visit-digit{background:var(--bg4);border:1px solid var(--border2);border-radius:4px;width:20px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text);font-family:monospace}
-
 
 /* ── DARK/LIGHT TOGGLE ── */
 .theme-toggle{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:5px;transition:all .2s}
@@ -429,7 +384,6 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
   <div class="logo">⚔ Que Pickeo ?</div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="nav-champ" style="font-size:12px;color:var(--gold);font-weight:600;opacity:0;transition:opacity .4s"></span>
-    <button class="theme-toggle" onclick="openTierList()" style="color:var(--gold2);border-color:rgba(212,175,55,.3)">📊 Tier List</button>
     <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Cambiar modo">🌙 Oscuro</button>
     <span class="patch">Patch 16.5</span>
   </div>
@@ -484,14 +438,6 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
 
 <div class="main" id="mainWrap">
   <div>
-    <!-- HISTORIAL -->
-    <div class="hist-section" id="histSection">
-      <div class="sec-hd">
-        <span class="sec-title">🕐 Recientes</span>
-        <span class="sec-count" id="hist-count"></span>
-      </div>
-      <div class="hist-grid" id="histGrid"></div>
-    </div>
     <!-- FAVORITOS -->
     <div class="fav-section" id="favSection">
       <div class="sec-hd">
@@ -510,22 +456,6 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
     <div id="sideInfo"><div class="placeholder">Seleccioná un campeón ↑</div></div>
   </div>
   <div id="mainInfo"><div class="placeholder" style="padding:5rem 2rem">← Seleccioná un campeón del panel izquierdo para ver sus counters, ítems y runas</div></div>
-</div>
-
-<div class="share-toast" id="share-toast">¡Link copiado al portapapeles!</div>
-
-<!-- TIER LIST MODAL -->
-<div id="tierlist-modal" onclick="if(event.target===this)closeTierList()">
-  <div class="tierlist-box">
-    <div class="tierlist-hd">
-      <span class="tierlist-title">Tier List — Patch 16.5</span>
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="tierlist-roles" id="tl-roles" style="padding:0;border:none;background:none;flex-wrap:nowrap"></div>
-        <button class="tierlist-close" onclick="closeTierList()">✕</button>
-      </div>
-    </div>
-    <div class="tierlist-body" id="tl-body"></div>
-  </div>
 </div>
 
 <!-- COMPARE PICKER -->
@@ -573,13 +503,9 @@ footer{text-align:center;padding:1.5rem;font-size:11px;color:var(--text3);border
     ☕ Invitame un café en MercadoPago :)
     <div style="margin-top: 15px; opacity: 0.6; font-size: 11px; color: var(--text3); display: flex; align-items: center; justify-content: center; gap: 8px;">
   <span>Visitas: </span>
-  <div class="visit-counter">
-    <span class="visit-counter-label">👁 Visitas</span>
-    <div class="visit-counter-nums" id="visit-nums">
-      <img src="https://counter9.optistats.ovh/private/freecounterstat.php?c=8m8l8u6y8n5w3p1u7z6u4b8r9q2j1l5y" style="display:none" id="visit-img-hidden" alt="visitas"/>
-      <span class="visit-digit">-</span>
-    </div>
-  </div>
+  <a href="https://www.freecounterstat.com" title="contador de visitas">
+    <img src="https://counter9.optistats.ovh/private/freecounterstat.php?c=8m8l8u6y8n5w3p1u7z6u4b8r9q2j1l5y" border="0" title="contador de visitas" alt="contador de visitas" style="vertical-align: middle; filter: invert(1) brightness(2);">
+  </a>
 </div>
   </a>
 </footer>
@@ -1172,7 +1098,7 @@ var selChamp=null;
 document.getElementById('roleTabs').innerHTML=ROLES.map(function(r){return '<button class="rtab'+(r==='Todos'?' on':'')+'" onclick="setRole(\''+r+'\')">'+r+'</button>';}).join('');
 function setRole(r){activeRole=r;document.querySelectorAll('.rtab').forEach(function(b){b.classList.toggle('on',b.textContent===r);});filterGrid();}
 function filterGrid(){var q=document.getElementById('si').value.toLowerCase().trim();var filtered=ALL.filter(function(c){return(!q||c.n.toLowerCase().indexOf(q)>=0)&&(activeRole==='Todos'||c.r===activeRole);});if(activeRole==='Todos'){var seen={};filtered=filtered.filter(function(c){if(seen[c.n])return false;seen[c.n]=true;return true;});}document.getElementById('ccount').textContent=filtered.length+' campeones';document.getElementById('cgrid').innerHTML=filtered.map(function(c){var active=selChamp&&selChamp.n===c.n;var isFav=favs.indexOf(c.n)>=0;var inCompare=compareChamps.find(function(x){return x&&x.n===c.n;});return '<div style="position:relative">'+'<button class="cbtn role-'+c.r+(active?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')">'+ portrait(c.n,c.r,48)+'<span class="cname">'+c.n+'</span><span class="crole">'+c.r+'</span></button>'+'<button class="fav-btn'+(isFav?' active':'')+'" onclick="toggleFav(\''+c.n.replace(/'/g,"\\'")+'\',event)" title="'+(isFav?'Quitar favorito':'Agregar a favoritos')+'">'+(isFav?'⭐':'☆')+'</button>'+'</div>';}).join('');}
-function pickChamp(name,role){selChamp=ALL.find(function(c){return c.n===name&&(role?c.r===role:true);});if(!selChamp)selChamp=ALL.find(function(c){return c.n===name;});filterGrid();renderSide(selChamp);renderMain(selChamp);updatePageBg(selChamp);addToHist(selChamp);if(window.innerWidth<800)window.scrollTo({top:0,behavior:'smooth'});}
+function pickChamp(name,role){selChamp=ALL.find(function(c){return c.n===name&&(role?c.r===role:true);});if(!selChamp)selChamp=ALL.find(function(c){return c.n===name;});filterGrid();renderSide(selChamp);renderMain(selChamp);updatePageBg(selChamp);if(window.innerWidth<800)window.scrollTo({top:0,behavior:'smooth'});}
 
 /* ════════════════════════════════════
    RENDER SIDEBAR
@@ -1498,162 +1424,9 @@ function closeCompareModal(){
   document.body.style.overflow='';
 }
 
-/* ════════════════════════════════════
-   HISTORIAL
-════════════════════════════════════ */
-var hist = [];
-try{ hist = JSON.parse(localStorage.getItem('qp-hist')||'[]'); }catch(e){}
-
-function addToHist(champ){
-  hist = hist.filter(function(n){ return n !== champ.n; });
-  hist.unshift(champ.n);
-  if(hist.length > 8) hist = hist.slice(0,8);
-  try{ localStorage.setItem('qp-hist', JSON.stringify(hist)); }catch(e){}
-  renderHist();
-}
-
-function renderHist(){
-  var sec  = document.getElementById('histSection');
-  var grid = document.getElementById('histGrid');
-  var cnt  = document.getElementById('hist-count');
-  if(!hist.length){ sec.classList.remove('has-hist'); return; }
-  sec.classList.add('has-hist');
-  cnt.textContent = hist.length;
-  grid.innerHTML = hist.map(function(name){
-    var c = ALL.find(function(x){ return x.n===name; });
-    if(!c) return '';
-    return '<div class="hist-item" onclick="pickChamp(''+c.n.replace(/'/g,"\'")+'',''+c.r+'')" title="'+c.n+'">'
-      +'<img src="'+cimgUrl(c.n)+'" onerror="this.style.opacity=.3"/>'
-      +'<span class="hist-item-name">'+c.n+'</span>'
-      +'</div>';
-  }).join('');
-}
-
-/* ════════════════════════════════════
-   SHARE CHAMPION
-════════════════════════════════════ */
-function shareChamp(){
-  if(!selChamp) return;
-  var url = window.location.origin + window.location.pathname + '?champ=' + encodeURIComponent(selChamp.n);
-  try{
-    navigator.clipboard.writeText(url).then(function(){
-      showToast('¡Link copiado al portapapeles!');
-    });
-  } catch(e){
-    var ta = document.createElement('textarea');
-    ta.value = url;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast('¡Link copiado!');
-  }
-}
-
-function showToast(msg){
-  var t = document.getElementById('share-toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 2500);
-}
-
-/* ════════════════════════════════════
-   URL PARAM: ?champ=Yasuo
-════════════════════════════════════ */
-function loadChampFromUrl(){
-  try{
-    var params = new URLSearchParams(window.location.search);
-    var name = params.get('champ');
-    if(!name) return;
-    var c = ALL.find(function(x){ return x.n.toLowerCase()===decodeURIComponent(name).toLowerCase(); });
-    if(c) setTimeout(function(){ pickChamp(c.n, c.r); }, 2600);
-  }catch(e){}
-}
-
-/* ════════════════════════════════════
-   TIER LIST
-════════════════════════════════════ */
-var tlRole = 'Todos';
-
-function openTierList(){
-  tlRole = 'Todos';
-  renderTierList();
-  document.getElementById('tierlist-modal').classList.add('visible');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeTierList(){
-  document.getElementById('tierlist-modal').classList.remove('visible');
-  document.body.style.overflow = '';
-}
-
-function renderTierList(){
-  var roles = ['Todos','Top','Jungle','Mid','ADC','Support'];
-  document.getElementById('tl-roles').innerHTML = roles.map(function(r){
-    return '<button class="rtab'+(r===tlRole?' on':'')+'" onclick="setTlRole(''+r+'')" style="font-size:11px;padding:3px 10px">'+r+'</button>';
-  }).join('');
-
-  var tiers = ['S','A','B','C'];
-  var tierData = {S:[],A:[],B:[],C:[]};
-
-  // Get unique champs filtered by role
-  var seen = {};
-  ALL.filter(function(c){
-    return tlRole==='Todos' || c.r===tlRole;
-  }).forEach(function(c){
-    if(seen[c.n+(tlRole==='Todos'?'':c.r)]) return;
-    seen[c.n+(tlRole==='Todos'?'':c.r)] = true;
-    var d = getData(c);
-    var t = d.stats && d.stats.tier ? d.stats.tier : 'B';
-    if(tierData[t]) tierData[t].push(c);
-    else tierData['C'].push(c);
-  });
-
-  document.getElementById('tl-body').innerHTML = tiers.map(function(tier){
-    var champs = tierData[tier];
-    if(!champs.length) return '';
-    return '<div class="tier-row">'
-      +'<div class="tier-label tier-label-'+tier+'">'+tier+'</div>'
-      +'<div class="tier-champs">'
-      +champs.map(function(c){
-        return '<div class="tier-champ" onclick="closeTierList();pickChamp(''+c.n.replace(/'/g,"\'")+'',''+c.r+'')" title="'+c.n+'">'
-          +'<img src="'+cimgUrl(c.n)+'" onerror="this.style.opacity=.3"/>'
-          +'<span class="tier-champ-name">'+c.n+'</span>'
-          +'</div>';
-      }).join('')
-      +'</div></div>';
-  }).join('');
-}
-
-function setTlRole(r){
-  tlRole = r;
-  renderTierList();
-}
-
-/* ════════════════════════════════════
-   VISIT COUNTER CUSTOM
-════════════════════════════════════ */
-(function(){
-  var img = document.getElementById('visit-img-hidden');
-  if(!img) return;
-  img.onload = function(){
-    // Extract number from URL counter via fetching
-    fetch('https://counter9.optistats.ovh/private/freecounterstat.php?c=8m8l8u6y8n5w3p1u7z6u4b8r9q2j1l5y')
-      .then(function(r){ return r.text(); })
-      .catch(function(){});
-  };
-  // Fallback: just show the original image nicely
-  var nums = document.getElementById('visit-nums');
-  if(nums){
-    nums.innerHTML = '<img src="https://counter9.optistats.ovh/private/freecounterstat.php?c=8m8l8u6y8n5w3p1u7z6u4b8r9q2j1l5y" style="height:24px;filter:invert(1) brightness(2);vertical-align:middle" alt="visitas"/>';
-  }
-})();
-
 /* INIT */
 filterGrid();
 renderFavs();
-renderHist();
-loadChampFromUrl();
 (function(){
   var btn=document.getElementById('theme-btn');
   if(btn) btn.textContent=isDark?'🌙 Oscuro':'☀️ Claro';
@@ -1689,7 +1462,6 @@ loadChampFromUrl();
     document.getElementById('splash').classList.add('hide');
   }, 2400);
 })();
-
 </script>
 </body>
 </html>
