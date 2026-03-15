@@ -787,10 +787,15 @@ input, select, textarea {
 .main.collapsed{grid-template-columns:0px 1fr}
 .left-panel{transition:opacity .3s ease, min-width .3s ease;min-width:0;overflow:hidden}
 .main.collapsed .left-panel{opacity:0;pointer-events:none}
-.collapse-btn{position:fixed;left:262px;top:50%;transform:translateY(-50%);z-index:100;background:var(--bg3);border:1px solid var(--border2);border-radius:0 8px 8px 0;width:18px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:left .3s ease, background .2s;color:var(--text2);font-size:11px}
-.collapse-btn:hover{background:var(--bg4);color:var(--text)}
-.main.collapsed .collapse-btn{left:0px}
-@media(max-width:700px){.collapse-btn{display:none}}
+
+
+
+/* ── SECTION COLLAPSE BUTTON ── */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;padding:.65rem 1rem;background:linear-gradient(90deg,var(--bg4) 0%,var(--bg3) 100%);border-bottom:1px solid var(--border2)}
+.sec-collapse-btn{background:none;border:1px solid var(--border2);border-radius:5px;color:var(--text3);width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;flex-shrink:0;margin-left:auto;padding:0}
+.sec-collapse-btn:hover{background:var(--bg4);color:var(--text);border-color:var(--border)}
+.sec-collapse-btn.collapsed{transform:rotate(180deg)}
+.sec-body-collapsed{display:none!important}
 
 </style>
 </head>
@@ -885,7 +890,6 @@ input, select, textarea {
   </div>
 </div>
 
-<button class="collapse-btn" id="collapseBtn" onclick="togglePanel()" title="Minimizar panel">‹</button>
 <div class="main" id="mainWrap">
   <div class="left-panel" id="leftPanel">
     <!-- HISTORIAL -->
@@ -893,6 +897,7 @@ input, select, textarea {
       <div class="sec-hd">
         <span class="sec-title">🕐 Recientes</span>
         <span class="sec-count" id="hist-count"></span>
+        <button class="sec-collapse-btn" onclick="toggleSection('histSection',this)" title="Minimizar">‹</button>
       </div>
       <div class="hist-grid" id="histGrid"></div>
     </div>
@@ -901,6 +906,7 @@ input, select, textarea {
       <div class="sec-hd">
         <span class="sec-title">⭐ Favoritos</span>
         <span class="sec-count" id="fav-count"></span>
+        <button class="sec-collapse-btn" onclick="toggleSection('favSection',this)" title="Minimizar">‹</button>
       </div>
       <div class="fav-grid" id="favGrid"></div>
     </div>
@@ -908,6 +914,7 @@ input, select, textarea {
       <div class="sec-hd">
         <span class="sec-title">Campeones</span>
         <span class="sec-count" id="ccount"></span>
+        <button class="sec-collapse-btn" onclick="toggleSection('cgrid',this)" title="Minimizar">‹</button>
       </div>
       <div class="cgrid" id="cgrid"></div>
     </div>
@@ -3197,25 +3204,41 @@ document.addEventListener('keydown', function(e){
   }
 });
 
+
+
 /* ════════════════════════════════════
-   COLLAPSE PANEL
+   SECTION COLLAPSE
 ════════════════════════════════════ */
-var panelCollapsed = false;
-function togglePanel(){
-  panelCollapsed = !panelCollapsed;
-  var wrap = document.getElementById('mainWrap');
-  var btn  = document.getElementById('collapseBtn');
-  if(panelCollapsed){
-    wrap.classList.add('collapsed');
-    wrap.style.gridTemplateColumns = '0px 1fr';
-    btn.textContent = '›';
-    btn.style.left = '0px';
+function toggleSection(sectionId, btn){
+  // For histSection and favSection, collapse the whole section body
+  // For cgrid, collapse just the grid
+  var target;
+  if(sectionId === 'cgrid'){
+    target = document.getElementById('cgrid');
   } else {
-    wrap.classList.remove('collapsed');
-    wrap.style.gridTemplateColumns = '250px 1fr';
-    btn.textContent = '‹';
-    btn.style.left = '262px';
+    // collapse body = everything after sec-hd inside the section
+    var section = document.getElementById(sectionId);
+    // get all children except sec-hd
+    var children = section.children;
+    var bodies = [];
+    for(var i=0;i<children.length;i++){
+      if(!children[i].classList.contains('sec-hd')) bodies.push(children[i]);
+    }
+    // toggle each
+    var isCollapsed = btn.classList.contains('collapsed');
+    bodies.forEach(function(el){
+      el.style.display = isCollapsed ? '' : 'none';
+    });
+    btn.classList.toggle('collapsed');
+    btn.textContent = isCollapsed ? '‹' : '›';
+    return;
   }
+  // for cgrid
+  if(!target) return;
+  var isCollapsed = btn.classList.contains('collapsed');
+  target.style.display = isCollapsed ? '' : 'none';
+  btn.classList.toggle('collapsed');
+  btn.textContent = isCollapsed ? '‹' : '›';
 }
 
 /* INIT */
