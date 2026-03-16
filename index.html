@@ -10,6 +10,7 @@
 <meta name="keywords" content="league of legends counters, que pickeo, counters LoL, runas LoL, items LoL, mejores counters, guia campeones lol, lol tier list, quepickeo"/>
 <meta name="author" content="Quepickeo.lol"/>
 <meta name="robots" content="index, follow"/>
+<link rel="sitemap" type="application/xml" href="/sitemap.xml"/>
 <link rel="canonical" href="https://quepickeo.lol/"/>
 
 <!-- Open Graph (Facebook, WhatsApp, Discord) -->
@@ -823,6 +824,33 @@ input, select, textarea {
 .compare-tab-content.on{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .compare-advantage-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700}
 
+
+/* ── SHARE BUTTONS ── */
+.share-row{display:flex;gap:6px;margin-top:6px}
+.share-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;border:none;cursor:pointer;transition:opacity .15s;font-family:'Inter',sans-serif}
+.share-btn:hover{opacity:.85}
+.share-wa{background:#25D366;color:#fff}
+.share-tw{background:#1DA1F2;color:#fff}
+.share-cp{background:var(--bg4);color:var(--text2);border:1px solid var(--border2)}
+
+/* ── HOMEPAGE HERO ── */
+#home-meta{display:block}
+#home-meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;padding:.5rem 0}
+.meta-card{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.meta-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.meta-card-splash{width:100%;height:80px;object-fit:cover;object-position:center 15%;display:block}
+.meta-card-body{padding:.6rem .75rem}
+.meta-card-name{font-size:12px;font-weight:700;color:var(--text)}
+.meta-card-role{font-size:10px;color:var(--text3)}
+.meta-card-wr{font-size:11px;font-weight:700;color:var(--green)}
+.meta-card-tier{position:absolute;top:6px;right:6px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px}
+.meta-card-tier-S{background:rgba(212,175,55,.9);color:#000}
+.meta-card-tier-A{background:rgba(56,139,253,.9);color:#fff}
+
+
+@keyframes teemoFall{to{top:110%;transform:rotate(360deg)}}
+@keyframes teemoPop{from{transform:translate(-50%,-50%) scale(.5);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+
 </style>
 </head>
 <body>
@@ -842,6 +870,7 @@ input, select, textarea {
   <div class="logo">⚔ Que Pickeo ?</div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="nav-champ" style="font-size:12px;color:var(--gold);font-weight:600;opacity:0;transition:opacity .4s"></span>
+    <button class="theme-toggle" id="ambient-btn" onclick="toggleAmbient()" style="color:var(--text2);border-color:var(--border)">🔇 Sonido</button>
     <button class="theme-toggle" onclick="openTFT()" style="color:#c084fc;border-color:rgba(192,132,252,.3)">🎮 TFT</button>
     <button class="theme-toggle" onclick="openDraft()" style="color:#4488ff;border-color:rgba(68,136,255,.3)">⚔ Modo Draft</button>
     <button class="theme-toggle" onclick="openTierList()" style="color:var(--gold2);border-color:rgba(212,175,55,.3)">📊 Tier List</button>
@@ -1100,7 +1129,7 @@ const CKEYS = {
   "Miss Fortune":"MissFortune","Nunu & Willump":"Nunu","Rek'Sai":"RekSai",
   "Renata Glasc":"Renata","Tahm Kench":"TahmKench","Twisted Fate":"TwistedFate",
   "Vel'Koz":"Velkoz","Xin Zhao":"XinZhao","Wukong":"MonkeyKing",
-  "Fiddlesticks":"Fiddlesticks","Yunara":"Yunara","Mel":"Mel","Ambessa":"Ambessa"
+  "Fiddlesticks":"Fiddlesticks","Yunara":"Yunara","Mel":"Mel","Ambessa":"Ambessa","Zaahen":"Zaahen"
 };
 function ckey(n){ return CKEYS[n] || n.replace(/[^a-zA-Z]/g,''); }
 function cimgUrl(n){ return DDR + ckey(n) + '.png'; }
@@ -1392,7 +1421,7 @@ var ALL = [
   {n:"Yorick",r:"Top"},{n:"Yuumi",r:"Support"},{n:"Ambessa",r:"Top"},{n:"Ambessa",r:"Jungle"},
   {n:"Zac",r:"Jungle"},{n:"Zed",r:"Jungle"},{n:"Zed",r:"Mid"},{n:"Zeri",r:"ADC"},
   {n:"Ziggs",r:"Mid"},{n:"Ziggs",r:"Support"},{n:"Zilean",r:"Support"},{n:"Zoe",r:"Mid"},
-  {n:"Zyra",r:"Mid"},{n:"Zyra",r:"Support"},{n:"Yunara",r:"ADC"}
+  {n:"Zyra",r:"Mid"},{n:"Zyra",r:"Support"},{n:"Yunara",r:"ADC"},{n:"Zaahen",r:"Top"},{n:"Zaahen",r:"Jungle"}
 ];
 
 /* ════════════════════════════════════
@@ -1599,6 +1628,7 @@ var SPECIFIC = {
   ,"Wukong":{ctr:[["Malphite","56.8","600","h","R durante su R Cyclone"],["Renekton","56.0","600","h","Stun antes de su R Cyclone"],["Poppy","55.2","500","h","W cancela su Nimbus Strike"],["Darius","54.4","600","m","Bleeding aplasta su clone"],["Irelia","53.7","600","m","Dashes niegan su E approach"],["Garen","52.9","600","l","Silence durante su R Cyclone"],["Pantheon","52.1","500","l","E bloquea su Q y R"]],good:[["Gangplank","44.1","500","Clone aplasta sus barrels"],["Nasus","44.8","600","Wukong gana el early"],["Tryndamere","45.3","500","Wukong gana el matchup"],["Gnar","45.9","600","Wukong gana el lane"]],items:[{n:"Trinity Force",o:1,c:"3333",r:"Dano en Q y R"},{n:"Black Cleaver",o:2,c:"3100",r:"Reduce armadura"},{n:"Death's Dance",o:3,c:"3300",r:"Sustain masivo"},{n:"Sterak's Gage",o:4,c:"3200",r:"Escudo anti-burst"},{n:"Guardian Angel",o:5,c:"2800",r:"Segunda oportunidad"},{n:"Lord Dominik's Regards",o:6,c:"3000",r:"Anti-tanques"}]}
   ,"Xerath":{ctr:[["Zed","56.7","500","h","Sombra llega antes de que pueda cast"],["LeBlanc","55.9","400","h","Burst antes de primer item"],["Talon","55.1","400","h","Salto cancela su Q channel"],["Fizz","54.3","400","m","Trickster evita sus habilidades"],["Katarina","53.6","500","m","Resets niegan su setup lento"],["Ahri","52.8","500","l","Charm aplasta su inmovidad"],["Akali","52.0","500","l","Shroud niega su poke"]],good:[["Thresh","44.1","600","Outrange aplasta su gancho"],["Nautilus","44.8","600","Xerath gana el matchup"],["Blitzcrank","45.3","600","Outrange niega su gancho"],["Brand","45.9","500","Xerath gana el lane"]],items:[{n:"Luden's Tempest",o:1,c:"3200",r:"Poke y movilidad"},{n:"Shadowflame",o:2,c:"3000",r:"Anti-escudos"},{n:"Rabadon's Deathcap",o:3,c:"3800",r:"AP multiplicador"},{n:"Void Staff",o:4,c:"2800",r:"Anti-MR"},{n:"Morellonomicon",o:5,c:"2500",r:"Antihealing"},{n:"Zhonya's Hourglass",o:6,c:"2600",r:"Invulnerabilidad"}]}
   ,"Xin Zhao":{ctr:[["Lee Sin","56.3","700","h","Invade nivel 2 y gana duelo"],["Vi","55.5","600","h","R niega su Crescent Guard"],["Warwick","54.7","700","h","Sustain masivo gana duelo"],["Kha'Zix","54.0","600","m","Burst antes de que knockup"],["Hecarim","53.2","600","m","Velocidad supera su clear"],["Graves","52.4","600","l","Shells penetran su clear"],["Rammus","51.6","500","l","Taunt devuelve su daño"]],good:[["Amumu","44.1","600","Knockup aplasta teamfight"],["Fiddlesticks","44.8","500","Xin gana el invade"],["Karthus","45.3","400","Xin gana con knockup"],["Nunu & Willump","45.9","400","Xin gana el matchup"]],items:[{n:"Trinity Force",o:1,c:"3333",r:"Daño en Q knockup"},{n:"Blade of the Ruined King",o:2,c:"3200",r:"Roba vida y velocidad"},{n:"Death's Dance",o:3,c:"3300",r:"Sustain masivo"},{n:"Sterak's Gage",o:4,c:"3200",r:"Escudo anti-burst"},{n:"Guardian Angel",o:5,c:"2800",r:"Segunda oportunidad"},{n:"Lord Dominik's Regards",o:6,c:"3000",r:"Anti-tanques"}]}
+  ,"Zaahen":{ctr:[["Vayne","56.2","19800","h","True damage y kiting destruyen su melee"],["Quinn","55.4","14200","h","Outrange y movilidad evitan sus stacks"],["Teemo","54.8","16400","h","Blind cancela sus autos y veneno lo kita"],["Garen","53.9","22100","m","Silence corta su Q"],["Darius","53.1","28400","m","Bleed supera su sustain"],["Fiora","52.4","18200","l","Parry bloquea su Q empowered"],["Camille","51.8","19800","l","Hookshot escapa antes de sus stacks"]],good:[["Nasus","44.1","21400","Sin movilidad para escapar"],["Malphite","44.8","18200","AP puro sin respuesta"],["Cho'Gath","45.3","16400","Lento y sin movilidad"],["Sion","45.9","14800","CC pero sin daño sostenido"]],items:[{n:"Trinity Force",o:1,c:"3333",r:"Daño en Q empowered"},{n:"Kraken Slayer",o:2,c:"3400",r:"True damage en tanques"},{n:"Death's Dance",o:3,c:"3300",r:"Sustain masivo"},{n:"Sterak's Gage",o:4,c:"3200",r:"Escudo cuando revive"},{n:"Lord Dominik's Regards",o:5,c:"3000",r:"Anti-tanques"},{n:"Guardian Angel",o:6,c:"2800",r:"Sinergia con su revive"}],runes:{p:{path:"Precisión",ks:"Conquistador",s:["Triunfo","Leyenda: Alacidad","Último Bastión"]},s:{path:"Dominación",picks:["Impacto Repentino","Colección de Globos Oculares"]},sh:{o:"Velocidad de Ataque",f:"Daño Adaptable",d:"Vida"}},stats:{wr:"51.2%",pr:"8.4%",br:"11.6%",tier:"A",g:"186,400"}}
   ,"Yorick":{ctr:[["Vayne","57.2","600","h","True damage aplasta su HP y ghouls"],["Fiora","56.4","500","h","Parry bloquea su Q y Maiden"],["Kennen","55.6","600","h","Poke seguro desde lejos"],["Quinn","54.8","500","h","Kiting frustra su split push"],["Teemo","54.1","600","m","Blind niega sus autos en split"],["Gnar","53.3","500","m","Kiting supera su lentitud"],["Illaoi","52.5","500","l","Tentáculos niegan su ghouls zone"]],good:[["Nasus","44.1","600","Ghouls aplasta su stacking"],["Garen","44.8","600","Yorick gana el split"],["Sion","45.3","600","Yorick gana el matchup"],["Cho'Gath","45.9","500","Yorick gana late"]],items:[{n:"Trinity Force",o:1,c:"3333",r:"Dano en Q ghouls"},{n:"Sterak's Gage",o:2,c:"3200",r:"Escudo anti-burst"},{n:"Death's Dance",o:3,c:"3300",r:"Sustain masivo"},{n:"Black Cleaver",o:4,c:"3100",r:"Reduce armadura"},{n:"Guardian Angel",o:5,c:"2800",r:"Segunda oportunidad"},{n:"Lord Dominik's Regards",o:6,c:"3000",r:"Anti-tanques"}]}
   ,"Yuumi":{ctr:[["Morellonomicon users","58.4","6000","h","Antihealing anula toda su utilidad"],["Brand","57.5","600","h","Poke burn aplasta su healing"],["Ignite users","57.0","8000","h","Grievous aplasta su E heal"],["Swain","56.1","500","m","Drain supera su healing"],["Xerath","55.2","500","m","Outrange su comfort zone"],["Zyra","54.3","500","l","Raíces niegan su attached carrier"],["Vel'Koz","53.4","400","l","Laser supera su DPS"]],good:[["Sona","44.1","500","Attached aplasta performance"],["Soraka","44.8","500","Yuumi gana fácilmente"],["Nami","45.3","500","Yuumi gana el lane"],["Zilean","45.9","400","Yuumi gana el matchup"]],items:[{n:"Moonstone Renewer",o:1,c:"2300",r:"Heals mientras dás shields"},{n:"Ardent Censer",o:2,c:"2300",r:"Potencia al carry"},{n:"Staff of Flowing Water",o:3,c:"2300",r:"AP para ally"},{n:"Redemption",o:4,c:"2300",r:"Heals masivos"},{n:"Chemtech Putrifier",o:5,c:"2300",r:"Antihealing"},{n:"Mikael's Blessing",o:6,c:"2300",r:"Limpia CC"}]}
   ,"Zac":{ctr:[["Lee Sin","56.1","600","h","Invade y gana duelo early"],["Kha'Zix","55.3","500","h","Burst antes de que blobs regeneren"],["Vi","54.5","600","h","R niega su slingshot"],["Hecarim","53.8","600","m","Velocidad supera su clear"],["Warwick","53.0","600","m","Sustain masivo gana duelo"],["Graves","52.2","600","l","Shells penetran su clear"],["Elise","51.5","500","l","Cocoon en su E windup"]],good:[["Amumu","44.1","500","Boing aplasta teamfight"],["Fiddlesticks","44.8","400","Zac gana el invade"],["Sejuani","45.3","500","Zac gana con CC"],["Nunu & Willump","45.9","400","Zac gana el matchup"]],items:[{n:"Sunfire Aegis",o:1,c:"2700",r:"Daño en engage"},{n:"Abyssal Mask",o:2,c:"2700",r:"Amplifica daño mágico"},{n:"Frozen Heart",o:3,c:"2700",r:"Slow de ataque"},{n:"Warmog's Armor",o:4,c:"3100",r:"HP masivo"},{n:"Gargoyle Stoneplate",o:5,c:"2700",r:"Tankiness teamfights"},{n:"Thornmail",o:6,c:"2700",r:"Antihealing"}]}
@@ -1699,9 +1729,10 @@ function thrEl(t){ if(t==='h')return '<span class="thr thr-h">Difícil</span>'; 
    SPELL IMAGES
 ════════════════════════════════════ */
 var SURL='https://ddragon.leagueoflegends.com/cdn/16.5.1/img/spell/';
+var SPELL_DATA={"Darius":['Flash','Ghost'],"Garen":['Ghost','Teleport'],"Singed":['Ghost','Teleport'],"Nasus":['Ghost','Teleport'],"Tryndamere":['Flash','Ignite'],"Fiora":['Flash','Ignite'],"Camille":['Flash','Ignite'],"Irelia":['Flash','Ignite'],"Riven":['Flash','Ignite'],"Jax":['Flash','Teleport'],"Sion":['Flash','Teleport'],"Malphite":['Flash','Teleport'],"Kennen":['Flash','Ignite'],"Teemo":['Flash','Ignite'],"Rumble":['Flash','Ignite'],"Gnar":['Flash','Teleport'],"Cho'Gath":['Flash','Teleport'],"Ornn":['Flash','Teleport'],"Urgot":['Flash','Teleport'],"Volibear":['Flash','Teleport'],"Warwick":['Flash','Ignite'],"Shyvana":['Flash','Teleport'],"Hecarim":['Flash','Teleport'],"Vi":['Flash','Ignite'],"Xin Zhao":['Flash','Ignite'],"Lee Sin":['Flash','Smite'],"Graves":['Flash','Smite'],"Kha'Zix":['Flash','Smite'],"Rengar":['Flash','Smite'],"Kayn":['Flash','Smite'],"Zed":['Flash','Ignite'],"Yasuo":['Flash','Ignite'],"Yone":['Flash','Ignite'],"Akali":['Flash','Ignite'],"Katarina":['Flash','Ignite'],"Ahri":['Flash','Ignite'],"Orianna":['Flash','Teleport'],"Syndra":['Flash','Teleport'],"Lux":['Flash','Ignite'],"Jinx":['Flash','Heal'],"Caitlyn":['Flash','Heal'],"Jhin":['Flash','Heal'],"Miss Fortune":['Flash','Heal'],"Draven":['Flash','Heal'],"Ashe":['Flash','Heal'],"Samira":['Flash','Ignite'],"Vayne":['Flash','Heal'],"Tristana":['Flash','Ignite'],"Leona":['Flash','Ignite'],"Thresh":['Flash','Ignite'],"Blitzcrank":['Flash','Ignite'],"Nautilus":['Flash','Ignite'],"Nami":['Flash','Heal'],"Lulu":['Flash','Heal'],"Soraka":['Flash','Heal'],"Janna":['Flash','Heal'],"Morgana":['Flash','Ignite'],"Brand":['Flash','Ignite'],"Zyra":['Flash','Ignite'],"Karma":['Flash','Ignite'],"Yorick":['Flash','Teleport'],"Trundle":['Flash','Ignite'],"Wukong":['Flash','Ignite'],"Olaf":['Flash','Ghost'],"Zaahen":['Flash','Teleport']};
 var SPELL_IMGS={'Flash':SURL+'SummonerFlash.png','Ignite':SURL+'SummonerDot.png','Teleport':SURL+'SummonerTeleport.png','Smite':SURL+'SummonerSmite.png','Ghost':SURL+'SummonerHaste.png','Exhaust':SURL+'SummonerExhaust.png','Barrier':SURL+'SummonerBarrier.png','Heal':SURL+'SummonerHeal.png','Cleanse':SURL+'SummonerBoost.png'};
 var SPELL_ROLE={Top:['Flash','Teleport'],Jungle:['Flash','Smite'],Mid:['Flash','Ignite'],ADC:['Flash','Heal'],Support:['Flash','Ignite']};
-var SPELL_DATA={"Darius":['Flash','Ghost'],"Garen":['Ghost','Teleport'],"Singed":['Ghost','Teleport'],"Tryndamere":['Flash','Ignite'],"Nasus":['Flash','Teleport'],"Malphite":['Flash','Teleport'],"Sion":['Flash','Teleport'],"Urgot":['Flash','Teleport'],"Mordekaiser":['Flash','Ignite'],"Cho'Gath":['Flash','Teleport'],"Dr. Mundo":['Flash','Teleport'],"K'Sante":['Flash','Teleport'],"Ornn":['Flash','Teleport'],"Tahm Kench":['Flash','Teleport'],"Shen":['Flash','Teleport'],"Poppy":['Flash','Teleport'],"Gragas":['Flash','Ignite'],"Gangplank":['Flash','Teleport'],"Jayce":['Flash','Teleport'],"Riven":['Flash','Ignite'],"Fiora":['Flash','Ignite'],"Camille":['Flash','Teleport'],"Irelia":['Flash','Teleport'],"Jax":['Flash','Teleport'],"Gwen":['Flash','Ignite'],"Renekton":['Flash','Ignite'],"Kennen":['Flash','Teleport'],"Rumble":['Flash','Teleport'],"Gnar":['Flash','Teleport'],"Quinn":['Flash','Teleport'],"Pantheon":['Flash','Teleport'],"Ambessa":['Flash','Ignite'],"Aurora":['Flash','Teleport'],"Kled":['Flash','Ignite'],"Aatrox":['Flash','Teleport'],"Vladimir":['Flash','Teleport'],"Kayle":['Flash','Teleport'],"Teemo":['Flash','Ignite'],"Yorick":['Flash','Teleport'],"Trundle":['Flash','Ignite'],"Wukong":['Flash','Ignite'],"Olaf":['Flash','Ghost'],"Volibear":['Flash','Teleport'],"Warwick":['Flash','Ignite'],"Shyvana":['Flash','Teleport'],"Lee Sin":['Flash','Smite'],"Vi":['Flash','Smite'],"Hecarim":['Flash','Smite'],"Graves":['Flash','Smite'],"Kha'Zix":['Flash','Smite'],"Elise":['Flash','Smite'],"Kindred":['Flash','Smite'],"Nidalee":['Flash','Smite'],"Diana":['Flash','Smite'],"Ekko":['Flash','Smite'],"Evelynn":['Flash','Smite'],"Fiddlesticks":['Flash','Smite'],"Kayn":['Flash','Smite'],"Rengar":['Flash','Smite'],"Shaco":['Flash','Smite'],"Nocturne":['Flash','Smite'],"Rammus":['Flash','Smite'],"Amumu":['Flash','Smite'],"Sejuani":['Flash','Smite'],"Nunu & Willump":['Flash','Smite'],"Zac":['Flash','Smite'],"Jarvan IV":['Flash','Smite'],"Master Yi":['Flash','Smite'],"Xin Zhao":['Flash','Smite'],"Udyr":['Flash','Smite'],"Briar":['Flash','Smite'],"Viego":['Flash','Smite'],"Ivern":['Flash','Smite'],"Taliyah":['Flash','Smite'],"Lillia":['Flash','Smite'],"Skarner":['Flash','Smite'],"Bel'Veth":['Flash','Smite'],"Rek'Sai":['Flash','Smite'],"Qiyana":['Flash','Smite'],"Talon":['Flash','Smite'],"Sylas":['Flash','Smite'],"Katarina":['Flash','Smite'],"Ahri":['Flash','Ignite'],"Zed":['Flash','Ignite'],"Yasuo":['Flash','Ignite'],"Yone":['Flash','Ignite'],"Cassiopeia":['Ghost','Ignite'],"Twisted Fate":['Flash','Ghost'],"Lissandra":['Flash','Ignite'],"Malzahar":['Flash','Ignite'],"Ryze":['Flash','Ghost'],"Kassadin":['Flash','Ignite'],"Annie":['Flash','Ignite'],"Anivia":['Flash','Ignite'],"Galio":['Flash','Teleport'],"Karthus":['Flash','Teleport'],"Vayne":['Flash','Ignite'],"Jinx":['Flash','Heal'],"Caitlyn":['Flash','Heal'],"Draven":['Flash','Heal'],"Ezreal":['Flash','Heal'],"Jhin":['Flash','Heal'],"Ashe":['Flash','Heal'],"Kai'Sa":['Flash','Heal'],"Samira":['Flash','Ignite'],"Lucian":['Flash','Ignite'],"Tristana":['Flash','Heal'],"Varus":['Flash','Heal'],"Xayah":['Flash','Heal'],"Miss Fortune":['Flash','Heal'],"Kog'Maw":['Flash','Heal'],"Sivir":['Flash','Heal'],"Twitch":['Flash','Heal'],"Kalista":['Flash','Heal'],"Aphelios":['Flash','Heal'],"Zeri":['Flash','Heal'],"Smolder":['Flash','Heal'],"Nilah":['Flash','Ignite'],"Yunara":['Flash','Heal'],"Senna":['Flash','Heal'],"Thresh":['Flash','Ignite'],"Blitzcrank":['Flash','Ignite'],"Nautilus":['Flash','Ignite'],"Leona":['Flash','Ignite'],"Lulu":['Flash','Exhaust'],"Janna":['Flash','Exhaust'],"Soraka":['Flash','Exhaust'],"Nami":['Flash','Ignite'],"Yuumi":['Exhaust','Ignite'],"Bard":['Flash','Ignite'],"Milio":['Flash','Exhaust'],"Pyke":['Flash','Ignite'],"Sona":['Flash','Exhaust'],"Rakan":['Flash','Ignite'],"Rell":['Flash','Ignite'],"Alistar":['Flash','Ignite'],"Braum":['Flash','Ignite'],"Taric":['Flash','Ignite'],"Renata Glasc":['Flash','Ignite'],"Maokai":['Flash','Ignite'],"Brand":['Flash','Ignite'],"Zyra":['Flash','Ignite'],"Xerath":['Flash','Ignite'],"Vel'Koz":['Flash','Ignite'],"Swain":['Flash','Ignite'],"Seraphine":['Flash','Ignite'],"Karma":['Flash','Ignite'],"Morgana":['Flash','Ignite'],"Lux":['Flash','Ignite'],"Veigar":['Flash','Ignite'],"Neeko":['Flash','Ignite']};
+  "Yorick":['Flash','Teleport'],"Trundle":['Flash','Ignite'],"Wukong":['Flash','Ignite'],"Olaf":['Flash','Ghost'],"Volibear":['Flash','Teleport'],"Warwick":['Flash','Ignite'],"Shyvana":['Flash','Teleport'],"Lee Sin":['Flash','Smite'],"Vi":['Flash','Smite'],"Hecarim":['Flash','Smite'],"Graves":['Flash','Smite'],"Kha'Zix":['Flash','Smite'],"Elise":['Flash','Smite'],"Kindred":['Flash','Smite'],"Nidalee":['Flash','Smite'],"Diana":['Flash','Smite'],"Ekko":['Flash','Smite'],"Evelynn":['Flash','Smite'],"Fiddlesticks":['Flash','Smite'],"Kayn":['Flash','Smite'],"Rengar":['Flash','Smite'],"Shaco":['Flash','Smite'],"Nocturne":['Flash','Smite'],"Rammus":['Flash','Smite'],"Amumu":['Flash','Smite'],"Sejuani":['Flash','Smite'],"Nunu & Willump":['Flash','Smite'],"Zac":['Flash','Smite'],"Jarvan IV":['Flash','Smite'],"Master Yi":['Flash','Smite'],"Xin Zhao":['Flash','Smite'],"Udyr":['Flash','Smite'],"Briar":['Flash','Smite'],"Viego":['Flash','Smite'],"Ivern":['Flash','Smite'],"Taliyah":['Flash','Smite'],"Lillia":['Flash','Smite'],"Skarner":['Flash','Smite'],"Bel'Veth":['Flash','Smite'],"Rek'Sai":['Flash','Smite'],"Qiyana":['Flash','Smite'],"Talon":['Flash','Smite'],"Sylas":['Flash','Smite'],"Katarina":['Flash','Smite'],"Ahri":['Flash','Ignite'],"Zed":['Flash','Ignite'],"Yasuo":['Flash','Ignite'],"Yone":['Flash','Ignite'],"Cassiopeia":['Ghost','Ignite'],"Twisted Fate":['Flash','Ghost'],"Lissandra":['Flash','Ignite'],"Malzahar":['Flash','Ignite'],"Ryze":['Flash','Ghost'],"Kassadin":['Flash','Ignite'],"Annie":['Flash','Ignite'],"Anivia":['Flash','Ignite'],"Galio":['Flash','Teleport'],"Karthus":['Flash','Teleport'],"Vayne":['Flash','Ignite'],"Jinx":['Flash','Heal'],"Caitlyn":['Flash','Heal'],"Draven":['Flash','Heal'],"Ezreal":['Flash','Heal'],"Jhin":['Flash','Heal'],"Ashe":['Flash','Heal'],"Kai'Sa":['Flash','Heal'],"Samira":['Flash','Ignite'],"Lucian":['Flash','Ignite'],"Tristana":['Flash','Heal'],"Varus":['Flash','Heal'],"Xayah":['Flash','Heal'],"Miss Fortune":['Flash','Heal'],"Kog'Maw":['Flash','Heal'],"Sivir":['Flash','Heal'],"Twitch":['Flash','Heal'],"Kalista":['Flash','Heal'],"Aphelios":['Flash','Heal'],"Zeri":['Flash','Heal'],"Smolder":['Flash','Heal'],"Nilah":['Flash','Ignite'],"Yunara":['Flash','Heal'],"Senna":['Flash','Heal'],"Thresh":['Flash','Ignite'],"Blitzcrank":['Flash','Ignite'],"Nautilus":['Flash','Ignite'],"Leona":['Flash','Ignite'],"Lulu":['Flash','Exhaust'],"Janna":['Flash','Exhaust'],"Soraka":['Flash','Exhaust'],"Nami":['Flash','Ignite'],"Yuumi":['Exhaust','Ignite'],"Bard":['Flash','Ignite'],"Milio":['Flash','Exhaust'],"Pyke":['Flash','Ignite'],"Sona":['Flash','Exhaust'],"Rakan":['Flash','Ignite'],"Rell":['Flash','Ignite'],"Alistar":['Flash','Ignite'],"Braum":['Flash','Ignite'],"Taric":['Flash','Ignite'],"Renata Glasc":['Flash','Ignite'],"Maokai":['Flash','Ignite'],"Brand":['Flash','Ignite'],"Zyra":['Flash','Ignite'],"Xerath":['Flash','Ignite'],"Vel'Koz":['Flash','Ignite'],"Swain":['Flash','Ignite'],"Seraphine":['Flash','Ignite'],"Karma":['Flash','Ignite'],"Morgana":['Flash','Ignite'],"Lux":['Flash','Ignite'],"Veigar":['Flash','Ignite'],"Neeko":['Flash','Ignite']};
 function getSpells(c){if(c.r==='Jungle')return['Flash','Smite'];var custom=SPELL_DATA[c.n];if(custom)return custom;return SPELL_ROLE[c.r]||['Flash','Ignite'];}
 function spellImg(name,sz){var src=SPELL_IMGS[name];var s=sz||32;var h='<div style="display:flex;flex-direction:column;align-items:center;gap:2px"><div style="width:'+s+'px;height:'+s+'px;border-radius:5px;overflow:hidden;border:1px solid var(--border2);background:var(--bg4);flex-shrink:0">';if(src)h+='<img src="'+src+'" width="'+s+'" height="'+s+'" style="display:block;object-fit:cover" onerror="this.style.display=\'none\'">';h+='</div><span style="font-size:9px;color:var(--text3);white-space:nowrap">'+name+'</span></div>';return h;}
 
@@ -1746,7 +1777,7 @@ var ARCHETYPE = {
   "Xayah":"marksman","Draven":"marksman","Tristana":"marksman","Lucian":"marksman",
   "Kai'Sa":"marksman","Samira":"marksman","Aphelios":"marksman","Zeri":"marksman",
   "Kog'Maw":"marksman","Twitch":"marksman","Kalista":"marksman","Smolder":"marksman",
-  "Yunara":"marksman","Senna":"marksman","Nilah":"marksman",
+  "Yunara":"marksman","Zaahen":"bruiser","Senna":"marksman","Nilah":"marksman",
 
   // SUPPORTS
   "Thresh":"support","Blitzcrank":"support","Nami":"support","Lulu":"support",
@@ -2163,7 +2194,7 @@ function setRole(r){
   }
 }
 function filterGrid(){var q=document.getElementById('si').value.toLowerCase().trim();var filtered=ALL.filter(function(c){return(!q||c.n.toLowerCase().indexOf(q)>=0)&&(activeRole==='Todos'||c.r===activeRole);});if(activeRole==='Todos'){var seen={};filtered=filtered.filter(function(c){if(seen[c.n])return false;seen[c.n]=true;return true;});}document.getElementById('ccount').textContent=filtered.length+' campeones';document.getElementById('cgrid').innerHTML=filtered.map(function(c){var active=selChamp&&selChamp.n===c.n;var isFav=favs.indexOf(c.n)>=0;var inCompare=compareChamps.find(function(x){return x&&x.n===c.n;});return '<div style="position:relative">'+'<button class="cbtn role-'+c.r+(active?' active':'')+'" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\',\''+c.r+'\')">'+ portrait(c.n,c.r,48)+'<span class="cname">'+c.n+'</span><span class="crole">'+c.r+'</span></button>'+'<button class="fav-btn'+(isFav?' active':'')+'" onclick="toggleFav(\''+c.n.replace(/'/g,"\\'")+'\',event)" title="'+(isFav?'Quitar favorito':'Agregar a favoritos')+'">'+(isFav?'⭐':'☆')+'</button>'+'</div>';}).join('');}
-function pickChamp(name,role){selChamp=ALL.find(function(c){return c.n===name&&(role?c.r===role:true);});if(!selChamp)selChamp=ALL.find(function(c){return c.n===name;});filterGrid();renderSide(selChamp);renderMain(selChamp);updatePageBg(selChamp);addToHist(selChamp);renderHeroSynergies(selChamp);if(window.innerWidth<800)window.scrollTo({top:0,behavior:'smooth'});}
+function pickChamp(name,role){selChamp=ALL.find(function(c){return c.n===name&&(role?c.r===role:true);});if(!selChamp)selChamp=ALL.find(function(c){return c.n===name;});filterGrid();renderSide(selChamp);renderMain(selChamp);updatePageBg(selChamp);addToHist(selChamp);renderHeroSynergies(selChamp);updateMeta(selChamp.n,selChamp.r);if(window.innerWidth<800)window.scrollTo({top:0,behavior:'smooth'});}
 
 /* ════════════════════════════════════
    RENDER SIDEBAR
@@ -3330,8 +3361,160 @@ function toggleSection(sectionId, btn){
   btn.textContent = isCollapsed ? '‹' : '›';
 }
 
+/* ════════════════════════════════════
+   DYNAMIC META TAGS
+════════════════════════════════════ */
+function updateMeta(champName, role){
+  var title = champName
+    ? 'Counters de '+champName+' ('+role+') — Que Pickeo? LoL Patch 16.5'
+    : 'Que Pickeo? — Counters, ítems y runas de League of Legends';
+  var desc = champName
+    ? 'Descubrí los mejores counters, ítems y runas para '+champName+' '+role+' en el parche 16.5. Guía actualizada para LAN y LAS.'
+    : 'Encontrá los mejores counters, ítems y runas para cada campeón de League of Legends. Guía actualizada Patch 16.5 para LAN y LAS.';
+  document.title = title;
+  var mDesc = document.querySelector('meta[name="description"]');
+  if(mDesc) mDesc.setAttribute('content', desc);
+  var ogTitle = document.querySelector('meta[property="og:title"]');
+  if(ogTitle) ogTitle.setAttribute('content', title);
+  var ogDesc = document.querySelector('meta[property="og:description"]');
+  if(ogDesc) ogDesc.setAttribute('content', desc);
+  if(champName){
+    var ogImg = document.querySelector('meta[property="og:image"]');
+    if(ogImg) ogImg.setAttribute('content','https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(champName)+'_0.jpg');
+    history.replaceState(null,'','?champ='+encodeURIComponent(champName)+'&role='+encodeURIComponent(role));
+  } else {
+    history.replaceState(null,'','/');
+  }
+}
+
+/* ════════════════════════════════════
+   SHARE BUTTONS
+════════════════════════════════════ */
+function shareWhatsApp(){
+  if(!selChamp){showToast('Seleccioná un campeón primero');return;}
+  var url = 'https://quepickeo.lol?champ='+encodeURIComponent(selChamp.n)+'&role='+encodeURIComponent(selChamp.r);
+  var text = '¡Mirá los counters de '+selChamp.n+' en Que Pickeo! '+url;
+  window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
+}
+function shareTwitter(){
+  if(!selChamp){showToast('Seleccioná un campeón primero');return;}
+  var url = 'https://quepickeo.lol?champ='+encodeURIComponent(selChamp.n)+'&role='+encodeURIComponent(selChamp.r);
+  var text = '¿Qué juego contra '+selChamp.n+'? Mirá los counters en @quepickeo 👇';
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(url),'_blank');
+}
+
+
+/* ════════════════════════════════════
+   HOMEPAGE META PANEL
+════════════════════════════════════ */
+var META_CHAMPS = [
+  {n:'Gangplank',r:'Top',tier:'S',wr:'52.8%'},
+  {n:'Garen',r:'Top',tier:'S',wr:'52.4%'},
+  {n:'Warwick',r:'Jungle',tier:'S',wr:'52.4%'},
+  {n:'Xin Zhao',r:'Jungle',tier:'S',wr:'52.6%'},
+  {n:'Ahri',r:'Mid',tier:'S',wr:'52.1%'},
+  {n:'Annie',r:'Mid',tier:'S',wr:'52.8%'},
+  {n:'Jinx',r:'ADC',tier:'S',wr:'52.8%'},
+  {n:'Caitlyn',r:'ADC',tier:'A',wr:'51.4%'},
+  {n:'Nami',r:'Support',tier:'S',wr:'52.4%'},
+  {n:'Leona',r:'Support',tier:'S',wr:'52.6%'},
+  {n:'Darius',r:'Top',tier:'S',wr:'51.8%'},
+  {n:'Lee Sin',r:'Jungle',tier:'A',wr:'49.8%'},
+];
+
+function renderHomepage(){
+  if(selChamp) return; // already has a champ selected
+  var el = document.getElementById('mainInfo');
+  if(!el) return;
+  var cards = META_CHAMPS.map(function(c){
+    var splashUrl = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(c.n)+'_0.jpg';
+    return '<div class="meta-card" onclick="pickChamp(\''+c.n.replace(/'/g,"\\'")+'\'\,\''+c.r+'\')">' 
+      +'<img class="meta-card-splash" src="'+splashUrl+'" onerror="this.style.opacity=0" style="display:block"/>'
+      +'<span class="meta-card-tier meta-card-tier-'+c.tier+'">'+c.tier+'</span>'
+      +'<div class="meta-card-body">'
+        +'<div class="meta-card-name">'+c.n+'</div>'
+        +'<div style="display:flex;align-items:center;justify-content:space-between">'
+          +'<span class="meta-card-role">'+c.r+'</span>'
+          +'<span class="meta-card-wr">'+c.wr+'</span>'
+        +'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+  el.innerHTML = '<div style="padding:1.25rem">'
+    +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem">'
+      +'<span style="font-size:13px;font-weight:700;color:var(--gold2)">⭐ Meta del Patch 16.5</span>'
+      +'<span style="font-size:10px;color:var(--text3);background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:2px 7px">S + A Tier</span>'
+    +'</div>'
+    +'<div id="home-meta-grid" class="">'+cards+'</div>'
+    +'<div style="font-size:10px;color:var(--text3);margin-top:.75rem;text-align:center">Hacé click en cualquier campeón para ver sus counters, ítems y runas →</div>'
+    +'</div>';
+}
+
+/* ════════════════════════════════════
+   AMBIENT SOUND
+════════════════════════════════════ */
+var ambientAudio = null;
+var ambientOn = false;
+var AMBIENT_URLS = [
+  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+];
+
+function toggleAmbient(){
+  var btn = document.getElementById('ambient-btn');
+  if(!ambientAudio){
+    ambientAudio = new Audio(AMBIENT_URLS[0]);
+    ambientAudio.loop = true;
+    ambientAudio.volume = 0.15;
+  }
+  if(ambientOn){
+    ambientAudio.pause();
+    ambientOn = false;
+    if(btn) btn.textContent = '🔇 Sonido';
+  } else {
+    ambientAudio.play().catch(function(){});
+    ambientOn = true;
+    if(btn) btn.textContent = '🔊 Sonido';
+  }
+}
+
+/* ════════════════════════════════════
+   EASTER EGG — TEEMO
+════════════════════════════════════ */
+var eggBuffer = '';
+document.addEventListener('keypress', function(e){
+  eggBuffer += e.key.toLowerCase();
+  if(eggBuffer.length > 10) eggBuffer = eggBuffer.slice(-10);
+  if(eggBuffer.includes('teemo')){
+    eggBuffer = '';
+    triggerTeemoEgg();
+  }
+});
+function triggerTeemoEgg(){
+  var existing = document.getElementById('teemo-egg');
+  if(existing) existing.remove();
+  var div = document.createElement('div');
+  div.id = 'teemo-egg';
+  div.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;pointer-events:none;overflow:hidden';
+  // Rain teemo mushrooms
+  for(var i=0;i<18;i++){
+    (function(idx){
+      var el = document.createElement('div');
+      el.textContent = '🍄';
+      el.style.cssText = 'position:absolute;font-size:'+(20+Math.random()*30)+'px;top:-60px;left:'+(Math.random()*100)+'%;animation:teemoFall '+(1.5+Math.random()*2)+'s linear '+(Math.random()*1.5)+'s forwards;opacity:.9';
+      div.appendChild(el);
+    })(i);
+  }
+  var msg = document.createElement('div');
+  msg.textContent = '¡Captain Teemo on duty!';
+  msg.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:700;color:#ff6b00;background:rgba(0,0,0,.85);border:2px solid #ff6b00;border-radius:12px;padding:14px 28px;text-align:center;animation:teemoPop .4s ease';
+  div.appendChild(msg);
+  document.body.appendChild(div);
+  setTimeout(function(){ div.remove(); }, 4000);
+}
+
 /* INIT */
 filterGrid();
+renderHomepage();
 renderFavs();
 renderHist();
 loadChampFromUrl();
