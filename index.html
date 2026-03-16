@@ -998,7 +998,7 @@ input, select, textarea {
       <div class="roles" id="roleTabs" style="flex:1"></div>
       <div style="display:flex;gap:6px;flex-shrink:0">
         <button class="theme-toggle" onclick="openSkins()" style="color:#a78bfa;border-color:rgba(167,139,250,.3);font-size:11px" title="Ver skins del campeón seleccionado">✨ Skins</button>
-        <button class="theme-toggle" onclick="openFlashcards()" style="color:#fb923c;border-color:rgba(251,146,60,.3);font-size:11px" title="Modo estudio — adiviná counters">🃏 Flashcards</button>
+        <button class="theme-toggle" onclick="openFlashcards()" style="color:#fb923c;border-color:rgba(251,146,60,.3);font-size:11px" title="Modo estudio — adiviná counters">🧠 ¿Cuánto sabés?</button>
       </div>
     </div>
   </div>
@@ -3575,85 +3575,91 @@ function triggerTeemoEgg(){
 }
 
 /* ════════════════════════════════════
-   SKINS
+   SKINS — Dynamic from Data Dragon
 ════════════════════════════════════ */
-var SKIN_TIERS = {
-  ultimate:   {label:'⚡ Ultimate',      color:'#ffd700', champs:['Lux','Udyr','Jayce','Ezreal']},
-  mythic:     {label:'💎 Mítica',        color:'#a78bfa', champs:[]},
-  legendary:  {label:'🔥 Legendaria',    color:'#fb923c', champs:[]},
-  epic:       {label:'✨ Épica',         color:'#60a5fa', champs:[]},
-  classic:    {label:'🎮 Clásica / Base', color:'#8b949e', champs:[]},
+var SKIN_TIERS_KNOWN = {
+  // Ultimate skins
+  "Elementalist Lux":true,"Pulsefire Ezreal":true,"Spirit Guard Udyr":true,
+  "Gun Goddess Miss Fortune":true,"Lancer Zero Hecarim":true,"Seraphine":false,
+  // Mythic skins (prestige etc)
+  "Prestige":true,
+  // Legendary
+  "Dunkmaster Darius":true,"God-King Darius":true,"Dark Cosmic Darius":true,
 };
 
-var SKIN_DATA = {
-  "Ahri":       [{id:0,name:"Ahri",tier:"classic"},{id:1,name:"Dynasty Ahri",tier:"epic"},{id:2,name:"Midnight Ahri",tier:"epic"},{id:3,name:"Foxfire Ahri",tier:"epic"},{id:4,name:"Popstar Ahri",tier:"legendary"},{id:5,name:"Challenger Ahri",tier:"epic"},{id:6,name:"Academy Ahri",tier:"epic"},{id:7,name:"Star Guardian Ahri",tier:"legendary"},{id:8,name:"K/DA Ahri",tier:"epic"},{id:9,name:"Coven Ahri",tier:"epic"},{id:10,name:"K/DA ALL OUT Ahri",tier:"epic"},{id:11,name:"Immortal Journey Ahri",tier:"epic"},{id:12,name:"Porcelain Ahri",tier:"epic"}],
-  "Jinx":       [{id:0,name:"Jinx",tier:"classic"},{id:1,name:"Mafia Jinx",tier:"epic"},{id:2,name:"Firecracker Jinx",tier:"epic"},{id:3,name:"Star Guardian Jinx",tier:"legendary"},{id:4,name:"Slayer Jinx",tier:"epic"},{id:5,name:"Ambitious Elf Jinx",tier:"epic"},{id:6,name:"Odyssey Jinx",tier:"epic"},{id:7,name:"Arcane Jinx",tier:"legendary"},{id:8,name:"Cafe Cuties Jinx",tier:"epic"},{id:9,name:"Anima Squad Jinx",tier:"epic"}],
-  "Yasuo":      [{id:0,name:"Yasuo",tier:"classic"},{id:1,name:"Nightbringer Yasuo",tier:"legendary"},{id:2,name:"High Noon Yasuo",tier:"epic"},{id:3,name:"PROJECT: Yasuo",tier:"epic"},{id:4,name:"Battle Boss Yasuo",tier:"epic"},{id:5,name:"Odyssey Yasuo",tier:"epic"},{id:6,name:"True Damage Yasuo",tier:"epic"},{id:7,name:"Spirit Blossom Yasuo",tier:"epic"},{id:8,name:"Dawnbringer Yasuo",tier:"epic"}],
-  "Lux":        [{id:0,name:"Lux",tier:"classic"},{id:1,name:"Elementalist Lux",tier:"ultimate"},{id:2,name:"Star Guardian Lux",tier:"legendary"},{id:3,name:"Steel Legion Lux",tier:"epic"},{id:4,name:"Imperial Lux",tier:"epic"},{id:5,name:"Lunar Empress Lux",tier:"legendary"},{id:6,name:"Pajama Guardian Lux",tier:"epic"},{id:7,name:"Battle Academia Lux",tier:"legendary"},{id:8,name:"Space Groove Lux",tier:"epic"},{id:9,name:"Prestige Porcelain Lux",tier:"mythic"}],
-  "Zed":        [{id:0,name:"Zed",tier:"classic"},{id:1,name:"PROJECT: Zed",tier:"legendary"},{id:2,name:"SKT T1 Zed",tier:"epic"},{id:3,name:"Shockblade Zed",tier:"epic"},{id:4,name:"Death Sworn Zed",tier:"epic"},{id:5,name:"Galaxy Slayer Zed",tier:"legendary"}],
-  "Lee Sin":    [{id:0,name:"Lee Sin",tier:"classic"},{id:1,name:"Muay Thai Lee Sin",tier:"epic"},{id:2,name:"Dragon Fist Lee Sin",tier:"epic"},{id:3,name:"Acolyte Lee Sin",tier:"epic"},{id:4,name:"Pool Party Lee Sin",tier:"epic"},{id:5,name:"SKT T1 Lee Sin",tier:"epic"},{id:6,name:"Knockout Lee Sin",tier:"legendary"},{id:7,name:"God Fist Lee Sin",tier:"legendary"},{id:8,name:"Nightbringer Lee Sin",tier:"epic"}],
-  "Thresh":     [{id:0,name:"Thresh",tier:"classic"},{id:1,name:"Championship Thresh",tier:"legendary"},{id:2,name:"Deep Terror Thresh",tier:"epic"},{id:3,name:"Blood Moon Thresh",tier:"epic"},{id:4,name:"Dark Star Thresh",tier:"legendary"},{id:5,name:"High Noon Thresh",tier:"epic"},{id:6,name:"Space Groove Thresh",tier:"epic"}],
-  "Ezreal":     [{id:0,name:"Ezreal",tier:"classic"},{id:1,name:"TPA Ezreal",tier:"epic"},{id:2,name:"Ace of Spades Ezreal",tier:"epic"},{id:3,name:"Arcade Ezreal",tier:"ultimate"},{id:4,name:"Star Guardian Ezreal",tier:"epic"},{id:5,name:"Pulsefire Ezreal",tier:"legendary"},{id:6,name:"Battle Academia Ezreal",tier:"epic"},{id:7,name:"Pajama Guardian Ezreal",tier:"epic"}],
-  "Caitlyn":    [{id:0,name:"Caitlyn",tier:"classic"},{id:1,name:"Headhunter Caitlyn",tier:"epic"},{id:2,name:"Sheriff Caitlyn",tier:"epic"},{id:3,name:"Resistance Caitlyn",tier:"epic"},{id:4,name:"Officer Caitlyn",tier:"epic"},{id:5,name:"Pulsefire Caitlyn",tier:"legendary"},{id:6,name:"Pool Party Caitlyn",tier:"epic"},{id:7,name:"Arcane Caitlyn",tier:"legendary"},{id:8,name:"Cafe Cuties Caitlyn",tier:"epic"}],
-  "Leona":      [{id:0,name:"Leona",tier:"classic"},{id:1,name:"Valkyrie Leona",tier:"epic"},{id:2,name:"Iron Solari Leona",tier:"epic"},{id:3,name:"Pool Party Leona",tier:"epic"},{id:4,name:"PROJECT: Leona",tier:"epic"},{id:5,name:"Solar Eclipse Leona",tier:"legendary"},{id:6,name:"Lunar Eclipse Leona",tier:"legendary"}],
-  "Darius":     [{id:0,name:"Darius",tier:"classic"},{id:1,name:"Lord Darius",tier:"epic"},{id:2,name:"Bioforge Darius",tier:"epic"},{id:3,name:"Woad King Darius",tier:"epic"},{id:4,name:"Dunkmaster Darius",tier:"legendary"},{id:5,name:"God-King Darius",tier:"legendary"},{id:6,name:"Dark Cosmic Darius",tier:"legendary"}],
-  "Akali":      [{id:0,name:"Akali",tier:"classic"},{id:1,name:"Stinger Akali",tier:"epic"},{id:2,name:"Silverfang Akali",tier:"epic"},{id:3,name:"Nurse Akali",tier:"epic"},{id:4,name:"Blood Moon Akali",tier:"epic"},{id:5,name:"PROJECT: Akali",tier:"legendary"},{id:6,name:"K/DA Akali",tier:"legendary"},{id:7,name:"True Damage Akali",tier:"legendary"},{id:8,name:"K/DA ALL OUT Akali",tier:"epic"},{id:9,name:"Star Guardian Akali",tier:"epic"}],
-  "Malphite":   [{id:0,name:"Malphite",tier:"classic"},{id:1,name:"Coral Reef Malphite",tier:"epic"},{id:2,name:"Shamrock Malphite",tier:"epic"},{id:3,name:"Obsidian Malphite",tier:"epic"},{id:4,name:"Mecha Malphite",tier:"epic"},{id:5,name:"Odyssey Malphite",tier:"epic"},{id:6,name:"Glacial Malphite",tier:"epic"}],
-  "Jhin":       [{id:0,name:"Jhin",tier:"classic"},{id:1,name:"High Noon Jhin",tier:"legendary"},{id:2,name:"SKT T1 Jhin",tier:"epic"},{id:3,name:"Blood Moon Jhin",tier:"epic"},{id:4,name:"Dark Cosmic Jhin",tier:"legendary"},{id:5,name:"Shan Hai Scrolls Jhin",tier:"epic"},{id:6,name:"Crystal Rose Jhin",tier:"epic"}],
-  "Amumu":      [{id:0,name:"Amumu",tier:"classic"},{id:1,name:"Emumu",tier:"epic"},{id:2,name:"Re-Gifted Amumu",tier:"epic"},{id:3,name:"Almost-Prom King Amumu",tier:"epic"},{id:4,name:"Sad Robot Amumu",tier:"epic"},{id:5,name:"Little Knight Amumu",tier:"epic"},{id:6,name:"Surprise Party Amumu",tier:"epic"},{id:7,name:"Base Camp Amumu",tier:"epic"}],
-  "Nami":       [{id:0,name:"Nami",tier:"classic"},{id:1,name:"Koi Nami",tier:"epic"},{id:2,name:"River Spirit Nami",tier:"epic"},{id:3,name:"Deep Sea Nami",tier:"epic"},{id:4,name:"Program Nami",tier:"epic"},{id:5,name:"Splendid Staff Nami",tier:"legendary"},{id:6,name:"Fae Dragon Nami",tier:"epic"}],
-  "Blitzcrank": [{id:0,name:"Blitzcrank",tier:"classic"},{id:1,name:"Rusty Blitzcrank",tier:"classic"},{id:2,name:"Definitely Not Blitzcrank",tier:"epic"},{id:3,name:"Piltover Customs Blitzcrank",tier:"epic"},{id:4,name:"Battle Boss Blitzcrank",tier:"legendary"},{id:5,name:"Lancer Paragon Blitzcrank",tier:"epic"},{id:6,name:"iBlitzcrank",tier:"epic"}],
-  "Lulu":       [{id:0,name:"Lulu",tier:"classic"},{id:1,name:"Wicked Lulu",tier:"epic"},{id:2,name:"Dragon Trainer Lulu",tier:"legendary"},{id:3,name:"Winter Wonder Lulu",tier:"epic"},{id:4,name:"Pool Party Lulu",tier:"epic"},{id:5,name:"Star Guardian Lulu",tier:"epic"},{id:6,name:"Pajama Guardian Lulu",tier:"epic"},{id:7,name:"Space Groove Lulu",tier:"epic"}],
-  "Yone":       [{id:0,name:"Yone",tier:"classic"},{id:1,name:"Spirit Blossom Yone",tier:"legendary"},{id:2,name:"Nightbringer Yone",tier:"legendary"},{id:3,name:"Battle Academia Yone",tier:"epic"},{id:4,name:"Epoch Yone",tier:"epic"}],
-  "Kayn":       [{id:0,name:"Kayn",tier:"classic"},{id:1,name:"Soulhunter Kayn",tier:"legendary"},{id:2,name:"Odyssey Kayn",tier:"legendary"},{id:3,name:"Battle Academia Kayn",tier:"epic"}],
-  "Riven":      [{id:0,name:"Riven",tier:"classic"},{id:1,name:"Redeemed Riven",tier:"epic"},{id:2,name:"Battle Bunny Riven",tier:"epic"},{id:3,name:"Championship Riven",tier:"legendary"},{id:4,name:"Dawnbringer Riven",tier:"legendary"},{id:5,name:"Dragon Trainer Riven",tier:"epic"}],
-  "Miss Fortune":[{id:0,name:"Miss Fortune",tier:"classic"},{id:1,name:"Waterloo Miss Fortune",tier:"epic"},{id:2,name:"Candy Cane Miss Fortune",tier:"epic"},{id:3,name:"Road Warrior Miss Fortune",tier:"epic"},{id:4,name:"Mafia Miss Fortune",tier:"epic"},{id:5,name:"Pool Party Miss Fortune",tier:"epic"},{id:6,name:"Star Guardian Miss Fortune",tier:"legendary"},{id:7,name:"Gun Goddess Miss Fortune",tier:"ultimate"},{id:8,name:"Pajama Guardian Miss Fortune",tier:"epic"},{id:9,name:"Battle Bunny Miss Fortune",tier:"legendary"}],
-  "Katarina":   [{id:0,name:"Katarina",tier:"classic"},{id:1,name:"Mercenary Katarina",tier:"epic"},{id:2,name:"Red Card Katarina",tier:"epic"},{id:3,name:"High Command Katarina",tier:"epic"},{id:4,name:"Blood Moon Katarina",tier:"epic"},{id:5,name:"PROJECT: Katarina",tier:"legendary"},{id:6,name:"Death Sworn Katarina",tier:"epic"},{id:7,name:"KDA Katarina",tier:"epic"},{id:8,name:"Crystal Rose Katarina",tier:"epic"}],
-};
-
-var TIER_ORDER = ['ultimate','mythic','legendary','epic','classic'];
-var TIER_LABELS = {
-  ultimate:  {label:'⚡ Ultimate',   color:'#ffd700'},
-  mythic:    {label:'💎 Mítica',     color:'#a78bfa'},
-  legendary: {label:'🔥 Legendaria', color:'#fb923c'},
-  epic:      {label:'✨ Épica',      color:'#60a5fa'},
-  classic:   {label:'🎮 Clásica',    color:'#8b949e'},
-};
+function getSkinTier(skinName, idx){
+  if(idx === 0) return 'classic';
+  var n = skinName.toLowerCase();
+  // Ultimate
+  if(n.includes('elementalist') || n.includes('spirit guard') || n.includes('gun goddess') || n.includes('lancer zero')) return 'ultimate';
+  // Mythic
+  if(n.includes('prestige') || n.includes('mythic')) return 'mythic';
+  // Legendary — common legendary skin names
+  var legendary = ['god-king','dark cosmic','dunkmaster','championship','star guardian lux','solar eclipse','lunar eclipse','project: leona','project: zed','project: yasuo','project: katarina','project: akali','soulhunter','odyssey kayn','god fist','knockout','nightbringer yasuo','nightbringer lee','nightbringer yone','spirit blossom yasuo','spirit blossom yone','dawnbringer riven','dawnbringer yasuo','pulsefire caitlyn','pulsefire thresh','high noon jhin','high noon thresh','dark star thresh','dark star origin','arcane jinx','arcane caitlyn','arcane vi','k/da akali','k/da ahri','true damage yasuo','true damage akali','star guardian jinx','battle academia lux','lunar empress lux','splendid staff','dragon trainer lulu','moo cow alistar','unchained alistar','victorious','world championship'];
+  for(var i=0;i<legendary.length;i++){
+    if(n.includes(legendary[i])) return 'legendary';
+  }
+  // Epic — most paid skins
+  return 'epic';
+}
 
 function openSkins(){
   if(!selChamp){ showToast('Seleccioná un campeón primero'); return; }
-  var skins = SKIN_DATA[selChamp.n];
-  if(!skins){
-    // Generate generic skins list from Data Dragon
-    skins = [{id:0, name:selChamp.n, tier:'classic'}];
-  }
+  var champKey = ckey(selChamp.n);
   document.getElementById('skins-title').textContent = '✨ Skins de ' + selChamp.n;
-  // Group by tier
-  var grouped = {};
-  TIER_ORDER.forEach(function(t){ grouped[t] = []; });
-  skins.forEach(function(s){ if(grouped[s.tier]) grouped[s.tier].push(s); });
-
-  var html = '';
-  TIER_ORDER.forEach(function(tier){
-    var list = grouped[tier];
-    if(!list || !list.length) return;
-    var tl = TIER_LABELS[tier];
-    html += '<div class="skins-tier-section">'
-      +'<div class="skins-tier-label" style="color:'+tl.color+'">'+tl.label+'</div>'
-      +'<div class="skins-grid">'
-      +list.map(function(s){
-        var splashUrl = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(selChamp.n)+'_'+s.id+'.jpg';
-        return '<div class="skin-card skin-tier-'+tier+'">'
-          +'<img src="'+splashUrl+'" loading="lazy" onerror="this.style.opacity=.3" style="width:100%;height:80px;object-fit:cover;object-position:center 15%"/>'
-          +'<div class="skin-card-name" title="'+s.name+'">'+s.name+'</div>'
-          +'</div>';
-      }).join('')
-      +'</div></div>';
-  });
-
-  document.getElementById('skins-body').innerHTML = html;
+  document.getElementById('skins-body').innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text3)"><div style="font-size:24px;margin-bottom:8px">⌛</div>Cargando skins...</div>';
   document.getElementById('skins-modal').classList.add('visible');
   document.body.style.overflow = 'hidden';
+
+  // Fetch skins from Data Dragon
+  fetch('https://ddragon.leagueoflegends.com/cdn/16.5.1/data/en_US/champion/' + champKey + '.json')
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var champData = data.data[champKey];
+      if(!champData || !champData.skins){ document.getElementById('skins-body').innerHTML='<div style="padding:2rem;text-align:center;color:var(--text3)">Sin datos de skins.</div>'; return; }
+
+      var skins = champData.skins;
+      // Group by tier
+      var grouped = {ultimate:[],mythic:[],legendary:[],epic:[],classic:[]};
+      skins.forEach(function(s){
+        var tier = getSkinTier(s.name, s.num);
+        if(!grouped[tier]) grouped[tier] = [];
+        grouped[tier].push(s);
+      });
+
+      var TIER_ORDER = ['ultimate','mythic','legendary','epic','classic'];
+      var TIER_LABELS = {
+        ultimate:  {label:'⚡ Ultimate',    color:'#ffd700'},
+        mythic:    {label:'💎 Mítica',      color:'#a78bfa'},
+        legendary: {label:'🔥 Legendaria',  color:'#fb923c'},
+        epic:      {label:'✨ Épica',       color:'#60a5fa'},
+        classic:   {label:'🎮 Clásica',     color:'#8b949e'},
+      };
+
+      var html = '';
+      TIER_ORDER.forEach(function(tier){
+        var list = grouped[tier];
+        if(!list || !list.length) return;
+        var tl = TIER_LABELS[tier];
+        html += '<div class="skins-tier-section">'
+          +'<div class="skins-tier-label" style="color:'+tl.color+'">'+tl.label+' <span style="font-size:9px;opacity:.6">('+list.length+')</span></div>'
+          +'<div class="skins-grid">'
+          +list.map(function(s){
+            var splashUrl = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+champKey+'_'+s.num+'.jpg';
+            var displayName = s.name === 'default' ? selChamp.n : s.name;
+            return '<div class="skin-card skin-tier-'+tier+'">'
+              +'<img src="'+splashUrl+'" loading="lazy" style="width:100%;height:80px;object-fit:cover;object-position:center 15%" onerror="this.parentElement.style.opacity=.5"/>'
+              +'<div class="skin-card-name" title="'+displayName+'">'+displayName+'</div>'
+              +'</div>';
+          }).join('')
+          +'</div></div>';
+      });
+
+      document.getElementById('skins-body').innerHTML = html;
+    })
+    .catch(function(){
+      document.getElementById('skins-body').innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text3)">No se pudieron cargar las skins. Verificá tu conexión.</div>';
+    });
 }
 function closeSkins(){
   document.getElementById('skins-modal').classList.remove('visible');
