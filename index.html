@@ -4184,15 +4184,26 @@ loadChampFromUrl();
   }, 2400);
 })();
 
-/* ── COMMENTS MODAL ── */
+/* ── COMMENTS MODAL (Firebase) ── */
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+<script>
 (function(){
-  var STORE='qp_comments';
-  function load(){try{return JSON.parse(localStorage.getItem(STORE))||[];}catch(e){return[];}}
-  function save(d){localStorage.setItem(STORE,JSON.stringify(d));}
-  function avatar(name){
+  var app=firebase.initializeApp({
+    apiKey:"AIzaSyDCBHciXc7PJPWHaKn9WyRwVXeosd6nqxg",
+    authDomain:"quepickeo.firebaseapp.com",
+    projectId:"quepickeo",
+    storageBucket:"quepickeo.firebasestorage.app",
+    messagingSenderId:"56370265217",
+    appId:"1:56370265217:web:e0fab54ccf17aefb512180"
+  });
+  var db=firebase.firestore();
+  var col=db.collection('comentarios');
+
+  function avatar(n){
     var colors=['#1f6feb','#3fb950','#d4af37','#f85149','#f0883e','#8b5cf6','#06b6d4'];
-    var i=name.charCodeAt(0)%colors.length;
-    return {bg:colors[i],initials:name.substring(0,2).toUpperCase()};
+    return {bg:colors[n.charCodeAt(0)%colors.length],initials:n.substring(0,2).toUpperCase()};
   }
   function timeAgo(ts){
     var s=Math.floor((Date.now()-ts)/1000);
@@ -4202,35 +4213,41 @@ loadChampFromUrl();
     return 'hace '+Math.floor(s/86400)+'d';
   }
   function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-  function renderModal(){
-    var data=load();
+
+  function renderDocs(docs){
     var list=document.getElementById('cmodal-list');
     if(!list)return;
-    if(!data.length){list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:#999">Sin comentarios aún. ¡Sé el primero!</div>';return;}
-    list.innerHTML=data.slice().reverse().map(function(c,ri){
-      var idx=data.length-1-ri;
-      var av=avatar(c.name);
-      var likes=c.likes||0,dislikes=c.dislikes||0;
+    if(!docs.length){list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:#999">Sin firmas aún. ¡Sé el primero!</div>';return;}
+    list.innerHTML=docs.map(function(d){
+      var c=d.data(),av=avatar(c.name),likes=c.likes||0,dislikes=c.dislikes||0;
       return '<div style="display:flex;gap:.75rem;padding:.75rem;background:#f7f8fa;border:1px solid #e2e5ea;border-radius:8px">'+
         '<div style="width:36px;height:36px;border-radius:50%;background:'+av.bg+';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0">'+av.initials+'</div>'+
         '<div style="flex:1;min-width:0">'+
           '<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">'+
             '<span style="font-size:13px;font-weight:600;color:#b8860b">'+escHtml(c.name)+'</span>'+
             '<span style="font-size:11px;color:#aaa">'+timeAgo(c.ts)+'</span>'+
-            '<button onclick="cwall_delete_modal('+idx+')" title="Eliminar" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#ccc;font-size:14px;line-height:1;padding:0 2px" onmouseover="this.style.color=\'#f85149\'" onmouseout="this.style.color=\'#ccc\'">&#x2715;</button>'+
+            '<button onclick="cwall_delete(\''+d.id+'\')" title="Eliminar" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#ccc;font-size:14px;line-height:1;padding:0 2px" onmouseover="this.style.color=\'#f85149\'" onmouseout="this.style.color=\'#ccc\'">&#x2715;</button>'+
           '</div>'+
           '<div style="font-size:13px;color:#2d2d2d;line-height:1.5;word-break:break-word;margin-bottom:.5rem">'+escHtml(c.msg)+'</div>'+
           '<div style="display:flex;align-items:center;gap:.5rem">'+
-            '<button onclick="cwall_vote_modal('+idx+',1)" style="display:flex;align-items:center;gap:3px;background:none;border:1px solid #e2e5ea;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:12px;color:#3fb950" onmouseover="this.style.background=\'#e8f9ed\'" onmouseout="this.style.background=\'none\'">&#x1F44D; '+likes+'</button>'+
-            '<button onclick="cwall_vote_modal('+idx+',-1)" style="display:flex;align-items:center;gap:3px;background:none;border:1px solid #e2e5ea;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:12px;color:#f85149" onmouseover="this.style.background=\'#fde8e8\'" onmouseout="this.style.background=\'none\'">&#x1F44E; '+dislikes+'</button>'+
+            '<button onclick="cwall_vote(\''+d.id+'\',1)" style="display:flex;align-items:center;gap:3px;background:none;border:1px solid #e2e5ea;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:12px;color:#3fb950" onmouseover="this.style.background=\'#e8f9ed\'" onmouseout="this.style.background=\'none\'">&#x1F44D; '+likes+'</button>'+
+            '<button onclick="cwall_vote(\''+d.id+'\',-1)" style="display:flex;align-items:center;gap:3px;background:none;border:1px solid #e2e5ea;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:12px;color:#f85149" onmouseover="this.style.background=\'#fde8e8\'" onmouseout="this.style.background=\'none\'">&#x1F44E; '+dislikes+'</button>'+
           '</div>'+
         '</div>'+
       '</div>';
     }).join('');
   }
+
+  var listening=false;
+  function startListener(){
+    if(listening)return;
+    listening=true;
+    col.orderBy('ts','desc').onSnapshot(function(snap){renderDocs(snap.docs);});
+  }
+
   window.openComments=function(){
     document.getElementById('comments-modal').style.display='block';
-    renderModal();
+    startListener();
     setTimeout(function(){document.getElementById('cmodal-msg').focus();},100);
   };
   window.closeComments=function(){
@@ -4240,22 +4257,15 @@ loadChampFromUrl();
     var name=(document.getElementById('cmodal-name').value||'').trim()||'Invocador';
     var msg=(document.getElementById('cmodal-msg').value||'').trim();
     if(!msg)return;
-    var data=load();
-    data.push({name:name,msg:msg,ts:Date.now(),likes:0,dislikes:0});
-    if(data.length>100)data=data.slice(-100);
-    save(data);
-    document.getElementById('cmodal-msg').value='';
-    renderModal();
+    col.add({name:name,msg:msg,ts:Date.now(),likes:0,dislikes:0})
+      .then(function(){document.getElementById('cmodal-msg').value='';})
+      .catch(function(e){alert('Error: '+e.message);});
   };
-  window.cwall_delete_modal=function(idx){
-    var data=load();data.splice(idx,1);save(data);renderModal();
-  };
-  window.cwall_vote_modal=function(idx,val){
-    var data=load();
-    if(!data[idx])return;
-    if(val===1)data[idx].likes=(data[idx].likes||0)+1;
-    else data[idx].dislikes=(data[idx].dislikes||0)+1;
-    save(data);renderModal();
+  window.cwall_delete=function(id){col.doc(id).delete().catch(function(e){console.error(e);});};
+  window.cwall_vote=function(id,val){
+    var f=val===1?'likes':'dislikes';
+    var upd={};upd[f]=firebase.firestore.FieldValue.increment(1);
+    col.doc(id).update(upd).catch(function(e){console.error(e);});
   };
   document.getElementById('cmodal-msg').addEventListener('keydown',function(e){
     if(e.ctrlKey&&e.key==='Enter')cwall_post_modal();
