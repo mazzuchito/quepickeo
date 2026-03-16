@@ -4157,6 +4157,84 @@ loadChampFromUrl();
 
 </script>
 
+<!-- COMMENT WALL -->
+<section id="comment-wall" style="max-width:1100px;margin:2rem auto 0;padding:0 1.5rem">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 1rem;background:var(--bg3);border-bottom:1px solid var(--border)">
+      <span style="font-size:11px;font-weight:600;color:var(--gold2);letter-spacing:.6px;text-transform:uppercase">Comentarios de la comunidad</span>
+      <span id="cwall-count" style="font-size:11px;color:var(--text3)">0 comentarios</span>
+    </div>
+    <div style="padding:1rem">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.85rem 1rem;margin-bottom:1rem">
+        <div style="display:flex;gap:.6rem;margin-bottom:.6rem">
+          <input id="cwall-name" maxlength="24" placeholder="Tu nombre (ej: Yasuo420)" style="flex:1;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);outline:none" onfocus="this.style.borderColor='var(--blue2)'" onblur="this.style.borderColor='var(--border2)'"/>
+          <button onclick="cwall_post()" style="background:var(--blue);border:none;border-radius:6px;padding:7px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;white-space:nowrap;transition:background .15s" onmouseover="this.style.background='var(--blue2)'" onmouseout="this.style.background='var(--blue)'">Publicar</button>
+        </div>
+        <textarea id="cwall-msg" maxlength="400" rows="2" placeholder="Dejá tu comentario sobre el sitio, un campeón, una build..." style="width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical" onfocus="this.style.borderColor='var(--blue2)'" onblur="this.style.borderColor='var(--border2)'"></textarea>
+      </div>
+      <div id="cwall-list" style="display:flex;flex-direction:column;gap:.55rem"></div>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  var STORE='qp_comments';
+  function load(){try{return JSON.parse(localStorage.getItem(STORE))||[];}catch(e){return[];}}
+  function save(d){localStorage.setItem(STORE,JSON.stringify(d));}
+  function avatar(name){
+    var colors=['#1f6feb','#3fb950','#d4af37','#f85149','#f0883e','#8b5cf6','#06b6d4'];
+    var i=name.charCodeAt(0)%colors.length;
+    return {bg:colors[i],initials:name.substring(0,2).toUpperCase()};
+  }
+  function timeAgo(ts){
+    var s=Math.floor((Date.now()-ts)/1000);
+    if(s<60)return 'hace un momento';
+    if(s<3600)return 'hace '+Math.floor(s/60)+'m';
+    if(s<86400)return 'hace '+Math.floor(s/3600)+'h';
+    return 'hace '+Math.floor(s/86400)+'d';
+  }
+  function render(){
+    var data=load();
+    var list=document.getElementById('cwall-list');
+    var count=document.getElementById('cwall-count');
+    count.textContent=data.length+' comentario'+(data.length===1?'':'s');
+    if(!data.length){
+      list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:var(--text3)">Sin comentarios aún. ¡Sé el primero!</div>';
+      return;
+    }
+    list.innerHTML=data.slice().reverse().map(function(c){
+      var av=avatar(c.name);
+      return '<div style="display:flex;gap:.75rem;padding:.75rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px">'+
+        '<div style="width:36px;height:36px;border-radius:50%;background:'+av.bg+';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0">'+av.initials+'</div>'+
+        '<div style="flex:1;min-width:0">'+
+          '<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">'+
+            '<span style="font-size:13px;font-weight:600;color:var(--gold)">'+escHtml(c.name)+'</span>'+
+            '<span style="font-size:11px;color:var(--text3)">'+timeAgo(c.ts)+'</span>'+
+          '</div>'+
+          '<div style="font-size:13px;color:var(--text);line-height:1.5;word-break:break-word">'+escHtml(c.msg)+'</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+  function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  window.cwall_post=function(){
+    var name=(document.getElementById('cwall-name').value||'').trim()||'Invocador';
+    var msg=(document.getElementById('cwall-msg').value||'').trim();
+    if(!msg)return;
+    var data=load();
+    data.push({name:name,msg:msg,ts:Date.now()});
+    if(data.length>100)data=data.slice(-100);
+    save(data);
+    document.getElementById('cwall-msg').value='';
+    render();
+  };
+  document.getElementById('cwall-msg').addEventListener('keydown',function(e){
+    if(e.ctrlKey&&e.key==='Enter')cwall_post();
+  });
+  render();
+})();
+</script>
+
 <!-- FOOTER -->
 <footer style="text-align:center;padding:1.5rem 1rem;border-top:1px solid var(--border);margin-top:2rem;font-size:12px;color:var(--text3)">
   <div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
