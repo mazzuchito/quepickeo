@@ -4214,11 +4214,24 @@ loadChampFromUrl();
   }
   function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+  var PER_PAGE=5;
+  var currentPage=0;
+  var allDocs=[];
+
   function renderDocs(docs){
+    allDocs=docs;
+    currentPage=0;
+    renderPage();
+  }
+
+  function renderPage(){
     var list=document.getElementById('cmodal-list');
     if(!list)return;
-    if(!docs.length){list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:#999">Sin firmas aún. ¡Sé el primero!</div>';return;}
-    list.innerHTML=docs.map(function(d){
+    if(!allDocs.length){list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:#999">Sin firmas aún. ¡Sé el primero!</div>';return;}
+    var totalPages=Math.ceil(allDocs.length/PER_PAGE);
+    var start=currentPage*PER_PAGE;
+    var pageDocs=allDocs.slice(start,start+PER_PAGE);
+    var cards=pageDocs.map(function(d){
       var c=d.data(),av=avatar(c.name),likes=c.likes||0,dislikes=c.dislikes||0;
       return '<div style="display:flex;gap:.75rem;padding:.75rem;background:#f7f8fa;border:1px solid #e2e5ea;border-radius:8px">'+
         '<div style="width:36px;height:36px;border-radius:50%;background:'+av.bg+';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0">'+av.initials+'</div>'+
@@ -4226,7 +4239,6 @@ loadChampFromUrl();
           '<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">'+
             '<span style="font-size:13px;font-weight:600;color:#b8860b">'+escHtml(c.name)+'</span>'+
             '<span style="font-size:11px;color:#aaa">'+timeAgo(c.ts)+'</span>'+
-            '<button onclick="cwall_delete(\''+d.id+'\')" title="Eliminar" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#ccc;font-size:14px;line-height:1;padding:0 2px" onmouseover="this.style.color=\'#f85149\'" onmouseout="this.style.color=\'#ccc\'">&#x2715;</button>'+
           '</div>'+
           '<div style="font-size:13px;color:#2d2d2d;line-height:1.5;word-break:break-word;margin-bottom:.5rem">'+escHtml(c.msg)+'</div>'+
           '<div style="display:flex;align-items:center;gap:.5rem">'+
@@ -4236,7 +4248,31 @@ loadChampFromUrl();
         '</div>'+
       '</div>';
     }).join('');
+
+    var pagination='';
+    if(totalPages>1){
+      var btns='';
+      for(var i=0;i<totalPages;i++){
+        var active=i===currentPage;
+        btns+='<button onclick="cwall_page('+i+')" style="min-width:30px;padding:4px 8px;border-radius:4px;border:1px solid '+(active?'#f0d060':'#e2e5ea')+';background:'+(active?'#f0d060':'none')+';color:'+(active?'#1a1d23':'#666')+';font-weight:'+(active?'700':'400')+';font-size:12px;cursor:pointer">'+(i+1)+'</button>';
+      }
+      pagination='<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:.75rem;padding-top:.75rem;border-top:1px solid #e2e5ea">'+
+        '<button onclick="cwall_page('+(currentPage-1)+')" '+(currentPage===0?'disabled':'')+' style="padding:4px 10px;border-radius:4px;border:1px solid #e2e5ea;background:none;color:#666;font-size:12px;cursor:pointer;opacity:'+(currentPage===0?'.4':'1')+'">&larr;</button>'+
+        btns+
+        '<button onclick="cwall_page('+(currentPage+1)+')" '+(currentPage===totalPages-1?'disabled':'')+' style="padding:4px 10px;border-radius:4px;border:1px solid #e2e5ea;background:none;color:#666;font-size:12px;cursor:pointer;opacity:'+(currentPage===totalPages-1?'.4':'1')+'">&rarr;</button>'+
+        '<span style="font-size:11px;color:#aaa;margin-left:4px">'+allDocs.length+' firmas en total</span>'+
+      '</div>';
+    }
+    list.innerHTML=cards+pagination;
   }
+
+  window.cwall_page=function(p){
+    var totalPages=Math.ceil(allDocs.length/PER_PAGE);
+    if(p<0||p>=totalPages)return;
+    currentPage=p;
+    renderPage();
+    document.getElementById('cmodal-list').scrollIntoView({behavior:'smooth',block:'nearest'});
+  };
 
   var listening=false;
   function startListener(){
