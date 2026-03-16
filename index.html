@@ -941,12 +941,13 @@ input, select, textarea {
 <div id="page-bg"></div>
 <div id="page-bg-overlay"></div>
 <nav>
-  <div class="logo">⚔ Que Pickeo ?</div>
+  <div class="logo" onclick="window.location.href=window.location.pathname+'?'+Date.now()" style="cursor:pointer" title="Ir al inicio">⚔ Que Pickeo ?</div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="nav-champ" style="font-size:12px;color:var(--gold);font-weight:600;opacity:0;transition:opacity .4s"></span>
     <button class="theme-toggle" onclick="openTFT()" style="color:#c084fc;border-color:rgba(192,132,252,.3)">🎮 TFT</button>
     <button class="theme-toggle" onclick="openDraft()" style="color:#4488ff;border-color:rgba(68,136,255,.3)">⚔ Modo Draft</button>
     <button class="theme-toggle" onclick="openTierList()" style="color:var(--gold2);border-color:rgba(212,175,55,.3)">📊 Tier List</button>
+    <button class="theme-toggle" onclick="openComments()" style="color:#f0d060;border-color:rgba(240,208,96,.35)">💬 Comentarios</button>
     <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="Cambiar modo">🌙 Oscuro</button>
     <span class="patch">Patch 16.5</span>
   </div>
@@ -993,6 +994,14 @@ input, select, textarea {
           <button onclick="searchSummoner()" style="background:var(--blue);border:none;color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:0 14px;cursor:pointer;transition:background .15s" onmouseover="this.style.background='var(--blue2)'" onmouseout="this.style.background='var(--blue)'">Buscar</button>
         </div>
       </div>
+    </div>
+    <!-- COMMENTS BTN -->
+    <div style="margin-bottom:.75rem">
+      <button onclick="openComments()" style="width:100%;background:linear-gradient(90deg,rgba(240,208,96,.1),rgba(240,208,96,.04));border:1px solid rgba(240,208,96,.4);border-radius:8px;padding:10px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#f0d060;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s" onmouseover="this.style.background='linear-gradient(90deg,rgba(240,208,96,.18),rgba(240,208,96,.08))';this.style.borderColor='#f0d060'" onmouseout="this.style.background='linear-gradient(90deg,rgba(240,208,96,.1),rgba(240,208,96,.04))';this.style.borderColor='rgba(240,208,96,.4)'">
+        <span style="font-size:16px">💬</span>
+        <span>Dejá tu firma</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--text3)">Contanos qué pensás →</span>
+      </button>
     </div>
     <!-- DRAFT BANNER -->
     <div class="draft-hero-banner" onclick="openDraft()">
@@ -1070,6 +1079,26 @@ input, select, textarea {
       </div>
     </div>
     <div class="tierlist-body" id="tl-body"></div>
+  </div>
+</div>
+
+<!-- COMMENTS MODAL -->
+<div id="comments-modal" onclick="if(event.target===this)closeComments()" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);overflow-y:auto">
+  <div style="background:#fff;border:1px solid #f0d060;border-radius:12px;width:100%;max-width:680px;margin:2rem auto;box-shadow:0 0 30px rgba(240,208,96,.2),0 4px 24px rgba(0,0,0,.3);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:linear-gradient(90deg,rgba(240,208,96,.18),rgba(240,208,96,.06));border-bottom:1px solid rgba(240,208,96,.35)">
+      <span style="font-size:13px;font-weight:700;color:#b8860b;letter-spacing:1px;text-transform:uppercase">💬 Comentarios de la comunidad</span>
+      <button onclick="closeComments()" style="background:none;border:none;cursor:pointer;color:#aaa;font-size:18px;line-height:1;padding:0 4px" onmouseover="this.style.color='#f85149'" onmouseout="this.style.color='#aaa'">✕</button>
+    </div>
+    <div style="padding:1rem;background:#fff">
+      <div style="background:#f7f8fa;border:1px solid #e2e5ea;border-radius:8px;padding:.85rem 1rem;margin-bottom:1rem">
+        <div style="display:flex;gap:.6rem;margin-bottom:.6rem">
+          <input id="cmodal-name" maxlength="24" placeholder="Tu nombre (ej: Yasuo420)" style="flex:1;background:#fff;border:1px solid #d0d5dd;border-radius:6px;padding:7px 10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1d23;outline:none" onfocus="this.style.borderColor='#1f6feb'" onblur="this.style.borderColor='#d0d5dd'"/>
+          <button onclick="cwall_post_modal()" style="background:#1f6feb;border:none;border-radius:6px;padding:7px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;white-space:nowrap;transition:background .15s" onmouseover="this.style.background='#388bfd'" onmouseout="this.style.background='#1f6feb'">Publicar</button>
+        </div>
+        <textarea id="cmodal-msg" maxlength="400" rows="3" placeholder="Dejá tu comentario sobre el sitio, un campeón, una build..." style="width:100%;background:#fff;border:1px solid #d0d5dd;border-radius:6px;padding:7px 10px;font-family:'Inter',sans-serif;font-size:13px;color:#1a1d23;outline:none;resize:vertical" onfocus="this.style.borderColor='#1f6feb'" onblur="this.style.borderColor='#d0d5dd'"></textarea>
+      </div>
+      <div id="cmodal-list" style="display:flex;flex-direction:column;gap:.55rem;max-height:420px;overflow-y:auto"></div>
+    </div>
   </div>
 </div>
 
@@ -4155,28 +4184,7 @@ loadChampFromUrl();
   }, 2400);
 })();
 
-</script>
-
-<!-- COMMENT WALL -->
-<section id="comment-wall" style="max-width:1100px;margin:2rem auto 0;padding:0 1.5rem">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 1rem;background:var(--bg3);border-bottom:1px solid var(--border)">
-      <span style="font-size:11px;font-weight:700;color:#f0d060;letter-spacing:.6px;text-transform:uppercase;text-shadow:0 0 8px rgba(240,208,96,.5)">Comentarios de la comunidad</span>
-      <span id="cwall-count" style="font-size:11px;color:var(--text3)">0 comentarios</span>
-    </div>
-    <div style="padding:1rem">
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.85rem 1rem;margin-bottom:1rem">
-        <div style="display:flex;gap:.6rem;margin-bottom:.6rem">
-          <input id="cwall-name" maxlength="24" placeholder="Tu nombre (ej: Yasuo420)" style="flex:1;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);outline:none" onfocus="this.style.borderColor='var(--blue2)'" onblur="this.style.borderColor='var(--border2)'"/>
-          <button onclick="cwall_post()" style="background:var(--blue);border:none;border-radius:6px;padding:7px 16px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;white-space:nowrap;transition:background .15s" onmouseover="this.style.background='var(--blue2)'" onmouseout="this.style.background='var(--blue)'">Publicar</button>
-        </div>
-        <textarea id="cwall-msg" maxlength="400" rows="2" placeholder="Dejá tu comentario sobre el sitio, un campeón, una build..." style="width:100%;background:var(--bg4);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical" onfocus="this.style.borderColor='var(--blue2)'" onblur="this.style.borderColor='var(--border2)'"></textarea>
-      </div>
-      <div id="cwall-list" style="display:flex;flex-direction:column;gap:.55rem"></div>
-    </div>
-  </div>
-</section>
-<script>
+/* ── COMMENTS MODAL ── */
 (function(){
   var STORE='qp_comments';
   function load(){try{return JSON.parse(localStorage.getItem(STORE))||[];}catch(e){return[];}}
@@ -4193,46 +4201,67 @@ loadChampFromUrl();
     if(s<86400)return 'hace '+Math.floor(s/3600)+'h';
     return 'hace '+Math.floor(s/86400)+'d';
   }
-  function render(){
+  function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function renderModal(){
     var data=load();
-    var list=document.getElementById('cwall-list');
-    var count=document.getElementById('cwall-count');
-    count.textContent=data.length+' comentario'+(data.length===1?'':'s');
-    if(!data.length){
-      list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:var(--text3)">Sin comentarios aún. ¡Sé el primero!</div>';
-      return;
-    }
-    list.innerHTML=data.slice().reverse().map(function(c){
+    var list=document.getElementById('cmodal-list');
+    if(!list)return;
+    if(!data.length){list.innerHTML='<div style="text-align:center;padding:1.5rem;font-size:13px;color:#999">Sin comentarios aún. ¡Sé el primero!</div>';return;}
+    list.innerHTML=data.slice().reverse().map(function(c,ri){
+      var idx=data.length-1-ri;
       var av=avatar(c.name);
-      return '<div style="display:flex;gap:.75rem;padding:.75rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px">'+
+      var likes=c.likes||0,dislikes=c.dislikes||0;
+      return '<div style="display:flex;gap:.75rem;padding:.75rem;background:#f7f8fa;border:1px solid #e2e5ea;border-radius:8px">'+
         '<div style="width:36px;height:36px;border-radius:50%;background:'+av.bg+';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0">'+av.initials+'</div>'+
         '<div style="flex:1;min-width:0">'+
           '<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">'+
-            '<span style="font-size:13px;font-weight:600;color:var(--gold)">'+escHtml(c.name)+'</span>'+
-            '<span style="font-size:11px;color:var(--text3)">'+timeAgo(c.ts)+'</span>'+
+            '<span style="font-size:13px;font-weight:600;color:#b8860b">'+escHtml(c.name)+'</span>'+
+            '<span style="font-size:11px;color:#aaa">'+timeAgo(c.ts)+'</span>'+
+            '<button onclick="cwall_delete_modal('+idx+')" title="Eliminar" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#ccc;font-size:14px;line-height:1;padding:0 2px" onmouseover="this.style.color=\'#f85149\'" onmouseout="this.style.color=\'#ccc\'">&#x2715;</button>'+
           '</div>'+
-          '<div style="font-size:13px;color:var(--text);line-height:1.5;word-break:break-word">'+escHtml(c.msg)+'</div>'+
+          '<div style="font-size:13px;color:#2d2d2d;line-height:1.5;word-break:break-word;margin-bottom:.5rem">'+escHtml(c.msg)+'</div>'+
+          '<div style="display:flex;align-items:center;gap:.5rem">'+
+            '<button onclick="cwall_vote_modal('+idx+',1)" style="display:flex;align-items:center;gap:3px;background:none;border:1px solid #e2e5ea;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:12px;color:#3fb950" onmouseover="this.style.background=\'#e8f9ed\'" onmouseout="this.style.background=\'none\'">&#x1F44D; '+likes+'</button>'+
+            '<button onclick="cwall_vote_modal('+idx+',-1)" style="display:flex;align-items:center;gap:3px;background:none;border:1px solid #e2e5ea;border-radius:4px;padding:3px 8px;cursor:pointer;font-size:12px;color:#f85149" onmouseover="this.style.background=\'#fde8e8\'" onmouseout="this.style.background=\'none\'">&#x1F44E; '+dislikes+'</button>'+
+          '</div>'+
         '</div>'+
       '</div>';
     }).join('');
   }
-  function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-  window.cwall_post=function(){
-    var name=(document.getElementById('cwall-name').value||'').trim()||'Invocador';
-    var msg=(document.getElementById('cwall-msg').value||'').trim();
+  window.openComments=function(){
+    document.getElementById('comments-modal').style.display='block';
+    renderModal();
+    setTimeout(function(){document.getElementById('cmodal-msg').focus();},100);
+  };
+  window.closeComments=function(){
+    document.getElementById('comments-modal').style.display='none';
+  };
+  window.cwall_post_modal=function(){
+    var name=(document.getElementById('cmodal-name').value||'').trim()||'Invocador';
+    var msg=(document.getElementById('cmodal-msg').value||'').trim();
     if(!msg)return;
     var data=load();
-    data.push({name:name,msg:msg,ts:Date.now()});
+    data.push({name:name,msg:msg,ts:Date.now(),likes:0,dislikes:0});
     if(data.length>100)data=data.slice(-100);
     save(data);
-    document.getElementById('cwall-msg').value='';
-    render();
+    document.getElementById('cmodal-msg').value='';
+    renderModal();
   };
-  document.getElementById('cwall-msg').addEventListener('keydown',function(e){
-    if(e.ctrlKey&&e.key==='Enter')cwall_post();
+  window.cwall_delete_modal=function(idx){
+    var data=load();data.splice(idx,1);save(data);renderModal();
+  };
+  window.cwall_vote_modal=function(idx,val){
+    var data=load();
+    if(!data[idx])return;
+    if(val===1)data[idx].likes=(data[idx].likes||0)+1;
+    else data[idx].dislikes=(data[idx].dislikes||0)+1;
+    save(data);renderModal();
+  };
+  document.getElementById('cmodal-msg').addEventListener('keydown',function(e){
+    if(e.ctrlKey&&e.key==='Enter')cwall_post_modal();
   });
-  render();
 })();
+
 </script>
 
 <!-- FOOTER -->
