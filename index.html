@@ -851,6 +851,60 @@ input, select, textarea {
 @keyframes teemoFall{to{top:110%;transform:rotate(360deg)}}
 @keyframes teemoPop{from{transform:translate(-50%,-50%) scale(.5);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
 
+
+/* ── SKINS MODAL ── */
+#skins-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);overflow-y:auto}
+#skins-modal.visible{display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem}
+.skins-box{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:960px;overflow:hidden;animation:fadeInUp .3s ease}
+.skins-hd{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:var(--bg3);border-bottom:1px solid var(--border2)}
+.skins-title{font-size:15px;font-weight:700;color:#a78bfa}
+.skins-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer}
+.skins-close:hover{color:var(--text)}
+.skins-tier-section{padding:.75rem 1.25rem}
+.skins-tier-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:.6rem;display:flex;align-items:center;gap:8px}
+.skins-tier-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.skins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin-bottom:1rem}
+.skin-card{border-radius:8px;overflow:hidden;background:var(--bg3);border:1px solid var(--border2);cursor:pointer;transition:all .2s;position:relative}
+.skin-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.skin-card img{width:100%;height:80px;object-fit:cover;object-position:center 15%;display:block}
+.skin-card-name{font-size:10px;font-weight:600;color:var(--text2);padding:5px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.skin-tier-ultimate{border-color:rgba(255,215,0,.5)}
+.skin-tier-ultimate .skin-card-name{color:#ffd700}
+.skin-tier-mythic{border-color:rgba(167,139,250,.5)}
+.skin-tier-mythic .skin-card-name{color:#a78bfa}
+.skin-tier-legendary{border-color:rgba(251,146,60,.5)}
+.skin-tier-legendary .skin-card-name{color:#fb923c}
+.skin-tier-epic{border-color:rgba(56,139,253,.3)}
+.skin-tier-classic .skin-card-name{color:var(--text3)}
+
+/* ── FLASHCARDS MODAL ── */
+#flash-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.82);backdrop-filter:blur(6px)}
+#flash-modal.visible{display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.flash-box{background:var(--bg2);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:600px;overflow:hidden;animation:fadeInUp .3s ease}
+.flash-hd{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:var(--bg3);border-bottom:1px solid var(--border2)}
+.flash-title{font-size:15px;font-weight:700;color:#fb923c}
+.flash-score{font-size:13px;font-weight:600;color:var(--text2)}
+.flash-close{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer}
+.flash-body{padding:1.5rem}
+.flash-card{background:var(--bg3);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:1.25rem;text-align:center}
+.flash-splash{width:100%;height:180px;object-fit:cover;object-position:center 15%}
+.flash-champ-name{font-size:22px;font-weight:700;color:var(--text);padding:.75rem;border-top:1px solid var(--border)}
+.flash-champ-role{font-size:12px;color:var(--text3);margin-top:-8px;padding-bottom:.75rem}
+.flash-question{font-size:13px;color:var(--text2);margin-bottom:1rem;text-align:center}
+.flash-options{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem}
+.flash-opt{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:.65rem;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px}
+.flash-opt:hover{border-color:var(--blue2);background:var(--bg4)}
+.flash-opt.correct{border-color:var(--green)!important;background:rgba(63,185,80,.12)!important;color:var(--green)!important}
+.flash-opt.wrong{border-color:var(--red)!important;background:rgba(248,81,73,.1)!important;color:var(--red)!important}
+.flash-opt.reveal{border-color:var(--green)!important;background:rgba(63,185,80,.06)!important}
+.flash-feedback{text-align:center;font-size:13px;font-weight:600;min-height:20px;margin-bottom:.75rem}
+.flash-next{width:100%;background:var(--blue);color:#fff;border:none;border-radius:8px;padding:.75rem;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .15s}
+.flash-next:hover{background:var(--blue2)}
+.flash-stats{display:flex;gap:1rem;justify-content:center;padding:.75rem;background:var(--bg3);border-top:1px solid var(--border)}
+.flash-stat{text-align:center}
+.flash-stat-val{font-size:18px;font-weight:700}
+.flash-stat-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px}
+
 </style>
 </head>
 <body>
@@ -870,7 +924,6 @@ input, select, textarea {
   <div class="logo">⚔ Que Pickeo ?</div>
   <div style="display:flex;align-items:center;gap:10px">
     <span id="nav-champ" style="font-size:12px;color:var(--gold);font-weight:600;opacity:0;transition:opacity .4s"></span>
-    <button class="theme-toggle" id="ambient-btn" onclick="toggleAmbient()" style="color:var(--text2);border-color:var(--border)">🔇 Sonido</button>
     <button class="theme-toggle" onclick="openTFT()" style="color:#c084fc;border-color:rgba(192,132,252,.3)">🎮 TFT</button>
     <button class="theme-toggle" onclick="openDraft()" style="color:#4488ff;border-color:rgba(68,136,255,.3)">⚔ Modo Draft</button>
     <button class="theme-toggle" onclick="openTierList()" style="color:var(--gold2);border-color:rgba(212,175,55,.3)">📊 Tier List</button>
@@ -941,7 +994,13 @@ input, select, textarea {
     </div>
     <div id="summoner-result" style="display:none;margin-bottom:.75rem"></div>
     <div id="hero-synergies" style="display:none;margin-bottom:.75rem"></div>
-    <div class="roles" id="roleTabs"></div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <div class="roles" id="roleTabs" style="flex:1"></div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="theme-toggle" onclick="openSkins()" style="color:#a78bfa;border-color:rgba(167,139,250,.3);font-size:11px" title="Ver skins del campeón seleccionado">✨ Skins</button>
+        <button class="theme-toggle" onclick="openFlashcards()" style="color:#fb923c;border-color:rgba(251,146,60,.3);font-size:11px" title="Modo estudio — adiviná counters">🃏 Flashcards</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1059,6 +1118,36 @@ input, select, textarea {
     </div>
     <div id="search-popup-roles"></div>
     <div id="search-popup-grid"></div>
+  </div>
+</div>
+
+<!-- SKINS MODAL -->
+<div id="skins-modal" onclick="if(event.target===this)closeSkins()">
+  <div class="skins-box">
+    <div class="skins-hd">
+      <span class="skins-title" id="skins-title">✨ Skins</span>
+      <button class="skins-close" onclick="closeSkins()">✕</button>
+    </div>
+    <div id="skins-body" style="max-height:75vh;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- FLASHCARDS MODAL -->
+<div id="flash-modal" onclick="if(event.target===this)closeFlashcards()">
+  <div class="flash-box">
+    <div class="flash-hd">
+      <span class="flash-title">🃏 Flashcards — Adiviná los counters</span>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="flash-score" id="flash-score">0 / 0</span>
+        <button class="flash-close" onclick="closeFlashcards()">✕</button>
+      </div>
+    </div>
+    <div class="flash-body" id="flash-body"></div>
+    <div class="flash-stats" id="flash-stats" style="display:none">
+      <div class="flash-stat"><div class="flash-stat-val" id="fs-correct" style="color:var(--green)">0</div><div class="flash-stat-lbl">Correctas</div></div>
+      <div class="flash-stat"><div class="flash-stat-val" id="fs-wrong" style="color:var(--red)">0</div><div class="flash-stat-lbl">Incorrectas</div></div>
+      <div class="flash-stat"><div class="flash-stat-val" id="fs-pct" style="color:var(--gold2)">0%</div><div class="flash-stat-lbl">Precisión</div></div>
+    </div>
   </div>
 </div>
 
@@ -3449,32 +3538,6 @@ function renderHomepage(){
     +'</div>';
 }
 
-/* ════════════════════════════════════
-   AMBIENT SOUND
-════════════════════════════════════ */
-var ambientAudio = null;
-var ambientOn = false;
-var AMBIENT_URLS = [
-  'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
-];
-
-function toggleAmbient(){
-  var btn = document.getElementById('ambient-btn');
-  if(!ambientAudio){
-    ambientAudio = new Audio(AMBIENT_URLS[0]);
-    ambientAudio.loop = true;
-    ambientAudio.volume = 0.15;
-  }
-  if(ambientOn){
-    ambientAudio.pause();
-    ambientOn = false;
-    if(btn) btn.textContent = '🔇 Sonido';
-  } else {
-    ambientAudio.play().catch(function(){});
-    ambientOn = true;
-    if(btn) btn.textContent = '🔊 Sonido';
-  }
-}
 
 /* ════════════════════════════════════
    EASTER EGG — TEEMO
@@ -3509,6 +3572,199 @@ function triggerTeemoEgg(){
   div.appendChild(msg);
   document.body.appendChild(div);
   setTimeout(function(){ div.remove(); }, 4000);
+}
+
+/* ════════════════════════════════════
+   SKINS
+════════════════════════════════════ */
+var SKIN_TIERS = {
+  ultimate:   {label:'⚡ Ultimate',      color:'#ffd700', champs:['Lux','Udyr','Jayce','Ezreal']},
+  mythic:     {label:'💎 Mítica',        color:'#a78bfa', champs:[]},
+  legendary:  {label:'🔥 Legendaria',    color:'#fb923c', champs:[]},
+  epic:       {label:'✨ Épica',         color:'#60a5fa', champs:[]},
+  classic:    {label:'🎮 Clásica / Base', color:'#8b949e', champs:[]},
+};
+
+var SKIN_DATA = {
+  "Ahri":       [{id:0,name:"Ahri",tier:"classic"},{id:1,name:"Dynasty Ahri",tier:"epic"},{id:2,name:"Midnight Ahri",tier:"epic"},{id:3,name:"Foxfire Ahri",tier:"epic"},{id:4,name:"Popstar Ahri",tier:"legendary"},{id:5,name:"Challenger Ahri",tier:"epic"},{id:6,name:"Academy Ahri",tier:"epic"},{id:7,name:"Star Guardian Ahri",tier:"legendary"},{id:8,name:"K/DA Ahri",tier:"epic"},{id:9,name:"Coven Ahri",tier:"epic"},{id:10,name:"K/DA ALL OUT Ahri",tier:"epic"},{id:11,name:"Immortal Journey Ahri",tier:"epic"},{id:12,name:"Porcelain Ahri",tier:"epic"}],
+  "Jinx":       [{id:0,name:"Jinx",tier:"classic"},{id:1,name:"Mafia Jinx",tier:"epic"},{id:2,name:"Firecracker Jinx",tier:"epic"},{id:3,name:"Star Guardian Jinx",tier:"legendary"},{id:4,name:"Slayer Jinx",tier:"epic"},{id:5,name:"Ambitious Elf Jinx",tier:"epic"},{id:6,name:"Odyssey Jinx",tier:"epic"},{id:7,name:"Arcane Jinx",tier:"legendary"},{id:8,name:"Cafe Cuties Jinx",tier:"epic"},{id:9,name:"Anima Squad Jinx",tier:"epic"}],
+  "Yasuo":      [{id:0,name:"Yasuo",tier:"classic"},{id:1,name:"Nightbringer Yasuo",tier:"legendary"},{id:2,name:"High Noon Yasuo",tier:"epic"},{id:3,name:"PROJECT: Yasuo",tier:"epic"},{id:4,name:"Battle Boss Yasuo",tier:"epic"},{id:5,name:"Odyssey Yasuo",tier:"epic"},{id:6,name:"True Damage Yasuo",tier:"epic"},{id:7,name:"Spirit Blossom Yasuo",tier:"epic"},{id:8,name:"Dawnbringer Yasuo",tier:"epic"}],
+  "Lux":        [{id:0,name:"Lux",tier:"classic"},{id:1,name:"Elementalist Lux",tier:"ultimate"},{id:2,name:"Star Guardian Lux",tier:"legendary"},{id:3,name:"Steel Legion Lux",tier:"epic"},{id:4,name:"Imperial Lux",tier:"epic"},{id:5,name:"Lunar Empress Lux",tier:"legendary"},{id:6,name:"Pajama Guardian Lux",tier:"epic"},{id:7,name:"Battle Academia Lux",tier:"legendary"},{id:8,name:"Space Groove Lux",tier:"epic"},{id:9,name:"Prestige Porcelain Lux",tier:"mythic"}],
+  "Zed":        [{id:0,name:"Zed",tier:"classic"},{id:1,name:"PROJECT: Zed",tier:"legendary"},{id:2,name:"SKT T1 Zed",tier:"epic"},{id:3,name:"Shockblade Zed",tier:"epic"},{id:4,name:"Death Sworn Zed",tier:"epic"},{id:5,name:"Galaxy Slayer Zed",tier:"legendary"}],
+  "Lee Sin":    [{id:0,name:"Lee Sin",tier:"classic"},{id:1,name:"Muay Thai Lee Sin",tier:"epic"},{id:2,name:"Dragon Fist Lee Sin",tier:"epic"},{id:3,name:"Acolyte Lee Sin",tier:"epic"},{id:4,name:"Pool Party Lee Sin",tier:"epic"},{id:5,name:"SKT T1 Lee Sin",tier:"epic"},{id:6,name:"Knockout Lee Sin",tier:"legendary"},{id:7,name:"God Fist Lee Sin",tier:"legendary"},{id:8,name:"Nightbringer Lee Sin",tier:"epic"}],
+  "Thresh":     [{id:0,name:"Thresh",tier:"classic"},{id:1,name:"Championship Thresh",tier:"legendary"},{id:2,name:"Deep Terror Thresh",tier:"epic"},{id:3,name:"Blood Moon Thresh",tier:"epic"},{id:4,name:"Dark Star Thresh",tier:"legendary"},{id:5,name:"High Noon Thresh",tier:"epic"},{id:6,name:"Space Groove Thresh",tier:"epic"}],
+  "Ezreal":     [{id:0,name:"Ezreal",tier:"classic"},{id:1,name:"TPA Ezreal",tier:"epic"},{id:2,name:"Ace of Spades Ezreal",tier:"epic"},{id:3,name:"Arcade Ezreal",tier:"ultimate"},{id:4,name:"Star Guardian Ezreal",tier:"epic"},{id:5,name:"Pulsefire Ezreal",tier:"legendary"},{id:6,name:"Battle Academia Ezreal",tier:"epic"},{id:7,name:"Pajama Guardian Ezreal",tier:"epic"}],
+  "Caitlyn":    [{id:0,name:"Caitlyn",tier:"classic"},{id:1,name:"Headhunter Caitlyn",tier:"epic"},{id:2,name:"Sheriff Caitlyn",tier:"epic"},{id:3,name:"Resistance Caitlyn",tier:"epic"},{id:4,name:"Officer Caitlyn",tier:"epic"},{id:5,name:"Pulsefire Caitlyn",tier:"legendary"},{id:6,name:"Pool Party Caitlyn",tier:"epic"},{id:7,name:"Arcane Caitlyn",tier:"legendary"},{id:8,name:"Cafe Cuties Caitlyn",tier:"epic"}],
+  "Leona":      [{id:0,name:"Leona",tier:"classic"},{id:1,name:"Valkyrie Leona",tier:"epic"},{id:2,name:"Iron Solari Leona",tier:"epic"},{id:3,name:"Pool Party Leona",tier:"epic"},{id:4,name:"PROJECT: Leona",tier:"epic"},{id:5,name:"Solar Eclipse Leona",tier:"legendary"},{id:6,name:"Lunar Eclipse Leona",tier:"legendary"}],
+  "Darius":     [{id:0,name:"Darius",tier:"classic"},{id:1,name:"Lord Darius",tier:"epic"},{id:2,name:"Bioforge Darius",tier:"epic"},{id:3,name:"Woad King Darius",tier:"epic"},{id:4,name:"Dunkmaster Darius",tier:"legendary"},{id:5,name:"God-King Darius",tier:"legendary"},{id:6,name:"Dark Cosmic Darius",tier:"legendary"}],
+  "Akali":      [{id:0,name:"Akali",tier:"classic"},{id:1,name:"Stinger Akali",tier:"epic"},{id:2,name:"Silverfang Akali",tier:"epic"},{id:3,name:"Nurse Akali",tier:"epic"},{id:4,name:"Blood Moon Akali",tier:"epic"},{id:5,name:"PROJECT: Akali",tier:"legendary"},{id:6,name:"K/DA Akali",tier:"legendary"},{id:7,name:"True Damage Akali",tier:"legendary"},{id:8,name:"K/DA ALL OUT Akali",tier:"epic"},{id:9,name:"Star Guardian Akali",tier:"epic"}],
+  "Malphite":   [{id:0,name:"Malphite",tier:"classic"},{id:1,name:"Coral Reef Malphite",tier:"epic"},{id:2,name:"Shamrock Malphite",tier:"epic"},{id:3,name:"Obsidian Malphite",tier:"epic"},{id:4,name:"Mecha Malphite",tier:"epic"},{id:5,name:"Odyssey Malphite",tier:"epic"},{id:6,name:"Glacial Malphite",tier:"epic"}],
+  "Jhin":       [{id:0,name:"Jhin",tier:"classic"},{id:1,name:"High Noon Jhin",tier:"legendary"},{id:2,name:"SKT T1 Jhin",tier:"epic"},{id:3,name:"Blood Moon Jhin",tier:"epic"},{id:4,name:"Dark Cosmic Jhin",tier:"legendary"},{id:5,name:"Shan Hai Scrolls Jhin",tier:"epic"},{id:6,name:"Crystal Rose Jhin",tier:"epic"}],
+  "Amumu":      [{id:0,name:"Amumu",tier:"classic"},{id:1,name:"Emumu",tier:"epic"},{id:2,name:"Re-Gifted Amumu",tier:"epic"},{id:3,name:"Almost-Prom King Amumu",tier:"epic"},{id:4,name:"Sad Robot Amumu",tier:"epic"},{id:5,name:"Little Knight Amumu",tier:"epic"},{id:6,name:"Surprise Party Amumu",tier:"epic"},{id:7,name:"Base Camp Amumu",tier:"epic"}],
+  "Nami":       [{id:0,name:"Nami",tier:"classic"},{id:1,name:"Koi Nami",tier:"epic"},{id:2,name:"River Spirit Nami",tier:"epic"},{id:3,name:"Deep Sea Nami",tier:"epic"},{id:4,name:"Program Nami",tier:"epic"},{id:5,name:"Splendid Staff Nami",tier:"legendary"},{id:6,name:"Fae Dragon Nami",tier:"epic"}],
+  "Blitzcrank": [{id:0,name:"Blitzcrank",tier:"classic"},{id:1,name:"Rusty Blitzcrank",tier:"classic"},{id:2,name:"Definitely Not Blitzcrank",tier:"epic"},{id:3,name:"Piltover Customs Blitzcrank",tier:"epic"},{id:4,name:"Battle Boss Blitzcrank",tier:"legendary"},{id:5,name:"Lancer Paragon Blitzcrank",tier:"epic"},{id:6,name:"iBlitzcrank",tier:"epic"}],
+  "Lulu":       [{id:0,name:"Lulu",tier:"classic"},{id:1,name:"Wicked Lulu",tier:"epic"},{id:2,name:"Dragon Trainer Lulu",tier:"legendary"},{id:3,name:"Winter Wonder Lulu",tier:"epic"},{id:4,name:"Pool Party Lulu",tier:"epic"},{id:5,name:"Star Guardian Lulu",tier:"epic"},{id:6,name:"Pajama Guardian Lulu",tier:"epic"},{id:7,name:"Space Groove Lulu",tier:"epic"}],
+  "Yone":       [{id:0,name:"Yone",tier:"classic"},{id:1,name:"Spirit Blossom Yone",tier:"legendary"},{id:2,name:"Nightbringer Yone",tier:"legendary"},{id:3,name:"Battle Academia Yone",tier:"epic"},{id:4,name:"Epoch Yone",tier:"epic"}],
+  "Kayn":       [{id:0,name:"Kayn",tier:"classic"},{id:1,name:"Soulhunter Kayn",tier:"legendary"},{id:2,name:"Odyssey Kayn",tier:"legendary"},{id:3,name:"Battle Academia Kayn",tier:"epic"}],
+  "Riven":      [{id:0,name:"Riven",tier:"classic"},{id:1,name:"Redeemed Riven",tier:"epic"},{id:2,name:"Battle Bunny Riven",tier:"epic"},{id:3,name:"Championship Riven",tier:"legendary"},{id:4,name:"Dawnbringer Riven",tier:"legendary"},{id:5,name:"Dragon Trainer Riven",tier:"epic"}],
+  "Miss Fortune":[{id:0,name:"Miss Fortune",tier:"classic"},{id:1,name:"Waterloo Miss Fortune",tier:"epic"},{id:2,name:"Candy Cane Miss Fortune",tier:"epic"},{id:3,name:"Road Warrior Miss Fortune",tier:"epic"},{id:4,name:"Mafia Miss Fortune",tier:"epic"},{id:5,name:"Pool Party Miss Fortune",tier:"epic"},{id:6,name:"Star Guardian Miss Fortune",tier:"legendary"},{id:7,name:"Gun Goddess Miss Fortune",tier:"ultimate"},{id:8,name:"Pajama Guardian Miss Fortune",tier:"epic"},{id:9,name:"Battle Bunny Miss Fortune",tier:"legendary"}],
+  "Katarina":   [{id:0,name:"Katarina",tier:"classic"},{id:1,name:"Mercenary Katarina",tier:"epic"},{id:2,name:"Red Card Katarina",tier:"epic"},{id:3,name:"High Command Katarina",tier:"epic"},{id:4,name:"Blood Moon Katarina",tier:"epic"},{id:5,name:"PROJECT: Katarina",tier:"legendary"},{id:6,name:"Death Sworn Katarina",tier:"epic"},{id:7,name:"KDA Katarina",tier:"epic"},{id:8,name:"Crystal Rose Katarina",tier:"epic"}],
+};
+
+var TIER_ORDER = ['ultimate','mythic','legendary','epic','classic'];
+var TIER_LABELS = {
+  ultimate:  {label:'⚡ Ultimate',   color:'#ffd700'},
+  mythic:    {label:'💎 Mítica',     color:'#a78bfa'},
+  legendary: {label:'🔥 Legendaria', color:'#fb923c'},
+  epic:      {label:'✨ Épica',      color:'#60a5fa'},
+  classic:   {label:'🎮 Clásica',    color:'#8b949e'},
+};
+
+function openSkins(){
+  if(!selChamp){ showToast('Seleccioná un campeón primero'); return; }
+  var skins = SKIN_DATA[selChamp.n];
+  if(!skins){
+    // Generate generic skins list from Data Dragon
+    skins = [{id:0, name:selChamp.n, tier:'classic'}];
+  }
+  document.getElementById('skins-title').textContent = '✨ Skins de ' + selChamp.n;
+  // Group by tier
+  var grouped = {};
+  TIER_ORDER.forEach(function(t){ grouped[t] = []; });
+  skins.forEach(function(s){ if(grouped[s.tier]) grouped[s.tier].push(s); });
+
+  var html = '';
+  TIER_ORDER.forEach(function(tier){
+    var list = grouped[tier];
+    if(!list || !list.length) return;
+    var tl = TIER_LABELS[tier];
+    html += '<div class="skins-tier-section">'
+      +'<div class="skins-tier-label" style="color:'+tl.color+'">'+tl.label+'</div>'
+      +'<div class="skins-grid">'
+      +list.map(function(s){
+        var splashUrl = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(selChamp.n)+'_'+s.id+'.jpg';
+        return '<div class="skin-card skin-tier-'+tier+'">'
+          +'<img src="'+splashUrl+'" loading="lazy" onerror="this.style.opacity=.3" style="width:100%;height:80px;object-fit:cover;object-position:center 15%"/>'
+          +'<div class="skin-card-name" title="'+s.name+'">'+s.name+'</div>'
+          +'</div>';
+      }).join('')
+      +'</div></div>';
+  });
+
+  document.getElementById('skins-body').innerHTML = html;
+  document.getElementById('skins-modal').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+function closeSkins(){
+  document.getElementById('skins-modal').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+/* ════════════════════════════════════
+   FLASHCARDS
+════════════════════════════════════ */
+var flashState = { correct:0, wrong:0, current:null, answered:false };
+
+function openFlashcards(){
+  flashState = { correct:0, wrong:0, current:null, answered:false };
+  document.getElementById('flash-stats').style.display = 'none';
+  document.getElementById('flash-modal').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+  nextFlashcard();
+}
+function closeFlashcards(){
+  document.getElementById('flash-modal').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+function nextFlashcard(){
+  flashState.answered = false;
+  // Pick random champ that has specific counters
+  var champPool = Object.keys(SPECIFIC).filter(function(n){
+    var s = SPECIFIC[n];
+    return s && s.ctr && s.ctr.length >= 3;
+  });
+  var champName = champPool[Math.floor(Math.random()*champPool.length)];
+  var found = ALL.find(function(c){ return c.n === champName; });
+  if(!found){ nextFlashcard(); return; }
+  flashState.current = found;
+
+  var d = getData(found);
+  var correctCounters = d.ctr.slice(0,3).map(function(r){ return r[0]; });
+
+  // Generate 3 wrong options from other champs
+  var allNames = ALL.map(function(c){ return c.n; }).filter(function(n){
+    return correctCounters.indexOf(n) < 0 && n !== champName;
+  });
+  var shuffle = allNames.sort(function(){ return Math.random()-.5; });
+  var wrongOptions = [];
+  var seen = {};
+  for(var i=0;i<shuffle.length && wrongOptions.length<3;i++){
+    if(!seen[shuffle[i]]){ seen[shuffle[i]]=true; wrongOptions.push(shuffle[i]); }
+  }
+
+  // Pick 1 correct counter as the "answer" to guess
+  var correctAnswer = correctCounters[Math.floor(Math.random()*correctCounters.length)];
+  // Mix with 3 wrong options
+  var options = [correctAnswer].concat(wrongOptions).sort(function(){ return Math.random()-.5; });
+
+  var splashUrl = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+ckey(found.n)+'_0.jpg';
+  var total = flashState.correct + flashState.wrong;
+  document.getElementById('flash-score').textContent = flashState.correct+' / '+total;
+  document.getElementById('fs-correct').textContent = flashState.correct;
+  document.getElementById('fs-wrong').textContent = flashState.wrong;
+  document.getElementById('fs-pct').textContent = total>0 ? Math.round(flashState.correct/total*100)+'%' : '0%';
+  if(total>0) document.getElementById('flash-stats').style.display='flex';
+
+  document.getElementById('flash-body').innerHTML =
+    '<div class="flash-card">'
+      +'<img class="flash-splash" src="'+splashUrl+'" onerror="this.style.opacity=.3"/>'
+      +'<div class="flash-champ-name">'+found.n+'</div>'
+      +'<div class="flash-champ-role">'+found.r+'</div>'
+    +'</div>'
+    +'<div class="flash-question">¿Cuál de estos campeones le gana a <strong>'+found.n+'</strong>?</div>'
+    +'<div class="flash-options" id="flash-opts">'
+      +options.map(function(opt){
+        var isCorrect = opt === correctAnswer;
+        return '<button class="flash-opt" onclick="answerFlash(this,'+isCorrect+',\''+correctAnswer+'\')">'
+          +portrait(opt, findRole(opt), 24)
+          +'<span>'+opt+'</span>'
+          +'</button>';
+      }).join('')
+    +'</div>'
+    +'<div class="flash-feedback" id="flash-feedback"></div>'
+    +'<button class="flash-next" id="flash-next-btn" onclick="nextFlashcard()" style="display:none">Siguiente →</button>';
+}
+
+function answerFlash(btn, isCorrect, correctAnswer){
+  if(flashState.answered) return;
+  flashState.answered = true;
+
+  var opts = document.querySelectorAll('.flash-opt');
+  opts.forEach(function(b){
+    b.onclick = null;
+    var span = b.querySelector('span');
+    if(span && span.textContent === correctAnswer){
+      b.classList.add(isCorrect && b===btn ? 'correct' : 'reveal');
+    }
+  });
+
+  if(isCorrect){
+    flashState.correct++;
+    btn.classList.add('correct');
+    document.getElementById('flash-feedback').innerHTML = '<span style="color:var(--green)">✓ ¡Correcto! '+correctAnswer+' le gana a '+flashState.current.n+'</span>';
+  } else {
+    flashState.wrong++;
+    btn.classList.add('wrong');
+    document.getElementById('flash-feedback').innerHTML = '<span style="color:var(--red)">✗ Incorrecto. La respuesta era <strong>'+correctAnswer+'</strong></span>';
+  }
+
+  var total = flashState.correct + flashState.wrong;
+  document.getElementById('flash-score').textContent = flashState.correct+' / '+total;
+  document.getElementById('fs-correct').textContent = flashState.correct;
+  document.getElementById('fs-wrong').textContent = flashState.wrong;
+  document.getElementById('fs-pct').textContent = Math.round(flashState.correct/total*100)+'%';
+  document.getElementById('flash-stats').style.display = 'flex';
+  document.getElementById('flash-next-btn').style.display = 'block';
 }
 
 /* INIT */
