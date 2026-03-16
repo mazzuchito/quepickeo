@@ -905,6 +905,24 @@ input, select, textarea {
 .flash-stat-val{font-size:18px;font-weight:700}
 .flash-stat-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px}
 
+
+/* ── SKIN LIGHTBOX ── */
+#skin-lightbox{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);align-items:center;justify-content:center;flex-direction:column}
+#skin-lightbox.visible{display:flex}
+#skin-lightbox-img{max-width:90vw;max-height:72vh;object-fit:contain;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.7);animation:fadeInUp .25s ease}
+#skin-lightbox-name{font-size:18px;font-weight:700;color:#e6edf3;margin-top:1rem;text-align:center}
+#skin-lightbox-tier{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-top:4px;text-align:center}
+.skin-lightbox-actions{display:flex;gap:10px;margin-top:1rem}
+.skin-lightbox-btn{padding:8px 18px;border-radius:7px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:opacity .15s}
+.skin-lightbox-btn:hover{opacity:.85}
+#skin-lightbox-close{position:absolute;top:1.25rem;right:1.5rem;background:none;border:none;color:#8b949e;font-size:26px;cursor:pointer;transition:color .15s;z-index:1}
+#skin-lightbox-close:hover{color:#e6edf3}
+#skin-lightbox-prev,#skin-lightbox-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#e6edf3;font-size:22px;width:44px;height:60px;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center}
+#skin-lightbox-prev{left:1rem}
+#skin-lightbox-next{right:1rem}
+#skin-lightbox-prev:hover,#skin-lightbox-next:hover{background:rgba(255,255,255,.15)}
+#skin-lightbox-counter{font-size:10px;color:#6e7681;margin-top:6px}
+
 </style>
 </head>
 <body>
@@ -1119,6 +1137,21 @@ input, select, textarea {
     <div id="search-popup-roles"></div>
     <div id="search-popup-grid"></div>
   </div>
+</div>
+
+<!-- SKIN LIGHTBOX -->
+<div id="skin-lightbox" onclick="if(event.target===this)closeLightbox()">
+  <button id="skin-lightbox-close" onclick="closeLightbox()">✕</button>
+  <button id="skin-lightbox-prev" onclick="lightboxNav(-1)">‹</button>
+  <img id="skin-lightbox-img" src="" alt=""/>
+  <div id="skin-lightbox-name"></div>
+  <div id="skin-lightbox-tier"></div>
+  <div id="skin-lightbox-counter"></div>
+  <div class="skin-lightbox-actions">
+    <button class="skin-lightbox-btn" id="skin-lightbox-riot" style="background:#C8AA6E;color:#0a1428" onclick="openSkinOnRiot()">Ver en Riot →</button>
+    <button class="skin-lightbox-btn" style="background:rgba(255,255,255,.08);color:#8b949e;border:1px solid rgba(255,255,255,.1)" onclick="closeLightbox()">Cerrar</button>
+  </div>
+  <button id="skin-lightbox-next" onclick="lightboxNav(1)">›</button>
 </div>
 
 <!-- SKINS MODAL -->
@@ -3619,6 +3652,7 @@ function openSkins(){
       if(!champData || !champData.skins){ document.getElementById('skins-body').innerHTML='<div style="padding:2rem;text-align:center;color:var(--text3)">Sin datos de skins.</div>'; return; }
 
       var skins = champData.skins;
+      window.allSkinsFlat = skins;
       // Group by tier
       var grouped = {ultimate:[],mythic:[],legendary:[],epic:[],classic:[]};
       skins.forEach(function(s){
@@ -3772,6 +3806,74 @@ function answerFlash(btn, isCorrect, correctAnswer){
   document.getElementById('flash-stats').style.display = 'flex';
   document.getElementById('flash-next-btn').style.display = 'block';
 }
+
+/* ════════════════════════════════════
+   SKIN LIGHTBOX
+════════════════════════════════════ */
+var lightboxSkins = [];
+var lightboxIdx = 0;
+var lightboxChampKey = '';
+
+function openLightbox(skin, allSkins, tier){
+  lightboxSkins = allSkins || [skin];
+  lightboxIdx = lightboxSkins.findIndex(function(s){ return s.num === skin.num; });
+  if(lightboxIdx < 0) lightboxIdx = 0;
+  lightboxChampKey = ckey(selChamp ? selChamp.n : '');
+  renderLightbox();
+  document.getElementById('skin-lightbox').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderLightbox(){
+  var skin = lightboxSkins[lightboxIdx];
+  if(!skin) return;
+  var splashUrl = 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/'+lightboxChampKey+'_'+skin.num+'.jpg';
+  var displayName = skin.name === 'default' ? (selChamp ? selChamp.n : '') : skin.name;
+  var tier = getSkinTier(skin.name, skin.num);
+  var TIER_LABELS = {ultimate:'⚡ Ultimate',mythic:'💎 Mítica',legendary:'🔥 Legendaria',epic:'✨ Épica',classic:'🎮 Clásica'};
+  var TIER_COLORS = {ultimate:'#ffd700',mythic:'#a78bfa',legendary:'#fb923c',epic:'#60a5fa',classic:'#8b949e'};
+
+  var img = document.getElementById('skin-lightbox-img');
+  img.style.opacity = '0';
+  img.src = splashUrl;
+  img.onload = function(){ img.style.transition='opacity .3s'; img.style.opacity='1'; };
+
+  document.getElementById('skin-lightbox-name').textContent = displayName;
+  document.getElementById('skin-lightbox-tier').textContent = TIER_LABELS[tier] || tier;
+  document.getElementById('skin-lightbox-tier').style.color = TIER_COLORS[tier] || '#8b949e';
+  document.getElementById('skin-lightbox-counter').textContent = (lightboxIdx+1)+' / '+lightboxSkins.length;
+
+  // Show/hide nav arrows
+  document.getElementById('skin-lightbox-prev').style.opacity = lightboxIdx > 0 ? '1' : '0.2';
+  document.getElementById('skin-lightbox-next').style.opacity = lightboxIdx < lightboxSkins.length-1 ? '1' : '0.2';
+}
+
+function lightboxNav(dir){
+  var newIdx = lightboxIdx + dir;
+  if(newIdx < 0 || newIdx >= lightboxSkins.length) return;
+  lightboxIdx = newIdx;
+  renderLightbox();
+}
+
+function closeLightbox(){
+  document.getElementById('skin-lightbox').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+function openSkinOnRiot(){
+  var skin = lightboxSkins[lightboxIdx];
+  if(!skin || !selChamp) return;
+  var champSlug = selChamp.n.toLowerCase().replace(/[^a-z0-9]/g,'');
+  window.open('https://www.leagueoflegends.com/en-us/champions/'+champSlug+'/', '_blank');
+}
+
+// Keyboard nav in lightbox
+document.addEventListener('keydown', function(e){
+  if(!document.getElementById('skin-lightbox').classList.contains('visible')) return;
+  if(e.key === 'ArrowLeft') lightboxNav(-1);
+  if(e.key === 'ArrowRight') lightboxNav(1);
+  if(e.key === 'Escape') closeLightbox();
+});
 
 /* INIT */
 filterGrid();
